@@ -10,6 +10,7 @@
     const accountToggle = account.querySelector('.homepage-account__toggle');
     const accountMenu = account.querySelector('.homepage-account__menu');
     const logoutForm = account.querySelector('[data-logout]');
+    const adventureLink = document.querySelector('[data-adventure-link]');
     const loading = document.querySelector('.homepage-loading');
     const loadingMessage = loading.querySelector('.homepage-loading__message');
     const main = document.querySelector('#main-content');
@@ -22,7 +23,6 @@
         resources: { title: 'Materi Rujukan', description: 'Kenali topik jaringan yang menemani perjalanan belajarmu.' },
         leaderboard: { title: 'Leaderboard', description: 'Tempat pencapaian para penjelajah jaringan.' },
         help: { title: 'Ada yang bisa dibantu?', description: 'Kenali halaman dan mode belajar NetGuard Academy.' },
-        adventure: { title: 'Adventure Mode', description: 'Jelajahi alur cerita dan selesaikan misi jaringan yang seru.' },
         practice: { title: 'Practice Mode', description: 'Asah kemampuan konfigurasi MikroTik lewat latihan.' },
         certification: { title: 'Certification Mode', description: 'Tantang dirimu dan tunjukkan kemampuan jaringanmu.' },
     };
@@ -57,6 +57,22 @@
         closeAccountMenu();
         showLoading('Keluar dari akun...');
         window.setTimeout(() => HTMLFormElement.prototype.submit.call(logoutForm), reducedMotion.matches ? 150 : 650);
+    });
+
+    adventureLink.addEventListener('click', (event) => {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        if (leaving || !loading.hidden) return;
+        leaving = true;
+        closeAccountMenu();
+        showLoading('Menyiapkan Adventure Mode...');
+        modeTimer = window.setTimeout(() => {
+            if (window.NetGuardNavigation) {
+                window.NetGuardNavigation.navigate(adventureLink.href, 'adventure');
+            } else {
+                window.location.assign(adventureLink.href);
+            }
+        }, reducedMotion.matches ? 150 : 650);
     });
 
     accountToggle.addEventListener('click', () => {

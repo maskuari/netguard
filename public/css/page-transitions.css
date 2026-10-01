@@ -6,9 +6,10 @@
 :root[data-auth-mode="register"], :root[data-page-destination="register"] { --page-direction: -1; }
 
 .classroom { view-transition-name: academy-background; }
-.hero, .auth-card, .homepage-hero { view-transition-name: academy-card; }
-.homepage-modes { view-transition-name: academy-features; }
-.auth-brand, .homepage-illustration { view-transition-name: academy-mascot; }
+.hero, .auth-card, .homepage-hero, .adventure-intro { view-transition-name: academy-card; }
+.homepage-modes, .chapter-section { view-transition-name: academy-features; }
+.chapter-panels { view-transition-name: academy-details; }
+.auth-brand, .homepage-illustration, .adventure-intro__art { view-transition-name: academy-mascot; }
 .auth-atmosphere { view-transition-name: academy-glow; }
 .navbar { view-transition-name: academy-navbar; }
 .auth-home { view-transition-name: academy-back; }
@@ -20,6 +21,7 @@
 ::view-transition-group(academy-mascot) { z-index: 2; }
 ::view-transition-group(academy-card) { z-index: 3; }
 ::view-transition-group(academy-features) { z-index: 3; }
+::view-transition-group(academy-details) { z-index: 3; }
 ::view-transition-group(academy-navbar), ::view-transition-group(academy-back) { z-index: 4; }
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; opacity: 0; }
 ::view-transition-old(academy-background) { animation: page-fade-out 900ms ease both; }
@@ -34,6 +36,7 @@
 ::view-transition-new(academy-card) { animation: page-card-resolve 620ms 140ms var(--page-ease) both; }
 ::view-transition-old(academy-features) { animation: page-fade-out 300ms ease both; }
 ::view-transition-new(academy-features) { animation: page-content-in 750ms 220ms var(--page-ease) both; }
+::view-transition-new(academy-details) { animation: page-content-in 750ms 280ms var(--page-ease) both; }
 ::view-transition-image-pair(academy-card) { isolation: isolate; }
 
 /* The native transition takes over initial reveals, including on history restoration. */
@@ -46,6 +49,9 @@
 .page-arrived [data-home-reveal],
 .page-arrived .mode-card,
 .page-arrived .homepage-footer { animation: none; }
+.page-arrived .adventure-intro__art,
+.page-arrived .chapter-card,
+.page-arrived .chapter-panel { animation: none; }
 
 .page-transitioning .mission-card,
 .page-transitioning .auth-brand__image { animation-play-state: paused; }
@@ -58,6 +64,7 @@
 .page-exiting .homepage-illustration { animation: page-mascot-out 330ms ease-out both; }
 .page-exiting .classroom__image { animation: page-background-out 450ms ease-out both; }
 .page-exiting .homepage-hero, .page-exiting .homepage-modes { animation: page-card-out 360ms var(--page-ease) both; }
+.page-exiting .adventure-intro, .page-exiting .chapter-section, .page-exiting .chapter-panels { animation: page-card-out 360ms var(--page-ease) both; }
 
 .page-entering .auth-card__surface { animation: page-form-in 800ms 40ms var(--page-ease) both; }
 .page-entering .auth-brand__motion { animation: page-mascot-in 900ms 120ms var(--page-ease) both; }
@@ -67,6 +74,7 @@
 .page-entering .navbar { animation: page-nav-in 600ms 120ms var(--page-ease) both; }
 .page-entering .homepage-hero { animation: page-content-in 800ms 60ms var(--page-ease) both; }
 .page-entering .homepage-modes { animation: page-content-in 850ms 150ms var(--page-ease) both; }
+.page-entering .adventure-intro, .page-entering .chapter-section, .page-entering .chapter-panels { animation: page-content-in 800ms 80ms var(--page-ease) both; }
 
 @keyframes page-fade-out { from { opacity: 1; } to { opacity: 0; } }
 @keyframes page-content-in { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }

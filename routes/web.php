@@ -13,3 +13,4 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1')->name('register.store');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 Route::view('/homepage', 'homepage')->middleware('auth')->name('homepage');
+Route::view('/adventure', 'adventure')->middleware('auth')->name('adventure');
