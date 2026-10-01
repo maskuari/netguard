@@ -1,0 +1,89 @@
+@view-transition {
+    navigation: auto;
+}
+
+:root { --page-ease: cubic-bezier(.22, .75, .18, 1); --page-direction: 1; }
+:root[data-auth-mode="register"], :root[data-page-destination="register"] { --page-direction: -1; }
+
+.classroom { view-transition-name: academy-background; }
+.hero, .auth-card, .homepage-hero { view-transition-name: academy-card; }
+.homepage-modes { view-transition-name: academy-features; }
+.auth-brand, .homepage-illustration { view-transition-name: academy-mascot; }
+.auth-atmosphere { view-transition-name: academy-glow; }
+.navbar { view-transition-name: academy-navbar; }
+.auth-home { view-transition-name: academy-back; }
+
+::view-transition { pointer-events: none; }
+::view-transition-group(*) { animation-duration: 850ms; animation-timing-function: var(--page-ease); }
+::view-transition-group(academy-background) { z-index: 0; }
+::view-transition-group(academy-glow) { z-index: 1; }
+::view-transition-group(academy-mascot) { z-index: 2; }
+::view-transition-group(academy-card) { z-index: 3; }
+::view-transition-group(academy-features) { z-index: 3; }
+::view-transition-group(academy-navbar), ::view-transition-group(academy-back) { z-index: 4; }
+::view-transition-old(root), ::view-transition-new(root) { animation: none; opacity: 0; }
+::view-transition-old(academy-background) { animation: page-fade-out 900ms ease both; }
+::view-transition-new(academy-background) { animation: page-background-in 1100ms var(--page-ease) both; }
+::view-transition-old(academy-glow) { animation: page-fade-out 500ms ease both; }
+::view-transition-new(academy-glow) { animation: page-content-in 800ms var(--page-ease) both; }
+::view-transition-old(academy-mascot) { animation: page-mascot-out 330ms ease-out both; }
+::view-transition-new(academy-mascot) { animation: page-mascot-in 900ms 120ms var(--page-ease) both; }
+::view-transition-old(academy-navbar), ::view-transition-old(academy-back) { animation: page-nav-out 240ms ease-out both; }
+::view-transition-new(academy-navbar), ::view-transition-new(academy-back) { animation: page-nav-in 550ms 220ms var(--page-ease) both; }
+::view-transition-old(academy-card) { animation: page-card-dissolve 300ms ease-out both; }
+::view-transition-new(academy-card) { animation: page-card-resolve 620ms 140ms var(--page-ease) both; }
+::view-transition-old(academy-features) { animation: page-fade-out 300ms ease both; }
+::view-transition-new(academy-features) { animation: page-content-in 750ms 220ms var(--page-ease) both; }
+::view-transition-image-pair(academy-card) { isolation: isolate; }
+
+/* The native transition takes over initial reveals, including on history restoration. */
+.page-arrived .hero,
+.page-arrived .navbar,
+.page-arrived .classroom__image,
+.page-arrived .auth-stage,
+.page-arrived .auth-home,
+.page-arrived .homepage-illustration,
+.page-arrived [data-home-reveal],
+.page-arrived .mode-card,
+.page-arrived .homepage-footer { animation: none; }
+
+.page-transitioning .mission-card,
+.page-transitioning .auth-brand__image { animation-play-state: paused; }
+
+/* Browsers without cross-document transitions still get matching exit/entry motion. */
+.page-exiting .academy-scene { pointer-events: none; }
+.page-exiting .navbar, .page-exiting .auth-home { animation: page-nav-out 260ms ease-out both; }
+.page-exiting .mission-card, .page-exiting .auth-card__surface { animation: page-card-out 360ms var(--page-ease) both; }
+.page-exiting .auth-brand__motion { animation: page-mascot-out 330ms ease-out both; }
+.page-exiting .homepage-illustration { animation: page-mascot-out 330ms ease-out both; }
+.page-exiting .classroom__image { animation: page-background-out 450ms ease-out both; }
+.page-exiting .homepage-hero, .page-exiting .homepage-modes { animation: page-card-out 360ms var(--page-ease) both; }
+
+.page-entering .auth-card__surface { animation: page-form-in 800ms 40ms var(--page-ease) both; }
+.page-entering .auth-brand__motion { animation: page-mascot-in 900ms 120ms var(--page-ease) both; }
+.page-entering .homepage-illustration { animation: page-mascot-in 900ms 120ms var(--page-ease) both; }
+.page-entering .auth-home { animation: page-nav-in 500ms 220ms var(--page-ease) both; }
+.page-entering .mission-card { animation: page-welcome-in 800ms 60ms var(--page-ease) both; }
+.page-entering .navbar { animation: page-nav-in 600ms 120ms var(--page-ease) both; }
+.page-entering .homepage-hero { animation: page-content-in 800ms 60ms var(--page-ease) both; }
+.page-entering .homepage-modes { animation: page-content-in 850ms 150ms var(--page-ease) both; }
+
+@keyframes page-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes page-content-in { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+@keyframes page-background-in { from { opacity: 0; scale: 1.015; } to { opacity: 1; scale: 1; } }
+@keyframes page-card-dissolve { from { opacity: 1; filter: blur(0); } to { opacity: 0; filter: blur(3px); } }
+@keyframes page-card-resolve { from { opacity: 0; filter: blur(3px); } to { opacity: 1; filter: blur(0); } }
+@keyframes page-card-out { from { opacity: 1; transform: translate(0, 0) scale(1); } to { opacity: 0; transform: translate(calc(var(--page-direction) * 30px), 8px) scale(.94); } }
+@keyframes page-mascot-out { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(.96); } }
+@keyframes page-background-out { to { transform: scale(1.055); filter: blur(2px); } }
+@keyframes page-form-in { from { opacity: 0; transform: translate(calc(var(--page-direction) * 38px), 12px) scale(.96); } to { opacity: 1; transform: translate(0, 0) scale(1); } }
+@keyframes page-mascot-in { from { opacity: 0; transform: translate(calc(var(--page-direction) * -26px), 8px) scale(.97); } to { opacity: 1; transform: translate(0, 0) scale(1); } }
+@keyframes page-welcome-in { from { opacity: 0; transform: translateY(12px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes page-nav-in { from { opacity: 0; translate: 0 -10px; } to { opacity: 1; translate: 0 0; } }
+@keyframes page-nav-out { to { opacity: 0; translate: 0 -10px; } }
+
+@media (prefers-reduced-motion: reduce) {
+    @view-transition { navigation: none; }
+    ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+    .page-entering *, .page-exiting * { animation: none !important; }
+}

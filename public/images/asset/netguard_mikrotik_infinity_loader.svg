@@ -1,0 +1,133 @@
+<svg width="320" height="320" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ring" x1="55" y1="55" x2="265" y2="265" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00D4FF"/>
+      <stop offset="0.48" stop-color="#147BFF"/>
+      <stop offset="1" stop-color="#0B2C8F"/>
+    </linearGradient>
+
+    <linearGradient id="router" x1="100" y1="125" x2="220" y2="205" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#173D87"/>
+      <stop offset="1" stop-color="#081B47"/>
+    </linearGradient>
+
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.4"/>
+    </filter>
+  </defs>
+
+  <style>
+    .orbit { transform-origin:160px 160px; animation:spin 2.4s linear infinite; }
+    .orbit2 { transform-origin:160px 160px; animation:spinReverse 3.3s linear infinite; }
+    .pulse { animation:pulse 1.2s ease-in-out infinite; transform-origin:center; }
+    .led1 { animation:blink 0.9s infinite; }
+    .led2 { animation:blink 0.9s 0.3s infinite; }
+    .led3 { animation:blink 0.9s 0.6s infinite; }
+    .packet1 { animation:packet1 1.6s linear infinite; }
+    .packet2 { animation:packet2 1.9s linear infinite; }
+    .packet3 { animation:packet3 2.2s linear infinite; }
+
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @keyframes spinReverse { to { transform:rotate(-360deg); } }
+
+    @keyframes pulse {
+      0%,100% { opacity:.55; transform:scale(.88); }
+      50% { opacity:1; transform:scale(1.16); }
+    }
+
+    @keyframes blink {
+      0%,45% { opacity:.28; }
+      50%,100% { opacity:1; }
+    }
+
+    @keyframes packet1 {
+      0% { transform:translate(0,0); opacity:0; }
+      10% { opacity:1; }
+      100% { transform:translate(73px,-59px); opacity:0; }
+    }
+    @keyframes packet2 {
+      0% { transform:translate(0,0); opacity:0; }
+      10% { opacity:1; }
+      100% { transform:translate(-76px,62px); opacity:0; }
+    }
+    @keyframes packet3 {
+      0% { transform:translate(0,0); opacity:0; }
+      10% { opacity:1; }
+      100% { transform:translate(67px,67px); opacity:0; }
+    }
+  </style>
+
+  <!-- outer subtle halo -->
+  <circle cx="160" cy="160" r="111" stroke="#1F8BFF" stroke-opacity=".16" stroke-width="8" filter="url(#soft)"/>
+
+  <!-- rotating segmented main orbit -->
+  <g class="orbit" filter="url(#glow)">
+    <circle cx="160" cy="160" r="105"
+            stroke="url(#ring)" stroke-width="10"
+            stroke-linecap="round"
+            stroke-dasharray="52 24 20 35"/>
+    <circle cx="160" cy="55" r="7" fill="#69E7FF"/>
+    <circle cx="251" cy="108" r="6" fill="#2BA3FF"/>
+    <circle cx="255" cy="208" r="7" fill="#69E7FF"/>
+    <circle cx="98" cy="246" r="6" fill="#2BA3FF"/>
+  </g>
+
+  <!-- thin counter orbit -->
+  <g class="orbit2">
+    <ellipse cx="160" cy="160" rx="92" ry="52"
+             stroke="#55CFFF" stroke-opacity=".55"
+             stroke-width="3" stroke-dasharray="12 10"/>
+    <ellipse cx="160" cy="160" rx="54" ry="92"
+             stroke="#237DFF" stroke-opacity=".34"
+             stroke-width="2"/>
+  </g>
+
+  <!-- network packets -->
+  <g filter="url(#glow)">
+    <circle class="packet1" cx="160" cy="160" r="4.5" fill="#8CF7FF"/>
+    <circle class="packet2" cx="160" cy="160" r="4" fill="#2FB3FF"/>
+    <circle class="packet3" cx="160" cy="160" r="4" fill="#7ADFFF"/>
+  </g>
+
+  <!-- central router shadow -->
+  <ellipse cx="160" cy="215" rx="77" ry="16" fill="#0C2D6B" opacity=".16"/>
+
+  <!-- antennas -->
+  <rect x="111" y="103" width="8" height="54" rx="4" fill="#0D2E6C" stroke="#25A6FF" stroke-width="2"/>
+  <rect x="201" y="103" width="8" height="54" rx="4" fill="#0D2E6C" stroke="#25A6FF" stroke-width="2"/>
+
+  <!-- router -->
+  <rect x="91" y="137" width="138" height="71" rx="18" fill="url(#router)" stroke="#29B8FF" stroke-width="3"/>
+
+  <!-- top glow line -->
+  <path d="M111 151H207" stroke="#4DDFFF" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+
+  <!-- ports -->
+  <g>
+    <rect x="112" y="171" width="19" height="15" rx="2" fill="#05142F" stroke="#5ACFFF" stroke-width="2"/>
+    <rect x="136" y="171" width="19" height="15" rx="2" fill="#05142F" stroke="#5ACFFF" stroke-width="2"/>
+    <rect x="160" y="171" width="19" height="15" rx="2" fill="#05142F" stroke="#5ACFFF" stroke-width="2"/>
+    <rect x="184" y="171" width="19" height="15" rx="2" fill="#05142F" stroke="#5ACFFF" stroke-width="2"/>
+  </g>
+
+  <!-- LEDs -->
+  <g filter="url(#glow)">
+    <circle class="led1" cx="213" cy="175" r="3.2" fill="#64FFB0"/>
+    <circle class="led2" cx="213" cy="185" r="3.2" fill="#5AD5FF"/>
+    <circle class="led3" cx="213" cy="195" r="3.2" fill="#6E8CFF"/>
+  </g>
+
+  <!-- center status node -->
+  <g class="pulse" filter="url(#glow)">
+    <circle cx="160" cy="160" r="9" fill="#0A49A8"/>
+    <circle cx="160" cy="160" r="5" fill="#6EEDFF"/>
+  </g>
+</svg>
