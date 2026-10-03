@@ -10,6 +10,7 @@
         <link rel="preload" as="image" href="{{ asset('images/background/home.png') }}" fetchpriority="high">
         <link rel="preload" as="image" href="{{ asset('images/card/cardlogin.png') }}" fetchpriority="high">
         <link rel="stylesheet" href="{{ asset('css/welcome.css') }}?v={{ filemtime(public_path('css/welcome.css')) }}">
+        <link rel="stylesheet" href="{{ asset('css/game-navbar.css') }}?v={{ filemtime(public_path('css/game-navbar.css')) }}">
         <link rel="stylesheet" href="{{ asset('css/page-transitions.css') }}?v={{ filemtime(public_path('css/page-transitions.css')) }}">
         <link rel="prefetch" as="image" href="{{ asset('images/asset/netlogin.png') }}">
         <link rel="prefetch" as="image" href="{{ asset('images/card/cardlog.png') }}">
@@ -56,22 +57,7 @@
             </div>
             <div class="sun-motes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 
-            <header class="navbar">
-                <a class="brand" href="{{ url('/') }}" aria-label="NetGuard Academy, Beranda" data-home>
-                    <span class="brand__mascot"><img src="{{ asset('images/logo/logo.png') }}" alt="" decoding="async"></span>
-                    <span class="brand__copy">
-                        <span class="brand__name">NetGuard <span>Academy</span></span>
-                        <span class="brand__tagline">MikroTik Mission</span>
-                    </span>
-                </a>
-                <nav class="nav-links" aria-label="Navigasi utama">
-                    <a class="nav-link is-active" href="{{ url('/') }}" aria-current="page" data-home><svg class="icon" aria-hidden="true"><use href="#icon-home"/></svg><span>Beranda</span></a>
-                    <button class="nav-link" type="button" data-panel="about" aria-haspopup="dialog" aria-controls="information-dialog"><svg class="icon" aria-hidden="true"><use href="#icon-about"/></svg><span>Tentang</span></button>
-                    <button class="nav-link" type="button" data-panel="resources" aria-haspopup="dialog" aria-controls="information-dialog"><svg class="icon" aria-hidden="true"><use href="#icon-book"/></svg><span>Materi Rujukan</span></button>
-                    <button class="nav-link" type="button" data-panel="help" aria-haspopup="dialog" aria-controls="information-dialog"><svg class="icon" aria-hidden="true"><use href="#icon-help"/></svg><span>Bantuan</span></button>
-                </nav>
-                <a class="button button--primary navbar__login" href="{{ route('login') }}" data-page-link="login"><svg class="icon" aria-hidden="true"><use href="#icon-user"/></svg><span>Login</span></a>
-            </header>
+            @include('game-navbar', ['page' => 'welcome'])
 
             <main class="hero" id="main-content" tabindex="-1">
                 <h1 class="visually-hidden">NetGuard Academy — MikroTik Mission</h1>
@@ -98,6 +84,7 @@
             <button class="button button--primary dialog-back" type="button">Kembali ke Beranda <svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></button>
         </dialog>
 
+        @include('game-materials', ['id' => 'panel-materials', 'isWelcome' => true, 'isAdventure' => false])
         <template id="panel-about">
             <div class="about-note"><span class="note-number">01 — MISIMU DIMULAI DI SINI</span><p>Kenali jaringan, pelajari konfigurasi MikroTik, dan asah kemampuanmu selangkah demi selangkah.</p></div>
             <div class="topic-tags"><span>Belajar</span><span>Konfigurasi</span><span>Simulasi</span></div>

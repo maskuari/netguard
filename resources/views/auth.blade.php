@@ -88,6 +88,23 @@
                                 <div class="auth-fields register-fields">
                                     <label class="auth-input" data-reveal><span class="visually-hidden">Nama lengkap</span><svg class="icon" aria-hidden="true"><use href="#auth-user"/></svg><input name="name" type="text" placeholder="Nama lengkap" autocomplete="name" required maxlength="255" value="{{ old('name') }}"></label>
                                     <label class="auth-input" data-reveal><span class="visually-hidden">Email</span><svg class="icon" aria-hidden="true"><use href="#auth-mail"/></svg><input name="email" type="email" placeholder="Email" autocomplete="email" autocapitalize="none" spellcheck="false" required maxlength="255" value="{{ old('email') }}"></label>
+                                    <fieldset class="auth-gender" data-reveal>
+                                        <legend>Jenis kelamin</legend>
+                                        <div class="auth-gender__choices">
+                                            <label class="auth-gender__option">
+                                                <input type="radio" name="gender" value="pria" required @checked(old('gender') === 'pria')>
+                                                <span class="auth-gender__avatar" aria-hidden="true"><img src="{{ asset('images/asset/char/siswa/cowo/bicara_santai.png') }}" alt="" decoding="async"></span>
+                                                <span>Pria</span>
+                                                <svg class="icon auth-gender__check" aria-hidden="true"><use href="#auth-check"/></svg>
+                                            </label>
+                                            <label class="auth-gender__option">
+                                                <input type="radio" name="gender" value="wanita" required @checked(old('gender') === 'wanita')>
+                                                <span class="auth-gender__avatar" aria-hidden="true"><img src="{{ asset('images/asset/char/siswa/cewe/bicara_santai.png') }}" alt="" decoding="async"></span>
+                                                <span>Wanita</span>
+                                                <svg class="icon auth-gender__check" aria-hidden="true"><use href="#auth-check"/></svg>
+                                            </label>
+                                        </div>
+                                    </fieldset>
                                     <div class="auth-input" data-reveal><label class="visually-hidden" for="register-password">Password, minimal 8 karakter</label><svg class="icon" aria-hidden="true"><use href="#auth-lock"/></svg><input id="register-password" name="password" type="password" placeholder="Password" autocomplete="new-password" required minlength="8"><button class="password-toggle" type="button" aria-label="Tampilkan password" aria-controls="register-password" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#auth-eye-off"/></svg></button></div>
                                     <div class="auth-input" data-reveal><label class="visually-hidden" for="register-confirmation">Konfirmasi password</label><svg class="icon" aria-hidden="true"><use href="#auth-lock"/></svg><input id="register-confirmation" name="password_confirmation" type="password" placeholder="Konfirmasi password" autocomplete="new-password" required minlength="8"><button class="password-toggle" type="button" aria-label="Tampilkan konfirmasi password" aria-controls="register-confirmation" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#auth-eye-off"/></svg></button></div>
                                 </div>

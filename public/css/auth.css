@@ -113,7 +113,7 @@
 
 .auth-fields { position: absolute; left: 13%; right: 12%; display: flex; flex-direction: column; }
 .login-fields { top: 37.5%; height: 23%; gap: 3.2cqh; }
-.register-fields { top: 32%; height: 42%; gap: 2cqh; }
+.register-fields { top: 32%; height: 42%; gap: 1.3cqh; }
 .auth-input {
     display: flex;
     align-items: center;
@@ -160,6 +160,18 @@
 .auth-form--register .auth-heading p { font-size: calc(2.6 * var(--form-unit)); line-height: 1.35; }
 .auth-form--register .auth-input { border-radius: 1.5cqw; gap: 3cqw; padding-inline: 2.6cqw; }
 .auth-form--register .auth-input input { font-size: calc(2.8 * var(--form-unit)); }
+.auth-gender { display: flex; flex: 1.35; flex-direction: column; min-width: 0; min-height: 0; margin: 0; padding: 0; border: 0; }
+.auth-gender legend { margin-bottom: .6cqh; padding: 0; color: #42579d; font-size: max(11px, calc(2.5 * var(--form-unit))); line-height: 1.2; }
+.auth-gender__choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); flex: 1; min-height: 0; gap: 2cqw; }
+.auth-gender__option { position: relative; display: flex; align-items: center; min-width: 0; min-height: 0; gap: 1.7cqw; padding: 3px 2cqw; border: 1px solid #91acff; border-radius: 1.5cqw; color: #6876ae; background: #ffffffa6; font-size: max(12px, calc(2.8 * var(--form-unit))); cursor: pointer; transition: border-color .25s ease, background .25s ease, box-shadow .25s ease; }
+.auth-gender__option input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.auth-gender__avatar { position: relative; display: block; flex: none; width: clamp(22px, calc(5.4 * var(--form-unit)), 34px); aspect-ratio: 1; overflow: hidden; border: 1px solid #b1ddff; border-radius: 50%; background: #e3f3ff; }
+.auth-gender__avatar img { position: absolute; top: -3%; left: -75%; display: block; width: 245%; max-width: none; height: auto; }
+.auth-gender__check { width: 14px; height: 14px; margin-left: auto; color: #0066ff; opacity: 0; transform: scale(.7); transition: opacity .2s ease, transform .25s var(--ease-out); }
+.auth-gender__option:has(input:checked) { border-color: #0076ff; color: #0752bc; background: #edf8ff; box-shadow: 0 0 0 2px #008cff16; }
+.auth-gender__option:has(input:checked) .auth-gender__check { opacity: 1; transform: scale(1); }
+.auth-gender__option:has(input:focus-visible) { outline: 3px solid #003da6; outline-offset: 2px; }
+.auth-form.was-validated .auth-gender:has(input:invalid) .auth-gender__option, .auth-gender:has(input[aria-invalid="true"]) .auth-gender__option { border-color: #de607a; }
 .auth-form--register .auth-submit { top: 76%; height: 8.5%; border-radius: 2.3cqw; font-size: calc(4.1 * var(--form-unit)); }
 .auth-form--register .auth-submit .icon { width: calc(7.7 * var(--form-unit)); height: calc(5.8 * var(--form-unit)); }
 .auth-form--register .auth-switch-row { bottom: 8.5%; min-height: 5.5cqh; padding-top: 1.1cqh; }
@@ -246,6 +258,11 @@
     .auth-input > .icon, .password-toggle .icon { width: 14px; height: 14px; }
     .password-toggle { width: 22px; }
     .auth-input input, .auth-form--register .auth-input input { font-size: 13px; }
+    .auth-gender { flex: 0 0 auto; }
+    .auth-gender legend { margin-bottom: 4px; font-size: 11px; }
+    .auth-gender__choices { flex: none; min-height: 32px; gap: 6px; }
+    .auth-gender__option { gap: 6px; padding: 3px 6px; border-radius: 6px; font-size: 12px; }
+    .auth-gender__avatar { width: 24px; }
     .login-options { position: static; height: auto; min-height: 23px; margin-top: 5px; gap: 5px; font-size: 10px; }
     .remember-me { gap: 5px; }
     .remember-me__box { width: 16px; height: 16px; border-radius: 4px; }

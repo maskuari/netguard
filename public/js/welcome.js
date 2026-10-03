@@ -9,6 +9,11 @@
     const homeLink = document.querySelector('.nav-link[data-home]');
 
     const panels = {
+        materials: {
+            title: 'Materi Belajar',
+            description: 'Ikuti lima chapter untuk membangun jaringan sekolah selangkah demi selangkah.',
+            icon: 'book',
+        },
         about: {
             title: 'Kenalan dengan NetGuard',
             description: 'Tempat memulai perjalananmu menjelajahi dunia jaringan dan MikroTik.',

@@ -15,16 +15,22 @@
     const loadingMessage = loading.querySelector('.homepage-loading__message');
     const main = document.querySelector('#main-content');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const modeGrid = document.querySelector('.mode-grid');
+    const previousMode = document.querySelector('[data-mode-previous]');
+    const nextMode = document.querySelector('[data-mode-next]');
     let modeTimer;
     let leaving = false;
 
     const panels = {
+        materials: { title: 'Materi Belajar', description: 'Ikuti lima chapter untuk membangun jaringan sekolah selangkah demi selangkah.' },
         about: { title: 'Tentang NetGuard Academy', description: 'Belajar jaringan jadi petualangan seru.' },
         resources: { title: 'Materi Rujukan', description: 'Kenali topik jaringan yang menemani perjalanan belajarmu.' },
         leaderboard: { title: 'Leaderboard', description: 'Tempat pencapaian para penjelajah jaringan.' },
         help: { title: 'Ada yang bisa dibantu?', description: 'Kenali halaman dan mode belajar NetGuard Academy.' },
         practice: { title: 'Practice Mode', description: 'Asah kemampuan konfigurasi MikroTik lewat latihan.' },
         certification: { title: 'Certification Mode', description: 'Tantang dirimu dan tunjukkan kemampuan jaringanmu.' },
+        'practice-locked': { title: 'Practice Mode terkunci', description: 'Selesaikan Chapter 3 Adventure untuk membuka mode ini.' },
+        'certification-locked': { title: 'Certification Mode terkunci', description: 'Selesaikan seluruh Adventure untuk membuka mode ini.' },
     };
 
     const resetNavigation = () => {
@@ -48,6 +54,26 @@
         loading.hidden = true;
         main.removeAttribute('aria-busy');
     };
+
+    const updateModeControls = () => {
+        previousMode.disabled = modeGrid.scrollLeft <= 1;
+        nextMode.disabled = modeGrid.scrollLeft >= modeGrid.scrollWidth - modeGrid.clientWidth - 1;
+    };
+
+    const scrollModes = (direction) => {
+        const card = modeGrid.querySelector('.mode-card');
+        const gap = parseFloat(window.getComputedStyle(modeGrid).columnGap) || 0;
+        modeGrid.scrollBy({
+            left: direction * (card.getBoundingClientRect().width + gap),
+            behavior: reducedMotion.matches ? 'auto' : 'smooth',
+        });
+    };
+
+    previousMode.addEventListener('click', () => scrollModes(-1));
+    nextMode.addEventListener('click', () => scrollModes(1));
+    modeGrid.addEventListener('scroll', updateModeControls, { passive: true });
+    window.addEventListener('resize', updateModeControls);
+    updateModeControls();
 
     logoutForm.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -107,9 +133,18 @@
     document.addEventListener('click', (event) => {
         const trigger = event.target.closest?.('[data-home-panel]');
         if (!trigger || leaving || !loading.hidden) return;
-        const panel = panels[trigger.dataset.homePanel];
-        const template = document.querySelector(`#home-panel-${trigger.dataset.homePanel}`);
+        const panelName = trigger.dataset.modeLocked === 'true'
+            ? `${trigger.dataset.homePanel}-locked`
+            : trigger.dataset.homePanel;
+        const panel = panels[panelName];
+        const template = document.querySelector(`#home-panel-${panelName}`);
         if (!panel || !template) return;
+
+        if (trigger.dataset.modeLocked === 'true') {
+            closeAccountMenu();
+            openPanel(trigger, panel, template);
+            return;
+        }
 
         if (trigger.classList.contains('mode-card')) {
             showLoading(`Membuka info ${panel.title}...`);

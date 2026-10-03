@@ -1,3 +1,10 @@
+@php
+    $user = auth()->user();
+    $completedChapters = $user->completedAdventureChapters();
+    $adventureProgress = $user->adventureProgressPercentage();
+    $practiceUnlocked = $user->isPracticeUnlocked();
+    $certificationUnlocked = $user->isCertificationUnlocked();
+@endphp
 <!DOCTYPE html>
 <html lang="id" data-page="homepage">
     <head>
@@ -11,6 +18,8 @@
         <link rel="preload" as="image" href="{{ asset('images/asset/imghome.png') }}">
         <link rel="stylesheet" href="{{ asset('css/welcome.css') }}?v={{ filemtime(public_path('css/welcome.css')) }}">
         <link rel="stylesheet" href="{{ asset('css/homepage.css') }}?v={{ filemtime(public_path('css/homepage.css')) }}">
+        <link rel="stylesheet" href="{{ asset('css/game-navbar.css') }}?v={{ filemtime(public_path('css/game-navbar.css')) }}">
+        <link rel="stylesheet" href="{{ asset('css/game-music.css') }}?v={{ filemtime(public_path('css/game-music.css')) }}">
         <link rel="stylesheet" href="{{ asset('css/page-transitions.css') }}?v={{ filemtime(public_path('css/page-transitions.css')) }}">
         <script src="{{ asset('js/page-transitions.js') }}?v={{ filemtime(public_path('js/page-transitions.js')) }}"></script>
         <script src="{{ asset('js/homepage.js') }}?v={{ filemtime(public_path('js/homepage.js')) }}" defer></script>
@@ -31,6 +40,9 @@
                 <symbol id="home-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
                 <symbol id="home-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></symbol>
                 <symbol id="home-star" viewBox="0 0 24 24"><path d="m12 2 3 6.2 6.8 1-4.9 4.8 1.2 6.8-6.1-3.2-6.1 3.2 1.2-6.8L2.2 9.2l6.8-1L12 2Z" fill="currentColor" stroke="none"/></symbol>
+                <symbol id="home-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 15v2"/></symbol>
+                <symbol id="home-unlock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0M12 15v2"/></symbol>
+                <symbol id="home-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" stroke-width="3"/></symbol>
             </defs>
         </svg>
 
@@ -42,27 +54,7 @@
                         <img class="classroom__image" src="{{ asset('images/background/bghome2.png') }}" alt="" fetchpriority="high" decoding="async">
                     </div>
 
-                    <header class="navbar homepage-navbar">
-                        <a class="brand" href="{{ route('homepage') }}" aria-label="NetGuard Academy, Beranda" data-home>
-                            <span class="brand__mascot"><img src="{{ asset('images/logo/logo.png') }}" alt="" decoding="async"></span>
-                            <span class="brand__copy"><span class="brand__name">NetGuard <span>Academy</span></span><span class="brand__tagline">MikroTik Mission</span></span>
-                        </a>
-                        <nav class="nav-links" aria-label="Navigasi utama">
-                            <a class="nav-link is-active" href="{{ route('homepage') }}" aria-current="page" data-home><svg class="icon" aria-hidden="true"><use href="#icon-home"/></svg><span>Beranda</span></a>
-                            <button class="nav-link" type="button" data-home-panel="about" aria-haspopup="dialog" aria-controls="homepage-dialog"><svg class="icon" aria-hidden="true"><use href="#icon-about"/></svg><span>Tentang</span></button>
-                            <button class="nav-link" type="button" data-home-panel="resources" aria-haspopup="dialog" aria-controls="homepage-dialog"><svg class="icon" aria-hidden="true"><use href="#icon-book"/></svg><span>Materi Rujukan</span></button>
-                            <button class="nav-link" type="button" data-home-panel="help" aria-haspopup="dialog" aria-controls="homepage-dialog"><svg class="icon" aria-hidden="true"><use href="#icon-help"/></svg><span>Bantuan</span></button>
-                        </nav>
-                        <div class="homepage-account">
-                            <button class="button button--primary navbar__login homepage-account__toggle" type="button" aria-expanded="false" aria-controls="homepage-account-menu"><svg class="icon" aria-hidden="true"><use href="#home-user"/></svg><span class="homepage-account__name">{{ auth()->user()->name }}</span><svg class="icon homepage-account__chevron" aria-hidden="true"><use href="#home-chevron"/></svg></button>
-                            <div class="homepage-account__menu" id="homepage-account-menu" hidden>
-                                <span class="homepage-account__label">Masuk sebagai</span>
-                                <strong>{{ auth()->user()->name }}</strong>
-                                <span class="homepage-account__email">{{ auth()->user()->email }}</span>
-                                <form action="{{ route('logout') }}" method="post" data-logout>@csrf<button type="submit"><svg class="icon" aria-hidden="true"><use href="#home-logout"/></svg>Keluar</button></form>
-                            </div>
-                        </div>
-                    </header>
+                    @include('game-navbar', ['page' => 'homepage'])
 
                     <main id="main-content" tabindex="-1">
                         <section class="homepage-hero" aria-labelledby="homepage-title">
@@ -84,28 +76,54 @@
 
                         <section class="homepage-modes" id="fitur" aria-labelledby="modes-title" tabindex="-1">
                             <h2 class="visually-hidden" id="modes-title">Pilih mode belajarmu</h2>
-                            <div class="mode-grid">
-                                <a class="mode-card" href="{{ route('adventure') }}" data-adventure-link aria-labelledby="adventure-title" aria-describedby="adventure-description">
-                                    <img class="mode-card__art" src="{{ asset('images/card/advanture.png') }}" alt="" width="2172" height="724" decoding="async" draggable="false">
-                                    <span class="mode-card__ribbon">Petualangan Jaringan</span>
-                                    <span class="mode-card__copy"><span class="mode-card__title" id="adventure-title"><span>Adventure</span> Mode</span><span class="mode-card__description" id="adventure-description">Jelajahi cerita dan selesaikan misi jaringan selangkah demi selangkah.</span></span>
-                                    <span class="mode-card__meta"><svg class="icon" aria-hidden="true"><use href="#icon-book"/></svg>5 Chapter</span>
-                                    <span class="mode-card__action">Pilih Chapter <svg class="icon" aria-hidden="true"><use href="#home-chevron"/></svg></span>
+                            <div class="mode-grid" role="group" aria-label="Pilihan mode belajar">
+                                <a class="mode-card mode-card--adventure" href="{{ route('adventure') }}#chapter-{{ str_pad((string) min($completedChapters + 1, 5), 2, '0', STR_PAD_LEFT) }}" data-adventure-link aria-labelledby="adventure-title" aria-describedby="adventure-description adventure-status">
+                                    @include('mode-frame', ['theme' => 'adventure'])
+                                    <span class="mode-card__badge" aria-hidden="true"><svg class="icon"><use href="#home-gamepad"/></svg></span>
+                                    <img class="mode-card__art" src="{{ asset('images/asset/advanture.png') }}?v={{ filemtime(public_path('images/asset/advanture.png')) }}" alt="" width="1280" height="1280" decoding="async" draggable="false">
+                                    <span class="mode-card__copy">
+                                        <span class="mode-card__title" id="adventure-title">Adventure Mode</span>
+                                        <span class="mode-card__description" id="adventure-description">Jelajahi cerita dan taklukkan misi jaringanmu.</span>
+                                    </span>
+                                    <span class="mode-card__progress">
+                                        <span class="mode-card__progress-label" id="adventure-status"><span>{{ $completedChapters }} / 5 chapter selesai</span><strong>{{ $adventureProgress }}%</strong></span>
+                                        <progress value="{{ $adventureProgress }}" max="100" aria-label="Progres Adventure Mode">{{ $adventureProgress }}%</progress>
+                                        <span class="mode-card__hint">{{ $completedChapters === 5 ? 'Petualangan selesai!' : ($completedChapters === 0 ? 'Mulai petualanganmu' : 'Lanjutkan petualanganmu') }}</span>
+                                    </span>
+                                    <span class="mode-card__action" aria-hidden="true"><svg class="icon"><use href="#home-chevron"/></svg></span>
                                 </a>
-                                <button class="mode-card" type="button" data-home-panel="practice" aria-haspopup="dialog" aria-controls="homepage-dialog" aria-labelledby="practice-title" aria-describedby="practice-description">
-                                    <img class="mode-card__art" src="{{ asset('images/card/practice.png') }}" alt="" width="2172" height="724" decoding="async" draggable="false">
-                                    <span class="mode-card__ribbon">Latihan Konfigurasi</span>
-                                    <span class="mode-card__copy"><span class="mode-card__title" id="practice-title"><span>Practice</span> Mode</span><span class="mode-card__description" id="practice-description">Latih konfigurasi MikroTik dan tingkatkan keterampilan jaringanmu.</span></span>
-                                    <span class="mode-card__meta"><svg class="icon" aria-hidden="true"><use href="#home-progress"/></svg>Per Topik</span>
-                                    <span class="mode-card__action">Lihat Mode <svg class="icon" aria-hidden="true"><use href="#home-chevron"/></svg></span>
+                                <button class="mode-card mode-card--practice" type="button" data-home-panel="practice" data-mode-locked="{{ $practiceUnlocked ? 'false' : 'true' }}" aria-disabled="{{ $practiceUnlocked ? 'false' : 'true' }}" aria-haspopup="dialog" aria-controls="homepage-dialog" aria-labelledby="practice-title" aria-describedby="practice-description practice-status">
+                                    @include('mode-frame', ['theme' => 'practice'])
+                                    <span class="mode-card__badge" aria-hidden="true"><svg class="icon"><use href="#home-progress"/></svg></span>
+                                    <img class="mode-card__art" src="{{ asset('images/asset/practice.png') }}?v={{ filemtime(public_path('images/asset/practice.png')) }}" alt="" width="1280" height="1280" decoding="async" draggable="false">
+                                    <span class="mode-card__copy">
+                                        <span class="mode-card__title" id="practice-title">Practice Mode</span>
+                                        <span class="mode-card__description" id="practice-description">Asah konfigurasi MikroTik melalui latihan mandiri.</span>
+                                    </span>
+                                    <span class="mode-card__availability" id="practice-status">
+                                        <span class="mode-card__status"><svg class="icon" aria-hidden="true"><use href="{{ $practiceUnlocked ? '#home-unlock' : '#home-lock' }}"/></svg>{{ $practiceUnlocked ? 'Mode terbuka' : 'Terkunci' }}</span>
+                                        <span class="mode-card__hint">{{ $practiceUnlocked ? 'Jelajahi latihan konfigurasi' : 'Selesaikan Chapter 3 Adventure' }}</span>
+                                    </span>
+                                    <span class="mode-card__action" aria-hidden="true"><svg class="icon"><use href="{{ $practiceUnlocked ? '#home-chevron' : '#home-lock' }}"/></svg></span>
                                 </button>
-                                <button class="mode-card" type="button" data-home-panel="certification" aria-haspopup="dialog" aria-controls="homepage-dialog" aria-labelledby="certification-title" aria-describedby="certification-description">
-                                    <img class="mode-card__art" src="{{ asset('images/card/sertifikat.png') }}" alt="" width="2172" height="724" decoding="async" draggable="false">
-                                    <span class="mode-card__ribbon">Tantangan Akhir</span>
-                                    <span class="mode-card__copy"><span class="mode-card__title" id="certification-title"><span>Certification</span> Mode</span><span class="mode-card__description" id="certification-description">Uji kemampuan melalui studi kasus jaringan secara mandiri.</span></span>
-                                    <span class="mode-card__meta"><svg class="icon" aria-hidden="true"><use href="#home-star"/></svg>Studi Kasus</span>
-                                    <span class="mode-card__action">Lihat Mode <svg class="icon" aria-hidden="true"><use href="#home-chevron"/></svg></span>
+                                <button class="mode-card mode-card--certification" type="button" data-home-panel="certification" data-mode-locked="{{ $certificationUnlocked ? 'false' : 'true' }}" aria-disabled="{{ $certificationUnlocked ? 'false' : 'true' }}" aria-haspopup="dialog" aria-controls="homepage-dialog" aria-labelledby="certification-title" aria-describedby="certification-description certification-status">
+                                    @include('mode-frame', ['theme' => 'certification'])
+                                    <span class="mode-card__badge" aria-hidden="true"><svg class="icon"><use href="#home-team"/></svg></span>
+                                    <img class="mode-card__art" src="{{ asset('images/asset/sertifikat.png') }}?v={{ filemtime(public_path('images/asset/sertifikat.png')) }}" alt="" width="1280" height="1280" decoding="async" draggable="false">
+                                    <span class="mode-card__copy">
+                                        <span class="mode-card__title" id="certification-title">Certification Mode</span>
+                                        <span class="mode-card__description" id="certification-description">Buktikan kemampuanmu dan raih sertifikat.</span>
+                                    </span>
+                                    <span class="mode-card__availability" id="certification-status">
+                                        <span class="mode-card__status"><svg class="icon" aria-hidden="true"><use href="{{ $certificationUnlocked ? '#home-unlock' : '#home-lock' }}"/></svg>{{ $certificationUnlocked ? 'Mode terbuka' : 'Terkunci' }}</span>
+                                        <span class="mode-card__hint">{{ $certificationUnlocked ? 'Jelajahi tantangan sertifikasi' : 'Selesaikan seluruh Adventure' }}</span>
+                                    </span>
+                                    <span class="mode-card__action" aria-hidden="true"><svg class="icon"><use href="{{ $certificationUnlocked ? '#home-chevron' : '#home-lock' }}"/></svg></span>
                                 </button>
+                            </div>
+                            <div class="mode-carousel__controls" aria-label="Geser mode belajar">
+                                <button type="button" data-mode-previous aria-label="Mode sebelumnya" disabled><svg class="icon" aria-hidden="true"><use href="#home-chevron"/></svg></button>
+                                <button type="button" data-mode-next aria-label="Mode berikutnya"><svg class="icon" aria-hidden="true"><use href="#home-chevron"/></svg></button>
                             </div>
                             <footer class="homepage-footer"><span>© {{ date('Y') }} NetGuard Academy: MikroTik Mission. All rights reserved.</span></footer>
                         </section>
@@ -129,11 +147,15 @@
             <button class="button button--primary dialog-back" type="button">Kembali ke Beranda <svg class="icon" aria-hidden="true"><use href="#home-chevron"/></svg></button>
         </dialog>
 
+        @include('game-materials', ['id' => 'home-panel-materials', 'isWelcome' => false, 'isAdventure' => false])
         <template id="home-panel-about"><div class="about-note"><span class="note-number">BELAJAR JARINGAN, SELANGKAH DEMI SELANGKAH</span><p>NetGuard Academy mengajakmu mengenal jaringan dan konfigurasi MikroTik melalui petualangan, latihan, dan tantangan.</p></div><div class="topic-tags"><span>Routing</span><span>Firewall</span><span>Hotspot</span><span>VLAN &amp; QoS</span></div></template>
         <template id="home-panel-resources"><ol class="resource-list"><li><span>01</span><div><h3>Dasar Jaringan</h3><p>Mengenal perangkat, alamat IP, dan topologi jaringan.</p></div></li><li><span>02</span><div><h3>Konfigurasi MikroTik</h3><p>Memahami antarmuka, DHCP, dan koneksi internet.</p></div></li><li><span>03</span><div><h3>Routing &amp; Firewall</h3><p>Mengenal pengaturan rute dan keamanan jaringan.</p></div></li><li><span>04</span><div><h3>Wireless &amp; Hotspot</h3><p>Mengenal jaringan nirkabel dan akses hotspot.</p></div></li></ol><button class="button button--outline homepage-resource-link" type="button" data-home-panel="leaderboard">Lihat Leaderboard</button></template>
         <template id="home-panel-leaderboard"><div class="about-note"><span class="note-number">PETUALANGAN AKAN SEGERA DIMULAI</span><p>Belum ada peringkat untuk ditampilkan. Leaderboard akan tersedia saat misi dan penilaian sudah dibuka.</p></div></template>
         <template id="home-panel-help"><div class="help-list"><details open><summary>Bagaimana cara memilih mode?</summary><p>Pilih Adventure Mode untuk melihat lima chapter. Kartu Practice dan Certification menampilkan informasi mode masing-masing.</p></details><details><summary>Apakah misi sudah bisa dimainkan?</summary><p>Chapter Adventure sudah dapat dijelajahi, tetapi misi interaktifnya masih disiapkan. Practice dan Certification juga belum dibuka.</p></details><details><summary>Bagaimana tampilan di HP?</summary><p>Tampilan menyesuaikan ke posisi landscape. Pilih kartu mode di bagian bawah untuk melihat rinciannya.</p></details></div></template>
         <template id="home-panel-practice"><div class="about-note"><span class="note-number">PRACTICE MODE · SEGERA HADIR</span><p>Kenali konfigurasi MikroTik lewat latihan jaringan dan simulasi. Area latihan belum dibuka.</p></div><div class="topic-tags"><span>Konfigurasi IP</span><span>DHCP</span><span>Routing</span></div></template>
         <template id="home-panel-certification"><div class="about-note"><span class="note-number">CERTIFICATION MODE · SEGERA HADIR</span><p>Uji pemahaman dan keterampilan konfigurasi melalui tantangan khusus. Ujian dan penerbitan sertifikat belum dibuka.</p></div><div class="topic-tags"><span>Uji kemampuan</span><span>Tantangan khusus</span><span>Sertifikat</span></div></template>
+        <template id="home-panel-practice-locked"><div class="about-note"><span class="note-number">SELESAIKAN CHAPTER 3</span><p>Practice Mode terbuka setelah kamu menyelesaikan tiga chapter pertama Adventure. Progres saat ini: {{ $completedChapters }} dari 5 chapter selesai.</p></div><a class="button button--outline homepage-resource-link" href="{{ route('adventure') }}" data-page-link="adventure">Lanjutkan Adventure</a></template>
+        <template id="home-panel-certification-locked"><div class="about-note"><span class="note-number">SELESAIKAN ADVENTURE</span><p>Certification Mode terbuka setelah seluruh lima chapter Adventure selesai. Progres saat ini: {{ $completedChapters }} dari 5 chapter selesai.</p></div><a class="button button--outline homepage-resource-link" href="{{ route('adventure') }}" data-page-link="adventure">Lanjutkan Adventure</a></template>
+        @include('game-music-player')
     </body>
 </html>

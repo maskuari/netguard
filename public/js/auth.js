@@ -202,8 +202,9 @@
 
             if (!response.ok) {
                 const firstInvalidField = Object.keys(data.errors || {})[0];
-                const invalidInput = firstInvalidField ? form.elements.namedItem(firstInvalidField) : null;
-                invalidInput?.setAttribute('aria-invalid', 'true');
+                const invalidInputs = [...form.querySelectorAll('input')].filter((input) => input.name === firstInvalidField);
+                const invalidInput = invalidInputs.find((input) => !input.validity.valid) || invalidInputs[0];
+                invalidInputs.forEach((input) => input.setAttribute('aria-invalid', 'true'));
                 const message = response.status === 429
                     ? 'Terlalu banyak percobaan. Coba lagi sebentar.'
                     : response.status === 419
@@ -231,9 +232,10 @@
                 return;
             }
 
-            loadingMessage.textContent = 'Login berhasil! Membuka beranda...';
+            const isAdminLogin = data.destination === 'admin';
+            loadingMessage.textContent = isAdminLogin ? 'Login berhasil! Membuka panel admin...' : 'Login berhasil! Membuka beranda...';
             await wait(reducedMotion.matches ? 0 : 300);
-            if (window.NetGuardNavigation) {
+            if (window.NetGuardNavigation && !isAdminLogin) {
                 window.NetGuardNavigation.navigate(data.redirect, 'homepage');
             } else {
                 window.location.assign(data.redirect);
@@ -248,7 +250,7 @@
     };
 
     document.querySelectorAll('[data-auth-form]').forEach((form) => {
-        const inputs = [...form.querySelectorAll('.auth-input input')];
+        const inputs = [...form.querySelectorAll('.auth-input input, .auth-gender input')];
         form.querySelector('[data-submit]').disabled = false;
 
         inputs.forEach((input) => {
@@ -256,6 +258,9 @@
                 input.setCustomValidity('');
                 if (form.dataset.authForm === 'register') validateConfirmation();
                 input.removeAttribute('aria-invalid');
+                if (input.name === 'gender') {
+                    inputs.filter((field) => field.name === 'gender').forEach((field) => field.removeAttribute('aria-invalid'));
+                }
                 if (!toast.hidden && toast.dataset.tone === 'error') hideToast();
             });
         });
