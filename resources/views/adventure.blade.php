@@ -78,6 +78,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="theme-color" content="#0066ff">
         <meta name="description" content="Pilih satu dari lima chapter Adventure Mode NetGuard Academy.">
         <title>Adventure Mode — NetGuard Academy</title>
@@ -140,7 +141,7 @@
                                 <span class="chapter-card__icon"><svg class="icon" aria-hidden="true"><use href="#{{ $chapter['icon'] }}"/></svg></span>
                                 <span class="chapter-card__title">{{ $chapter['short'] }}</span>
                                 <span class="chapter-card__summary">{{ $chapter['summary'] }}</span>
-                                <span class="chapter-card__status">@if ($loop->first)<span class="chapter-card__mission">0 / 5 misi<span class="chapter-card__bar"></span></span>@else<svg class="icon" aria-hidden="true"><use href="#chapter-lock"/></svg> Segera tersedia @endif</span>
+                                <span class="chapter-card__status">@if ($loop->first)<span class="chapter-card__mission">{{ $user->completedAdventureChapters() >= 1 ? '5 / 5 misi' : '0 / 5 misi' }}<span class="chapter-card__bar{{ $user->completedAdventureChapters() >= 1 ? ' is-complete' : '' }}"></span></span>@else<svg class="icon" aria-hidden="true"><use href="#chapter-lock"/></svg> Segera tersedia @endif</span>
                                 <span class="chapter-card__marker" aria-hidden="true">{{ $loop->iteration }}</span>
                             </button>
                         @endforeach
@@ -167,7 +168,14 @@
                                     <div class="chapter-panel__result"><strong>{{ $chapter['result'] }}</strong><span>{{ $chapter['outcome'] }}</span></div>
                                 </div>
                             </div>
-                            <button class="chapter-panel__start" type="button" data-start-chapter="{{ $chapter['number'] }}"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg><span>Mulai Chapter {{ $chapter['number'] }}</span><svg class="icon" aria-hidden="true"><use href="#chapter-chevron"/></svg></button>
+                            @if ($loop->first)
+                                <div class="chapter-panel__actions">
+                                    <button class="chapter-panel__reset" type="button" data-reset-chapter-one data-reset-url="{{ route('chapter.one.reset') }}" data-progress-key="netguard.chapter-one.v1.{{ $user->id }}">Reset Progres</button>
+                                    <a class="chapter-panel__start" href="{{ route('chapter.one') }}" data-page-link="chapter-one"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg><span>{{ $user->completedAdventureChapters() >= 1 ? 'Main Lagi Chapter 01' : 'Mulai Chapter 01' }}</span><svg class="icon" aria-hidden="true"><use href="#chapter-chevron"/></svg></a>
+                                </div>
+                            @else
+                                <button class="chapter-panel__start" type="button" data-start-chapter="{{ $chapter['number'] }}"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg><span>Mulai Chapter {{ $chapter['number'] }}</span><svg class="icon" aria-hidden="true"><use href="#chapter-chevron"/></svg></button>
+                            @endif
                         </section>
                     @endforeach
                 </div>
@@ -187,7 +195,7 @@
         @include('game-materials', ['id' => 'adventure-info-materials', 'isWelcome' => false, 'isAdventure' => true])
         <template id="adventure-info-about"><div class="about-note"><span class="note-number">01 — MISIMU DIMULAI DI SINI</span><p>Jelajahi lima chapter, kenali perangkat jaringan, dan siapkan konfigurasi MikroTik selangkah demi selangkah.</p></div></template>
         <template id="adventure-info-resources"><ol class="resource-list"><li><span>01</span><div><h3>Dasar Jaringan</h3><p>Kenali perangkat, kabel, alamat IP dan topologi jaringan.</p></div></li><li><span>02</span><div><h3>Konfigurasi MikroTik</h3><p>Pelajari WinBox, DHCP, koneksi internet, HotSpot, dan VLAN.</p></div></li></ol></template>
-        <template id="adventure-info-help"><div class="help-list"><details open><summary>Bagaimana memilih chapter?</summary><p>Pilih salah satu pulau atau kartu chapter. Detailnya muncul di bagian bawah.</p></details><details><summary>Apakah misi bisa dimainkan?</summary><p>Misi interaktif masih disiapkan. Kamu sudah bisa melihat cerita dan materi setiap chapter.</p></details></div></template>
+        <template id="adventure-info-help"><div class="help-list"><details open><summary>Bagaimana memilih chapter?</summary><p>Pilih salah satu pulau atau kartu chapter. Detailnya muncul di bagian bawah.</p></details><details><summary>Apakah misi bisa dimainkan?</summary><p>Chapter 1 sudah bisa dimainkan. Chapter berikutnya masih disiapkan.</p></details></div></template>
         @include('game-music-player')
     </body>
 </html>

@@ -74,6 +74,35 @@
         });
     });
 
+    const chapterOneResetButton = document.querySelector('[data-reset-chapter-one]');
+    chapterOneResetButton.addEventListener('click', async () => {
+        const confirmed = window.confirm('Reset semua progres Adventure Mode? Chapter yang sudah tercatat selesai akan kembali terkunci dan Chapter 1 dimulai dari adegan pembuka.');
+        if (!confirmed) return;
+        chapterOneResetButton.disabled = true;
+        chapterOneResetButton.textContent = 'Mereset progres…';
+        try {
+            const response = await fetch(chapterOneResetButton.dataset.resetUrl, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                credentials: 'same-origin',
+            });
+            if (!response.ok) throw new Error('Reset gagal.');
+            try {
+                window.localStorage.removeItem(chapterOneResetButton.dataset.progressKey);
+            } catch {
+                // The server-side progress is already reset.
+            }
+            window.location.reload();
+        } catch {
+            chapterOneResetButton.disabled = false;
+            chapterOneResetButton.textContent = 'Reset Progres';
+            window.alert('Progres belum dapat direset. Periksa koneksi lalu coba lagi.');
+        }
+    });
+
     document.querySelectorAll('[data-start-chapter]').forEach((trigger) => {
         trigger.addEventListener('click', () => {
             openDialog(`Chapter ${trigger.dataset.startChapter} sedang disiapkan`, 'Misi interaktif untuk chapter ini belum tersedia. Kamu sudah bisa membaca materi dan target belajarnya.');

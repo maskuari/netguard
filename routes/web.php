@@ -2,11 +2,14 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChapterOneController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+
+Route::view('/uji-hap', 'hap-preview')->name('hap.preview');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1')->name('login.attempt');
@@ -15,6 +18,9 @@ Route::post('/register', [AuthController::class, 'register'])->middleware('throt
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 Route::view('/homepage', 'homepage')->middleware(['auth', 'active'])->name('homepage');
 Route::view('/adventure', 'adventure')->middleware(['auth', 'active'])->name('adventure');
+Route::get('/adventure/chapter-1', [ChapterOneController::class, 'show'])->middleware(['auth', 'active'])->name('chapter.one');
+Route::post('/adventure/chapter-1/complete', [ChapterOneController::class, 'complete'])->middleware(['auth', 'active', 'throttle:10,1'])->name('chapter.one.complete');
+Route::post('/adventure/chapter-1/reset', [ChapterOneController::class, 'resetProgress'])->middleware(['auth', 'active', 'throttle:5,1'])->name('chapter.one.reset');
 
 Route::get('/admin/login', [AuthController::class, 'showAdminLogin'])->name('admin.login');
 Route::post('/admin/login', [AuthController::class, 'adminLogin'])->middleware('throttle:10,1')->name('admin.login.attempt');

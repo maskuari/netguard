@@ -36,6 +36,8 @@ button, img { -webkit-user-select: none; user-select: none; }
 .classroom { position: absolute; z-index: -2; inset: 0; overflow: hidden; background: #c8b6a0; }
 .classroom__image { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; animation: classroom-reveal 1.6s var(--ease-out) both; }
 .classroom::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, #10244b0a, transparent 40%, #10244b05); pointer-events: none; }
+.welcome-scene .classroom__image { animation: none; }
+.welcome-scene .classroom::after { background: linear-gradient(180deg, #08275610, #08275622); }
 
 .navbar {
     position: absolute;
@@ -75,14 +77,17 @@ button, img { -webkit-user-select: none; user-select: none; }
 .button--outline { color: var(--blue); border-color: var(--blue); background: #ffffffb8; box-shadow: inset 0 0 15px #c8ecff20; }
 .navbar__login { flex: none; width: 10.25cqw; min-width: 72px; max-width: 180px; height: 72%; border-radius: clamp(10px, 1.05cqw, 18px); font-size: clamp(11px, 1.3cqw, 22px); }
 
-.hero { position: absolute; top: max(13.5cqh, 82px); left: 50%; width: min(48cqw, 83cqh); transform: translateX(-50%); outline: none; animation: card-reveal 1.1s .12s var(--ease-out) both; }
-.mission-card { position: relative; width: 100%; container-type: inline-size; animation: card-float 6s 1.25s ease-in-out infinite; }
-.mission-card__art { display: block; width: 100%; height: auto; pointer-events: none; filter: drop-shadow(0 4px 14px #008cff14); }
-.mission-card__actions { position: absolute; left: 13%; right: 13%; top: 80%; height: 11.5%; display: grid; grid-template-columns: 1fr 1fr; gap: 3.2%; }
-.mission-button { height: 100%; border-radius: 2.2cqw; border-width: max(1.5px, .25cqw); font-size: 4.05cqw; letter-spacing: -.015em; }
-.mission-button .icon { width: 5.6cqw; height: 5.6cqw; }
-.mission-button .icon--gamepad { width: 7cqw; height: 5.6cqw; }
-.mission-button .icon--add { width: 6.2cqw; }
+.welcome-scene .hero { position: absolute; top: 43%; left: 50%; width: min(62cqw, 108cqh); transform: translate(-50%, -50%); outline: none; animation: card-reveal .65s var(--ease-out) both; }
+.welcome-scene .hero::before { content: ''; position: absolute; z-index: -1; inset: 10% -5% 10%; border-radius: 50%; background: radial-gradient(ellipse 56% 68% at 35% 52%, #fffffff0, #ffffff99 58%, transparent 100%), radial-gradient(ellipse 39% 67% at 76% 50%, #06489657, transparent 100%); filter: blur(19px); pointer-events: none; }
+.mission-card { position: relative; width: 100%; container-type: inline-size; }
+.mission-card__art { display: block; width: 100%; height: auto; pointer-events: none; filter: drop-shadow(0 2px 2px #fff9) drop-shadow(0 15px 18px #05286175); }
+.mission-card__actions { position: absolute; left: 5%; top: 84%; width: 56%; height: 9.5%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3.5%; }
+.mission-button { height: 100%; min-height: 30px; border-radius: 1.9cqw; border-width: max(2px, .25cqw); font-size: clamp(12px, 2.6cqw, 29px); letter-spacing: -.015em; transition: transform .25s var(--ease-out), box-shadow .25s ease, background .25s ease; }
+.mission-button.button--primary { background: linear-gradient(135deg, #078dff, #0062f8 65%, #0055df); border-color: #c7ecff; box-shadow: 0 0 0 max(2px, .35cqw) #fff, 0 12px 23px #061f6e8c, inset 0 2px 0 #ffffff80; }
+.mission-button.button--outline { background: #fff; border-color: #0066ff; box-shadow: 0 0 0 max(2px, .35cqw) #fff, 0 12px 23px #061f6e70, inset 0 2px 0 #fff; }
+.mission-button .icon { width: 5.2cqw; height: 5.2cqw; }
+.mission-button .icon--gamepad { width: 5.8cqw; height: 5.2cqw; }
+.mission-button .icon--add { width: 5.6cqw; }
 
 .sun-motes { position: absolute; z-index: -1; inset: 0; overflow: hidden; pointer-events: none; }
 .sun-motes i { position: absolute; width: 4px; height: 4px; background: #fff9dc; border-radius: 50%; opacity: 0; box-shadow: 0 0 8px #fff2b2; animation: mote-float 12s linear infinite; }
@@ -130,6 +135,9 @@ button, img { -webkit-user-select: none; user-select: none; }
     .button--primary:hover { --button-fill: #005aee; box-shadow: 0 8px 24px #0066ff42, inset 0 1px 0 #ffffff30; }
     .button--primary:hover::after { transform: translateX(140%) skewX(-12deg); }
     .button--outline:hover { background: #eef7ff; box-shadow: 0 7px 20px #0066ff20; }
+    .mission-button:hover { transform: translateY(-2px); }
+    .mission-button.button--primary:hover { box-shadow: 0 0 0 max(2px, .35cqw) #fff, 0 16px 26px #0059d580; }
+    .mission-button.button--outline:hover { background: #f0f8ff; box-shadow: 0 0 0 max(2px, .35cqw) #fff, 0 15px 24px #004fac66; }
     .dialog-close:hover, .toast__close:hover { color: var(--blue); background: #dfeeff; }
 }
 .button:active { transform: translateY(1px) scale(.975); }
@@ -153,9 +161,7 @@ button, img { -webkit-user-select: none; user-select: none; }
     .nav-link { font-size: clamp(10px, 1.3cqw, 14px); }
     .nav-link::after { height: 2px; bottom: 14%; }
     .navbar__login { height: 34px; }
-    .hero { top: max(15.5cqh, 64px); width: min(52cqw, 88cqh); }
-    .mission-card__actions { top: 79%; height: 13%; min-height: 32px; }
-    .mission-button { font-size: max(13px, 4.3cqw); }
+    .mission-button { min-height: 32px; }
     .toast { bottom: 12px; padding: 8px 12px; }
 }
 
@@ -175,9 +181,7 @@ button, img { -webkit-user-select: none; user-select: none; }
     .nav-links { order: 3; flex: 0 0 100%; height: 23px; margin-left: 0; justify-content: space-around; gap: 4px; }
     .nav-link::after { bottom: 0; }
     .navbar__login { width: auto; max-width: none; height: 28px; margin-left: auto; padding-inline: 8px; }
-    .hero { top: max(21cqh, 76px); }
 }
-
 @media (orientation: landscape) and (max-height: 540px) {
     .information-dialog { max-height: 88dvh; padding: 24px; }
     .dialog-emblem { width: 40px; height: 40px; margin-bottom: 12px; }
@@ -186,8 +190,7 @@ button, img { -webkit-user-select: none; user-select: none; }
 
 @keyframes navbar-reveal { from { opacity: 0; translate: 0 -18px; } to { opacity: 1; translate: 0 0; } }
 @keyframes classroom-reveal { from { transform: scale(1.035); } to { transform: scale(1); } }
-@keyframes card-reveal { from { opacity: 0; translate: 0 18px; scale: .97; } to { opacity: 1; translate: 0 0; scale: 1; } }
-@keyframes card-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes card-reveal { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
 @keyframes mote-float { 0% { opacity: 0; transform: translate(0, 20px); } 20%, 70% { opacity: .55; } 100% { opacity: 0; transform: translate(35px, -110px); } }
 @keyframes toast-reveal { from { opacity: 0; translate: 0 10px; } to { opacity: 1; translate: 0 0; } }
 @keyframes dialog-reveal { from { opacity: 0; transform: translate(-50%, -47%) scale(.97); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
