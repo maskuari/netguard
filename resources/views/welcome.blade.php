@@ -12,7 +12,6 @@
         <link rel="stylesheet" href="{{ asset('css/welcome.css') }}?v={{ filemtime(public_path('css/welcome.css')) }}">
         <link rel="stylesheet" href="{{ asset('css/page-transitions.css') }}?v={{ filemtime(public_path('css/page-transitions.css')) }}">
         <link rel="prefetch" as="image" href="{{ asset('images/asset/netlogin.png') }}">
-        <link rel="prefetch" as="image" href="{{ asset('images/card/cardlog.png') }}">
         <link rel="prefetch" as="style" href="{{ asset('css/auth.css') }}?v={{ filemtime(public_path('css/auth.css')) }}">
         <link rel="prefetch" as="script" href="{{ asset('js/auth.js') }}?v={{ filemtime(public_path('js/auth.js')) }}">
         <script src="{{ asset('js/page-transitions.js') }}?v={{ filemtime(public_path('js/page-transitions.js')) }}"></script>

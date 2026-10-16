@@ -1,0 +1,87 @@
+.academy-navbar {
+    flex-wrap: nowrap;
+    align-content: normal;
+    top: max(3.3cqh, env(safe-area-inset-top));
+    left: max(4.5cqw, env(safe-area-inset-left));
+    right: max(4.5cqw, env(safe-area-inset-right));
+    height: clamp(50px, 8.6cqh, 98px);
+    gap: 1.7cqw;
+    padding: 0 1.65cqw;
+    border: 1px solid #74c5ff;
+    border-radius: clamp(20px, 2.2cqw, 38px);
+    background: #fffffff7;
+    box-shadow: 0 5px 17px #0579c72b;
+}
+.academy-navbar .brand { gap: .6cqw; }
+.academy-navbar .brand__mascot { width: 5.9cqw; height: 8cqh; max-width: 90px; max-height: 90px; }
+.academy-navbar .brand__mascot img { width: 150%; left: -25%; top: -17%; }
+.academy-navbar .brand__name { font-size: clamp(16px, 1.88cqw, 34px); letter-spacing: -.055em; }
+.academy-navbar .brand__tagline { font-size: clamp(10px, 1.05cqw, 18px); color: #2891ef; }
+.academy-navbar .nav-links { order: initial; flex: 0 1 auto; height: 64%; gap: .95cqw; align-items: stretch; }
+.academy-navbar .nav-link { gap: .65cqw; padding: 0 .8cqw; border-radius: 1.2cqw; color: #101544; font-size: clamp(11px, 1.02cqw, 18px); font-weight: 700; }
+.academy-navbar .nav-link .icon { width: 1.65cqw; height: 1.65cqw; }
+.academy-navbar .nav-link::after { display: none; }
+.academy-navbar .nav-link.is-active { padding-inline: 1.1cqw; color: white; background: #0075ff; box-shadow: 0 3px 8px #0075ff40, inset 0 1px 2px #4bc6ff; }
+.academy-navbar .homepage-account { position: relative; flex: 0 1 13cqw; min-width: 0; height: 72%; padding-left: 2cqw; margin-left: .3cqw; border-left: 1px solid #9fd5ff; }
+.academy-navbar .homepage-account__toggle { width: 100%; min-width: 0; max-width: none; height: 100%; padding: 0; gap: .9cqw; overflow: visible; border: 0; border-radius: 0; color: #101544; background: none; box-shadow: none; font-size: clamp(12px, 1.2cqw, 21px); }
+.academy-navbar .homepage-account__toggle::after { display: none; }
+.homepage-account__avatar { position: relative; display: block; flex: none; width: min(3.6cqw, 6.5cqh); aspect-ratio: 1; overflow: hidden; border: 2px solid white; border-radius: 50%; outline: 1.5px solid #10b7ff; background: #a9e8ff; }
+.homepage-account__avatar img { position: absolute; top: -3%; left: -52%; width: 220%; max-width: none; height: auto; }
+.homepage-account__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.homepage-account__chevron { width: .8em; height: .8em; flex: none; color: #0075ff; transform: rotate(90deg); transition: transform .2s ease; }
+.homepage-account__toggle[aria-expanded="true"] .homepage-account__chevron { transform: rotate(-90deg); }
+.homepage-account__menu { position: absolute; top: calc(100% + 18px); right: 0; z-index: 15; width: min(290px, 65cqw); padding: 18px; border: 1px solid #9fd5ff; border-radius: 20px; color: #101544; background: #fffffff7; box-shadow: 0 14px 35px #08254c30; animation: homepage-menu-in .2s var(--ease-out) both; }
+.homepage-account__label, .homepage-account__email { display: block; color: #61708f; font-size: 12px; }
+.homepage-account__menu strong { display: block; margin-top: 4px; overflow-wrap: anywhere; font-size: 16px; }
+.homepage-account__email { margin-top: 3px; overflow-wrap: anywhere; }
+.homepage-account__menu form { margin-top: 13px; padding-top: 10px; border-top: 1px solid #dceaff; }
+.homepage-account__menu form button { display: flex; align-items: center; gap: 9px; width: 100%; padding: 10px; border: 0; border-radius: 10px; color: #0066df; background: #eff6ff; font-weight: 700; text-align: left; }
+.homepage-account__menu form .icon { width: 18px; height: 18px; }
+
+.game-materials__link { width: 100%; min-height: 42px; margin-top: 14px; padding: 10px 14px; border-radius: 12px; font-size: 14px; }
+
+@media (hover: hover) and (pointer: fine) {
+    .academy-navbar .nav-link:not(.is-active):hover { color: #006bff; background: #edf8ff; }
+    .academy-navbar .homepage-account__toggle:hover { transform: none; background: none; box-shadow: none; }
+    .homepage-account__menu form button:hover { background: #e0efff; }
+}
+
+@container (max-width: 1100px) {
+    .academy-navbar { gap: 1cqw; padding-inline: 1.2cqw; }
+    .academy-navbar .nav-links { gap: .5cqw; }
+    .academy-navbar .nav-link { font-size: 10px; padding-inline: .65cqw; gap: .4cqw; }
+    .academy-navbar .brand__name { font-size: 1.8cqw; }
+    .academy-navbar .brand__tagline { font-size: 1cqw; }
+    .academy-navbar .homepage-account { padding-left: 1.3cqw; flex-basis: 13cqw; }
+    .academy-navbar .homepage-account__toggle { font-size: 11px; gap: .6cqw; }
+}
+@container (max-height: 600px) {
+    .academy-navbar { top: max(12px, env(safe-area-inset-top)); height: 48px; }
+    .academy-navbar .brand__mascot { height: 44px; }
+}
+@container (max-width: 900px) {
+    .academy-navbar .brand__mascot { width: 4.8cqw; }
+    .academy-navbar .brand__name { font-size: 1.7cqw; }
+    .academy-navbar .brand__tagline { font-size: .95cqw; }
+    .academy-navbar .nav-link { font-size: 9px; gap: .4cqw; }
+    .academy-navbar .nav-link .icon { width: 1.5cqw; min-width: 12px; min-height: 12px; }
+    .academy-navbar .homepage-account { flex-basis: 12cqw; }
+    .academy-navbar .homepage-account__toggle { font-size: 10px; }
+}
+@container (max-width: 650px) {
+    .academy-navbar { left: 2cqw; right: 2cqw; gap: 1cqw; padding-inline: 1cqw; }
+    .academy-navbar .brand__copy { display: none; }
+    .academy-navbar .brand__mascot { width: 7cqw; }
+    .academy-navbar .nav-links { flex: 1; justify-content: space-evenly; gap: 0; }
+    .academy-navbar .nav-link { padding-inline: 1cqw; font-size: 9px; }
+    .academy-navbar .nav-link .icon { display: none; }
+    .academy-navbar .homepage-account { flex-basis: 8cqw; padding-left: 1cqw; }
+    .academy-navbar .homepage-account__name { display: none; }
+    .homepage-account__avatar { width: 5cqw; }
+}
+
+@keyframes homepage-menu-in { from { opacity: 0; translate: 0 -5px; } to { opacity: 1; translate: 0 0; } }
+@media (prefers-reduced-motion: reduce) {
+    .homepage-account__menu { animation: none; }
+    .homepage-account__chevron { transition: none; }
+}

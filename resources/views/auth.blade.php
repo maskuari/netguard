@@ -9,12 +9,10 @@
         <link rel="icon" type="image/png" href="{{ asset('images/logo/logo.png') }}">
         <link rel="preload" as="image" href="{{ asset('images/background/home.png') }}" fetchpriority="high">
         <link rel="preload" as="image" href="{{ asset('images/asset/netlogin.png') }}" fetchpriority="high">
-        <link rel="preload" as="image" href="{{ asset('images/card/cardlog.png') }}" fetchpriority="high">
         <link rel="stylesheet" href="{{ asset('css/welcome.css') }}?v={{ filemtime(public_path('css/welcome.css')) }}">
         <link rel="stylesheet" href="{{ asset('css/auth.css') }}?v={{ filemtime(public_path('css/auth.css')) }}">
         <link rel="stylesheet" href="{{ asset('css/page-transitions.css') }}?v={{ filemtime(public_path('css/page-transitions.css')) }}">
-        <link rel="prefetch" as="image" href="{{ asset('images/background/bghome2.png') }}">
-        <link rel="prefetch" as="image" href="{{ asset('images/asset/imghome.png') }}">
+        <link rel="prefetch" as="image" href="{{ asset('images/background/homepage-lab-v3.webp') }}?v={{ filemtime(public_path('images/background/homepage-lab-v3.webp')) }}">
         <link rel="prefetch" as="style" href="{{ asset('css/homepage.css') }}?v={{ filemtime(public_path('css/homepage.css')) }}">
         <link rel="prefetch" as="script" href="{{ asset('js/homepage.js') }}?v={{ filemtime(public_path('js/homepage.js')) }}">
         <script src="{{ asset('js/page-transitions.js') }}?v={{ filemtime(public_path('js/page-transitions.js')) }}"></script>
@@ -23,7 +21,7 @@
     <body>
         <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
-                <symbol id="auth-cap" viewBox="0 0 64 56"><path d="M3 19 32 4l29 15-29 16L3 19Z" fill="#04134d" stroke="#0066ff" stroke-width="1.7"/><path d="M14 28v15l18 10 18-10V28L32 38 14 28Z" fill="#051b6c" stroke="#0066ff" stroke-width="1.7"/><path d="M59 21v22" stroke="#0066ff" stroke-width="3"/><circle cx="59" cy="44" r="2.5" fill="#0066ff"/></symbol>
+                <symbol id="auth-cap" viewBox="0 0 64 56"><path d="M3 19 32 4l29 15-29 16L3 19Z" fill="#0066ff" stroke="#0066ff" stroke-width="1.7"/><path d="M14 28v15l18 10 18-10V28L32 38 14 28Z" fill="#0054d9" stroke="#0066ff" stroke-width="1.7"/><path d="M59 21v22" stroke="#0066ff" stroke-width="3"/><circle cx="59" cy="44" r="2.5" fill="#0066ff"/></symbol>
                 <symbol id="auth-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="5" fill="currentColor" stroke="none"/><path d="M3 21v-2c0-4 4-6 9-6s9 2 9 6v2H3Z" fill="currentColor" stroke="none"/></symbol>
                 <symbol id="auth-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="12" rx="2.5" fill="currentColor" stroke="none"/><path d="M7 10V7a5 5 0 0 1 10 0v3" stroke-width="2.5"/><path d="M12 15v3" stroke="white" stroke-width="2"/></symbol>
                 <symbol id="auth-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2.5" fill="currentColor" stroke="none"/><path d="m3 6 9 7 9-7" stroke="white" stroke-width="1.8"/></symbol>
@@ -40,7 +38,6 @@
         <div class="academy-scene auth-scene" data-mode="{{ $mode }}" data-login-url="{{ route('login') }}" data-register-url="{{ route('register') }}">
             <div class="classroom auth-background" aria-hidden="true"><img class="classroom__image" src="{{ asset('images/background/home.png') }}" alt="" fetchpriority="high" decoding="async"></div>
             <div class="auth-atmosphere" aria-hidden="true"></div>
-            <div class="sun-motes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 
             <a class="auth-home" href="{{ route('home') }}" data-page-link="welcome"><svg class="icon" aria-hidden="true"><use href="#auth-back"/></svg><span>Beranda</span></a>
 
@@ -53,8 +50,6 @@
 
                 <div class="auth-card">
                     <div class="auth-card__surface">
-                        <img class="auth-card__frame" src="{{ asset('images/card/cardlog.png') }}" alt="" fetchpriority="high" decoding="async" draggable="false">
-
                         <section class="auth-pane" data-pane="login" aria-labelledby="login-title" @if ($mode !== 'login') hidden inert aria-hidden="true" @endif>
                             <form class="auth-form auth-form--login" action="{{ route('login.attempt') }}" method="post" data-auth-form="login" novalidate>
                                 @csrf

@@ -1,0 +1,162 @@
+.ch2-scene { color: #0c2555; }
+.ch2-scene::before { background: linear-gradient(180deg,#0a275588,#d9efffca 85%),url('../images/background/ruanglab.png') center/cover no-repeat; }
+.ch2-scene .lab-back { text-decoration: none; }
+.ch2-scene .lab-main { width: min(100%,1820px); margin-top: 13px; }
+.ch2-workspace { display: grid; grid-template-columns: minmax(0,1fr) clamp(240px,20vw,300px); align-items: start; gap: 14px; }
+.ch2-workbench { min-width: 0; }
+.ch2-guide__feedback { margin: 0 0 14px; color: #527195; font-size: 12px; line-height: 1.45; }
+.ch2-guide__feedback[data-kind="success"] { color: #078564; }
+.ch2-guide__feedback[data-kind="error"] { color: #bc393c; }
+.ch2-guide > .ch2-task-back { width: 100%; margin-bottom: 9px; }
+.ch2-instruction { min-height: 164px; cursor: pointer; }
+.ch2-instruction:hover { border-color: #70c5ff; box-shadow: 0 10px 30px #103e7055; }
+.ch2-instruction.is-speaking { border-color: #70c5ff; }
+.ch2-instruction > img { width: clamp(125px,13vw,205px); height: 166px; }
+.ch2-instruction__copy > span { display: inline-flex; padding: 6px 12px; border-radius: 8px; color: #fff; background: #0076eb; font-size: clamp(11px,.9vw,14px); letter-spacing: .06em; }
+.ch2-instruction__copy p { min-height: 2.7em; margin: 12px 0 8px; color: #0b285e; font-size: clamp(18px,1.55vw,27px); font-weight: 750; line-height: 1.35; }
+.ch2-instruction__copy p.is-typing::after { display: inline-block; width: .5ch; height: .95em; margin-left: 3px; background: #0878ec; content: ''; vertical-align: -.08em; animation: prologue-caret .72s steps(1,end) infinite; }
+.ch2-instruction__copy small { color: #5880a8; font-size: 11px; letter-spacing: .06em; }
+.ch2-instruction { display: flex; align-items: center; gap: 18px; min-height: 136px; margin-bottom: 13px; padding: 12px 18px; overflow: hidden; border: 1px solid #add9fb; border-radius: 19px; background: #f7fcfff5; box-shadow: 0 9px 25px #103e7045; }
+.ch2-instruction > img { flex: none; align-self: end; width: 112px; height: 120px; margin: -5px 0 -14px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 6px 8px #12436d45); }
+.ch2-instruction__copy { flex: 1; min-width: 0; }.ch2-instruction__copy > span { color: #0078e1; font-size: 11px; font-weight: 900; letter-spacing: .11em; }.ch2-instruction h1 { margin: 5px 0 4px; color: #08245a; font-size: clamp(20px,1.7vw,29px); line-height: 1.15; }.ch2-instruction p { max-width: 1050px; margin: 0 0 7px; color: #345579; font-size: clamp(12px,.9vw,15px); font-weight: 700; line-height: 1.38; }.ch2-instruction small { display: block; color: #647d99; font-size: 11px; font-weight: 700; line-height: 1.35; }.ch2-instruction small[data-kind="success"] { color: #078564; }.ch2-instruction small[data-kind="error"] { color: #bc393c; }
+.ch2-instruction__actions { display: grid; justify-items: stretch; flex: none; gap: 8px; width: clamp(170px,16vw,245px); }.ch2-task-button,.ch2-task-back { display: inline-flex; align-items: center; justify-content: center; min-height: 43px; padding: 9px 15px; border-radius: 10px; font: inherit; font-size: 13px; font-weight: 900; text-align: center; text-decoration: none; cursor: pointer; }.ch2-task-button { border: 2px solid #81d7ff; background: linear-gradient(#079dff,#0064e9); color: #fff; box-shadow: 0 4px 0 #0753b6,0 7px 14px #0d67d03b; }.ch2-task-back { border: 1px solid #a4d4f8; background: #eaf7ff; color: #0870c8; }.ch2-task-button:hover:not(:disabled),.ch2-task-back:hover { filter: brightness(1.05); transform: translateY(-1px); }.ch2-task-button:disabled { opacity: .58; cursor: wait; }
+.ch2-monitor { width: 100%; max-width: none; padding: 9px 10px 14px; border-radius: 18px 18px 11px 11px; }.ch2-monitor .simulation-monitor__screen { min-height: 610px; }.ch2-monitor .routeros { min-height: 605px; }.ch2-monitor .routeros__body { min-height: 550px; grid-template-columns: 150px minmax(0,1fr); }.ch2-monitor .routeros__content { position: relative; display: block; min-height: 550px; padding: 0; overflow: hidden; background: #a7a7a7; }.ch2-monitor .routeros__status { min-height: 22px; }.ch2-monitor .routeros__toolbar { background: #ededed; }.ch2-window-chrome { color: #333; letter-spacing: .1em; }
+.ch2-guide { position: sticky; top: 116px; min-height: 610px; padding-bottom: 170px; }
+.ch2-guide > img { position: absolute; right: 0; bottom: -2px; width: min(100%,230px); height: 230px; object-fit: contain; object-position: bottom right; pointer-events: none; }
+.ch2-guide ol { padding-left: 24px; }
+.ch2-nav { overflow-y: auto; max-height: 550px; scrollbar-width: thin; }.ch2-nav button[data-unlock] { padding-left: 18px; }.ch2-nav button:disabled { color: #8d8d8d; cursor: not-allowed; }.ch2-nav button:disabled:hover { background: transparent; }.ch2-nav__section { font-weight: 800 !important; background: #dadada !important; }
+.ch2-desktop__welcome { position: absolute; inset: 0 0 32px; display: grid; place-content: center; justify-items: center; padding: 30px; color: #474747; text-align: center; opacity: .6; pointer-events: none; }.ch2-desktop__welcome img { object-fit: contain; }.ch2-desktop__welcome strong { margin-top: 10px; font: 700 23px Arial,sans-serif; }.ch2-desktop__welcome p { max-width: 450px; font: 13px/1.45 Arial,sans-serif; }
+.ch2-monitor .ch2-window { position: absolute; top: 25px; left: 11%; display: flex; flex-direction: column; width: min(78%,850px); min-width: 0; min-height: 0; max-height: calc(100% - 56px); overflow: auto; border: 1px solid #565656; border-radius: 0; background: #eee; box-shadow: 3px 5px 0 #0003,0 15px 28px #0004; font-family: Arial,Tahoma,sans-serif; }.ch2-monitor .ch2-window[hidden] { display: none !important; }.ch2-monitor .ch2-window--small { top: 83px; left: 19%; width: min(53%,510px); }.ch2-monitor .ch2-window--medium { top: 65px; left: 17%; width: min(66%,630px); }.ch2-monitor [data-window="edit"],.ch2-monitor [data-window="vlan-edit"] { top: 106px; left: 31%; }
+.ch2-window > header { display: flex; align-items: center; justify-content: space-between; flex: none; min-height: 29px; padding: 3px 5px 3px 8px; background: #4e4bc2; color: #fff; font-size: 12px; font-weight: 800; cursor: move; touch-action: none; user-select: none; }.ch2-window-controls { display: flex; gap: 2px; }.ch2-window-controls button { display: grid; place-items: center; width: 24px; height: 21px; padding: 0; border: 1px solid #777; border-radius: 0; background: #e7e7e7; color: #111; font: 16px/1 Arial,sans-serif; cursor: pointer; }.ch2-window-controls button:hover { background: #fff; }.ch2-window-controls button:last-child:hover { background: #eb5151; color: #fff; }
+.ch2-window > footer { flex: none; min-height: 25px; padding: 5px 9px; border-top: 1px solid #aaa; background: #e4e4e4; color: #474747; font-size: 11px; }.ch2-window-content { display: grid; grid-template-columns: minmax(0,1fr) 75px; gap: 8px; min-height: 100px; padding: 15px; color: #222; }.ch2-window-content label { display: grid; grid-column: 1; grid-template-columns: 75px minmax(0,1fr); align-items: center; gap: 8px; margin: 0; max-width: none; color: #222; font-size: 12px; font-weight: 400; }.ch2-window-content input,.ch2-window-content select,.ch2-address-form input,.ch2-address-form select { width: 100%; min-height: 29px; padding: 3px 6px; border: 1px solid #999; border-radius: 1px; background: #fff; color: #111; font: 12px Arial,sans-serif; }.ch2-window-content input[readonly] { background: #e6e6e6; }.ch2-window-actions { display: flex; grid-column: 2; grid-row: 1 / span 4; flex-direction: column; gap: 5px; }.ch2-window-actions button,.ch2-window-toolbar button,.ch2-address-form button,.ch2-client-list button { min-height: 27px; padding: 4px 9px; border: 1px solid #898989; border-radius: 1px; background: linear-gradient(#fff,#ddd); color: #171717; font: 12px Arial,sans-serif; cursor: pointer; }.ch2-window-actions button:hover,.ch2-window-toolbar button:hover,.ch2-address-form button:hover,.ch2-client-list button:hover { background: #dceafa; border-color: #5b86b4; }.ch2-window-status { grid-column: 1 / -1; margin: 3px 0 0; padding: 8px; border: 1px solid #bdbdbd; background: #fff; font-size: 12px; }.ch2-window-status b { color: #078a62; }
+.ch2-window-tabs { display: flex; flex: none; gap: 3px; padding: 5px 6px 0; border-bottom: 1px solid #aaa; background: #ddd; }.ch2-window-tabs > * { min-height: 25px; padding: 5px 10px; border: 1px solid #aaa; border-bottom: 0; border-radius: 0; background: #e5e5e5; color: #333; font: 11px Arial,sans-serif; }.ch2-window-tabs b { background: #fff; font-weight: 800; }.ch2-window-tabs button:not(:disabled) { cursor: pointer; }.ch2-window-tabs button:disabled { opacity: .52; }.ch2-window-toolbar { display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 5px 8px; border-bottom: 1px solid #aaa; background: #eee; color: #333; font-size: 12px; }.ch2-window-toolbar small { margin-left: auto; color: #5b5b5b; font-size: 11px; }
+.ch2-table { flex: 1; min-height: 140px; overflow-y: auto; background: #fff; color: #222; font: 12px Arial,sans-serif; }.ch2-table__head,.ch2-table > button,.ch2-table > div:not(.ch2-table__head) { display: grid; grid-template-columns: 35px minmax(130px,1.4fr) minmax(100px,1fr) minmax(125px,1fr); align-items: center; width: 100%; min-height: 30px; }.ch2-table__head { background: #ddd; font-size: 11px; font-weight: 800; }.ch2-table > button,.ch2-table > div:not(.ch2-table__head) { padding: 0; border: 0; border-bottom: 1px solid #ddd; border-radius: 0; background: #fff; color: #222; text-align: left; font: 12px Arial,sans-serif; }.ch2-table > button:hover { background: #dceafa; }.ch2-table span,.ch2-table strong { overflow: hidden; padding: 6px; border-right: 1px solid #ddd; text-overflow: ellipsis; white-space: nowrap; font-weight: 400; }.ch2-table__head span { font-weight: 800; }.ch2-table > p { margin: 12px; color: #666; font-size: 12px; }
+.ch2-address-form { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr) auto; gap: 8px; align-items: end; padding: 10px; border-bottom: 1px solid #aaa; background: #ececec; }.ch2-address-form label { display: grid; gap: 4px; min-width: 0; color: #333; font-size: 11px; }.ch2-address-form button { min-height: 29px; white-space: nowrap; }.ch2-address-reference { padding: 8px 10px; border-bottom: 1px solid #b7cce0; background: #e6f5ff; color: #265785; font: 11px/1.4 Arial,sans-serif; }.ch2-address-table { min-height: 190px; }
+.ch2-client-list { display: grid; gap: 10px; padding: 14px; background: #f0f0f0; }.ch2-client-list article { display: grid; grid-template-columns: minmax(120px,1fr) minmax(125px,1fr) auto; gap: 10px; align-items: center; padding: 12px; border: 1px solid #aaa; background: #fff; }.ch2-client-list article.is-connected { border-color: #43b889; background: #edfff6; }.ch2-client-list article.is-requesting { animation: ch2-pulse .4s ease-in-out infinite alternate; }.ch2-client-list b,.ch2-client-list small { display: block; }.ch2-client-list b { font-size: 13px; }.ch2-client-list small { margin-top: 4px; color: #666; font-size: 11px; }.ch2-client-list article > span { color: #25517c; font-size: 12px; }.ch2-client-list button:disabled { opacity: .55; }.ch2-taskbar { position: absolute; z-index: 100; bottom: 0; left: 0; right: 0; min-height: 32px; }.ch2-taskbar button { min-width: 90px; }
+.ch2-learning-dialog { width: min(850px,calc(100vw - 30px)); max-height: min(88vh,900px); margin: auto; padding: 27px 30px 29px; overflow-y: auto; border: 2px solid #9bd6ff; border-radius: 21px; background: #f9fdff; color: #0d2b5c; box-shadow: 0 24px 75px #0018428a; font-family: 'Trebuchet MS','Segoe UI',Arial,sans-serif; }.ch2-learning-dialog::backdrop { background: #061b46a8; backdrop-filter: blur(4px); }.ch2-dialog-close { position: absolute; top: 13px; right: 14px; width: 34px; height: 34px; border: 1px solid #add7f4; border-radius: 9px; background: #edf8ff; color: #1863aa; font-size: 25px; line-height: 1; cursor: pointer; }.ch2-modal-kicker { display: block; margin-right: 40px; color: #0075dc; font-size: 11px; font-weight: 900; letter-spacing: .13em; }.ch2-learning-dialog h2 { margin: 9px 36px 12px 0; color: #081e50; font-size: clamp(26px,3vw,39px); line-height: 1.13; }.ch2-learning-dialog p { color: #34547b; font-size: 15px; line-height: 1.55; }.ch2-learning-dialog .ch2-topology { display: block; width: 100%; max-height: 360px; margin: 17px 0; border: 1px solid #aee0ff; border-radius: 14px; object-fit: contain; background: #e8f8ff; }.ch2-modal-note { padding: 12px 14px; border: 1px solid #b5dbf8; border-radius: 10px; background: #eaf7ff; font-weight: 800; }.ch2-learning-dialog > .ch2-task-button { display: flex; margin: 19px auto 0; }
+.ch2-quiz-dialog { width: min(920px,calc(100vw - 30px)); }.ch2-quiz-dialog form { display: grid; gap: 14px; }.ch2-quiz-dialog fieldset { min-width: 0; margin: 0; padding: 13px; border: 1px solid #bddcf6; border-radius: 11px; background: #edf8ff; }.ch2-quiz-dialog legend { padding: 0 5px; font-size: 14px; font-weight: 900; }.ch2-quiz-dialog legend b { color: #0079da; }.ch2-quiz-dialog fieldset > div { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }.ch2-quiz-dialog label { display: flex; gap: 8px; align-items: center; padding: 9px; border: 1px solid #c5dcf1; border-radius: 8px; background: #fff; color: #315177; font-size: 12px; cursor: pointer; }.ch2-quiz-dialog label:has(input:checked) { border-color: #007cea; background: #e0f2ff; }.ch2-quiz-dialog input { accent-color: #0079e7; }.ch2-quiz-dialog form > button { justify-self: center; margin-top: 5px; }
+.ch2-finish-dialog { max-width: 720px; text-align: center; }.ch2-finish-dialog > img { display: block; width: 132px; height: 150px; margin: 0 auto 10px; object-fit: contain; object-position: bottom; }.ch2-finish-dialog > div { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
+@keyframes ch2-pulse { to { box-shadow: 0 0 0 4px #55dca97a; } }
+@media (max-width: 850px) { .ch2-instruction { flex-wrap: wrap; gap: 8px 12px; }.ch2-instruction > img { width: 70px; height: 91px; }.ch2-instruction__copy { flex-basis: calc(100% - 84px); }.ch2-instruction__actions { display: flex; width: 100%; margin-left: 82px; }.ch2-instruction__actions > * { flex: 1; }.ch2-monitor .routeros { min-width: 700px; }.ch2-monitor .simulation-monitor__screen { overflow-x: auto; }.ch2-monitor .ch2-window { min-width: 420px; }.ch2-monitor .ch2-window--small { min-width: 380px; } }
+@media (max-width: 1100px) { .ch2-workspace { grid-template-columns: minmax(0,1fr); }.ch2-guide { position: relative; top: auto; min-height: 0; padding: 16px 18px; }.ch2-guide > img { display: none; }.ch2-guide ol { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px 24px; }.ch2-guide .lab-guide__note { max-width: 320px; } }
+@media (max-width: 620px) { .ch2-scene .lab-header { gap: 6px; padding: 6px 8px; }.ch2-scene .lab-logo,.ch2-scene .lab-hud,.ch2-scene .lab-settings { display: none; }.ch2-scene .lab-heading strong { font-size: 17px; }.ch2-scene .lab-heading small { font-size: 10px; }.ch2-scene .lab-heading span { font-size: 8px; }.ch2-scene .lab-save-progress { min-width: 36px; padding: 7px; }.ch2-scene .lab-save-progress__label { display: none; }.ch2-scene .lab-avatar { width: 35px; height: 35px; }.ch2-instruction { padding: 10px; }.ch2-instruction > img { width: 52px; height: 85px; }.ch2-instruction__copy { flex-basis: calc(100% - 65px); }.ch2-instruction h1 { font-size: 17px; }.ch2-instruction p { font-size: 11px; }.ch2-instruction__actions { margin-left: 0; }.ch2-task-button,.ch2-task-back { min-height: 37px; padding: 6px 9px; font-size: 11px; }.ch2-monitor { padding: 5px 5px 11px; }.ch2-monitor .simulation-monitor__screen { min-height: 540px; }.ch2-monitor .routeros { min-height: 540px; }.ch2-monitor .routeros__body,.ch2-monitor .routeros__content { min-height: 480px; }.ch2-nav { max-height: 480px; }.ch2-learning-dialog { padding: 20px 17px; }.ch2-learning-dialog p { font-size: 13px; }.ch2-quiz-dialog fieldset > div { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .ch2-client-list article.is-requesting { animation: none; } }
+.ch2-instruction { display: flex; min-height: 164px; border: 2px solid #79d6ff; cursor: pointer; }
+.ch2-instruction > img { width: clamp(125px,13vw,205px); height: 166px; }
+.ch2-instruction__copy > span { display: inline-flex; padding: 6px 12px; border-radius: 8px; color: #fff; background: #0076eb; font-size: clamp(11px,.9vw,14px); letter-spacing: .06em; }
+.ch2-instruction__copy p { min-height: 2.7em; margin: 12px 0 8px; color: #0b285e; font-size: clamp(18px,1.55vw,27px); font-weight: 750; line-height: 1.35; }
+.ch2-instruction__copy small { color: #5880a8; font-size: 11px; letter-spacing: .06em; }
+@media (max-width: 620px) { .ch2-instruction { min-height: 112px; padding: 10px; }.ch2-instruction > img { width: 74px; height: 96px; }.ch2-instruction__copy { flex-basis: calc(100% - 88px); }.ch2-instruction__copy p { font-size: 15px; line-height: 1.3; }.ch2-instruction__copy small { font-size: 9px; } }
+
+/* Chapter dialogue floats over the lab scene, like the Chapter 1 conversation. */
+.ch2-dialogue-overlay { position: fixed; z-index: 1500; inset: 0; display: block; background: #071a3a55; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.ch2-dialogue-overlay[hidden] { display: none !important; }
+.ch2-dialogue-overlay__card { position: absolute; right: clamp(22px,8vw,150px); bottom: clamp(22px,4vh,42px); left: clamp(22px,8vw,150px); display: flex; min-height: clamp(235px,30vh,310px); align-items: center; padding: 30px clamp(28px,7vw,120px) 30px clamp(285px,19vw,370px); border: 3px solid #77d2ff; border-radius: 27px; background: linear-gradient(110deg,#f8fdffff,#e5f4fffa); box-shadow: 0 0 0 6px #d9f4ff55,0 20px 55px #071b3b66,inset 0 0 0 2px #fff; cursor: pointer; }
+.ch2-dialogue-overlay__teacher { position: absolute; z-index: 2; bottom: 0; left: clamp(4px,3.2vw,62px); width: min(22vw,370px); height: min(61vh,560px); object-fit: contain; object-position: bottom left; filter: drop-shadow(0 9px 15px #061a3b55); pointer-events: none; }
+.ch2-dialogue-overlay__content { width: 100%; max-width: 1100px; }
+.ch2-dialogue-overlay__content > span { display: inline-flex; padding: 8px 18px; border-radius: 10px; background: #0879eb; color: #fff; font-size: clamp(12px,.9vw,16px); font-weight: 900; letter-spacing: .08em; }
+.ch2-dialogue-overlay__content p { min-height: 2.7em; margin: 16px 0 12px; color: #0c2c63; font-size: clamp(20px,1.7vw,31px); font-weight: 750; line-height: 1.38; }
+.ch2-dialogue-overlay__content p.is-typing::after { display: inline-block; width: .48ch; height: .95em; margin-left: 3px; background: #0878ec; content: ''; vertical-align: -.08em; animation: ch2-dialogue-caret .72s steps(1,end) infinite; }
+.ch2-dialogue-overlay__content small { color: #5a7fa4; font-size: 11px; font-weight: 800; letter-spacing: .07em; }
+@keyframes ch2-dialogue-caret { 50% { opacity: 0; } }
+
+/* RouterOS VLAN view follows the real tab, list and edit-dialog hierarchy. */
+.ch2-monitor .ch2-window[data-window="vlan"] { inset: 0 0 32px; width: auto; max-height: none; overflow: hidden; border: 0; box-shadow: none; }
+.ch2-monitor .ch2-window[data-window="vlan"] > header { min-height: 0; padding: 0; background: transparent; color: transparent; }
+.ch2-monitor .ch2-window[data-window="vlan"] > header .ch2-window-controls { display: none; }
+.ch2-window-tabs--interfaces { min-height: 35px; gap: 0; overflow-x: auto; padding: 0 7px; white-space: nowrap; }
+.ch2-window-tabs--interfaces > * { flex: none; padding: 8px 11px; }
+.ch2-window-toolbar--icons { min-height: 36px; gap: 4px; }
+.ch2-window-toolbar--icons button { display: grid; min-width: 27px; width: 27px; height: 26px; min-height: 26px; place-items: center; padding: 0; font-size: 17px; font-weight: 700; }
+.ch2-window-toolbar--icons input { width: min(170px,22%); min-height: 25px; margin-left: auto; padding: 3px 6px; border: 1px solid #aaa; border-radius: 0; background: #fff; font: 12px Arial,sans-serif; }
+.ch2-window-toolbar--icons > span { min-width: 36px; padding: 4px; border: 1px solid #aaa; background: #fff; text-align: center; }
+.ch2-vlan-table { overflow: auto; }
+.ch2-vlan-table .ch2-table__head,.ch2-vlan-table > div:not(.ch2-table__head) { width: max(100%,1120px); grid-template-columns: 25px 30px minmax(125px,1.4fr) minmax(75px,.8fr) 75px 90px 72px 78px minmax(110px,1.2fr) repeat(4,75px); }
+.ch2-vlan-table .ch2-table__head { position: sticky; top: 0; z-index: 1; }
+.ch2-vlan-table .ch2-table__head span,.ch2-vlan-table > div:not(.ch2-table__head) > * { min-width: 0; padding: 7px 5px; border-right: 1px solid #d0d0d0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ch2-vlan-table > div:not(.ch2-table__head) { min-height: 25px; }
+.ch2-vlan-table > p { width: max(100%,1120px); margin: 0; padding: 12px 14px; }
+.ch2-window[data-window="vlan-edit"] { top: 50% !important; left: 50% !important; width: min(540px,calc(100% - 36px)) !important; max-height: calc(100% - 32px); transform: translate(-50%,-50%); overflow: hidden; border: 1px solid #5a83ad; box-shadow: 0 8px 20px #0005; }
+.ch2-window[data-window="vlan-edit"] > header { min-height: 28px; background: linear-gradient(#3184d5,#1765b6); }
+.ch2-vlan-edit-layout { display: grid; grid-template-columns: minmax(0,1fr) 82px; gap: 9px; padding: 0 8px 9px; background: #eee; }
+.ch2-vlan-edit-main { min-width: 0; border: 1px solid #b4b4b4; background: #f5f5f5; }
+.ch2-vlan-edit-main .ch2-window-tabs { background: #e6e6e6; }
+.ch2-vlan-edit-main .ch2-window-content { display: grid; grid-template-columns: 1fr; gap: 7px; padding: 11px 13px; }
+.ch2-vlan-edit-main .ch2-window-content label { display: grid; grid-template-columns: 94px minmax(0,1fr); grid-column: 1; gap: 7px; min-height: 27px; }
+.ch2-vlan-edit-main .ch2-window-content input,.ch2-vlan-edit-main .ch2-window-content select { min-height: 26px; }
+.ch2-vlan-edit-actions { display: flex; flex-direction: column; gap: 5px; padding-top: 7px; }
+.ch2-vlan-edit-actions button { min-height: 27px; padding: 3px 6px; border: 1px solid #999; border-radius: 1px; background: linear-gradient(#fff,#ddd); color: #222; font: 12px Arial,sans-serif; }
+.ch2-vlan-edit-actions button:first-child { border-color: #3978b7; background: linear-gradient(#f8fcff,#cfe4fb); }
+.ch2-vlan-edit-actions button:hover { border-color: #4c8acb; background: #dceafa; }
+@media (max-width: 850px) {
+    .ch2-dialogue-overlay__teacher { left: 4px; width: min(30vw,300px); height: min(52vh,420px); }
+    .ch2-dialogue-overlay__card { right: 16px; bottom: 16px; left: 16px; min-height: 210px; padding: 22px 22px 22px clamp(150px,27vw,250px); }
+    .ch2-dialogue-overlay__content p { font-size: clamp(17px,2.4vw,23px); }
+}
+@media (max-width: 560px) {
+    .ch2-dialogue-overlay__teacher { left: -15px; width: 38vw; height: 35vh; }
+    .ch2-dialogue-overlay__card { right: 9px; bottom: 10px; left: 9px; min-height: 190px; padding: 18px 14px 18px 34vw; border-width: 2px; border-radius: 18px; }
+    .ch2-dialogue-overlay__content > span { padding: 6px 9px; font-size: 10px; }
+    .ch2-dialogue-overlay__content p { min-height: 3.5em; margin: 10px 0; font-size: clamp(15px,4vw,19px); }
+    .ch2-dialogue-overlay__content small { font-size: 8px; }
+    .ch2-window[data-window="vlan-edit"] { width: min(430px,calc(100% - 18px)) !important; }
+    .ch2-vlan-edit-layout { grid-template-columns: minmax(0,1fr) 67px; gap: 5px; padding: 0 5px 6px; }
+    .ch2-vlan-edit-actions button { padding: 2px; font-size: 10px; }
+}
+
+/* Classic WinBox desktop: parent window with overlapping MDI tool windows. */
+.ch2-monitor .ch2-routeros { display: flex; min-height: 605px; flex-direction: column; overflow: hidden; border: 2px solid #263a4f; border-radius: 12px; background: #aaa; color: #111; box-shadow: 0 7px 18px #102e4d55; font-family: Arial,Tahoma,sans-serif; }
+.ch2-routeros > .ch2-winbox-titlebar { display: flex; min-height: 27px; align-items: center; padding: 3px 7px; border-bottom: 1px solid #8a8a8a; background: linear-gradient(#fff,#f0f0f0); color: #124477; font: 12px Arial,Tahoma,sans-serif; }
+.ch2-winbox-titlebar > span:first-child { display: flex; min-width: 0; align-items: center; gap: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ch2-winbox-titlebar img { flex: none; object-fit: contain; }
+.ch2-routeros > .ch2-winbox-titlebar .ch2-window-chrome { color: #222; font: 14px Arial,sans-serif; letter-spacing: 0; white-space: nowrap; }
+.ch2-routeros > .ch2-winbox-menubar { display: flex; min-height: 24px; align-items: center; gap: 15px; padding: 2px 9px; border-bottom: 1px solid #b8b8b8; background: #f4f4f4; color: #111; font: 12px Arial,Tahoma,sans-serif; }
+.ch2-winbox-quickbar { display: flex; min-height: 31px; align-items: center; gap: 5px; padding: 3px 6px; border-bottom: 1px solid #aaa; background: #ececec; color: #111; font: 12px Arial,Tahoma,sans-serif; }
+.ch2-winbox-quickbar button { min-width: 25px; height: 23px; padding: 0 6px; border: 1px solid #aaa; border-radius: 1px; background: linear-gradient(#fff,#dedede); color: #111; font: 13px Arial,sans-serif; }
+.ch2-winbox-quickbar button:nth-child(3) { min-width: 70px; }
+.ch2-winbox-quickbar label { display: flex; align-items: center; gap: 5px; margin-left: 8px; white-space: nowrap; }
+.ch2-winbox-quickbar input { width: clamp(120px,18vw,240px); height: 21px; padding: 2px 5px; border: 1px solid #aaa; background: #fff; color: #111; font: 12px Arial,sans-serif; }
+.ch2-winbox-quickbar > span { margin-left: auto; white-space: nowrap; }
+.ch2-winbox-quickbar > span + span { margin-left: 5px; }
+.ch2-winbox-quickbar i { width: 10px; height: 10px; margin: 0 5px; border: 1px solid #607f6d; background: #299446; }
+.ch2-monitor .routeros__body { display: grid; min-height: 0; flex: 1; grid-template-columns: clamp(150px,12vw,205px) minmax(0,1fr); }
+.ch2-monitor .ch2-nav { max-height: none; padding: 4px 3px 25px; border-right: 1px solid #aaa; background: #e9e9e9; }
+.ch2-monitor .ch2-nav button,.ch2-monitor .ch2-nav span { min-height: 25px; padding: 5px 7px; border-bottom: 1px solid #d4d4d4; border-radius: 0; color: #202020; background: transparent; font: 12px Arial,Tahoma,sans-serif; }
+.ch2-monitor .ch2-nav button:hover,.ch2-monitor .ch2-nav button.is-active { background: #d7e6f6; color: #111; }
+.ch2-monitor .routeros__content.ch2-desktop { min-height: 0; overflow: hidden; background: #aaa; }
+.ch2-monitor .ch2-desktop__welcome { display: none; }
+.ch2-monitor .ch2-window { top: 8px; left: 0; width: min(90%,1040px); height: 78%; max-height: calc(100% - 40px); overflow: hidden; border: 1px solid #555; background: #ededed; box-shadow: 2px 3px 4px #0005; }
+.ch2-monitor .ch2-window > header { min-height: 23px; background: #5552bd; color: #fff; font: bold 12px Arial,Tahoma,sans-serif; }
+.ch2-monitor .ch2-window > footer { min-height: 20px; padding: 3px 7px; font: 11px Arial,Tahoma,sans-serif; }
+.ch2-monitor .ch2-window[data-window="routes"] { z-index: 1; top: 8px; left: 0; width: 88%; height: 81%; }
+.ch2-monitor .ch2-window[data-window="interfaces"],.ch2-monitor .ch2-window[data-window="vlan"] { z-index: 2; top: 96px; left: 8%; width: 79%; height: 64%; }
+.ch2-monitor .ch2-window[data-window="routes"] > header { background: #bdbdbd; color: #333; }
+.ch2-monitor .ch2-window[data-window="vlan"] { inset: auto; border: 1px solid #555; box-shadow: 2px 3px 4px #0005; }
+.ch2-monitor .ch2-window[data-window="vlan"] > header { display: flex; min-height: 23px; padding: 3px 5px 3px 8px; background: #5552bd; color: #fff; }
+.ch2-monitor .ch2-window[data-window="vlan"] > header .ch2-window-controls { display: flex; }
+.ch2-monitor .ch2-window-tabs { min-height: 28px; }
+.ch2-monitor .ch2-window-tabs > * { min-height: 24px; padding: 6px 10px; }
+.ch2-monitor .ch2-window-tabs--interfaces { min-height: 27px; gap: 0; padding: 0 5px; }
+.ch2-monitor .ch2-window-tabs--interfaces > * { min-height: 25px; padding: 6px 8px; font-size: 11px; }
+.ch2-monitor .ch2-window-toolbar--icons { min-height: 32px; padding: 3px 5px; }
+.ch2-monitor .ch2-window-toolbar--icons button { min-height: 23px; height: 23px; width: 24px; min-width: 24px; }
+.ch2-monitor .ch2-table { min-height: 0; }
+.ch2-interface-table .ch2-table__head,.ch2-interface-table > button,.ch2-interface-table > div:not(.ch2-table__head) { width: max(100%,780px); grid-template-columns: minmax(145px,1.6fr) minmax(90px,1fr) 75px 86px 75px minmax(72px,.9fr) minmax(72px,.9fr) minmax(100px,1.2fr); }
+.ch2-interface-table .ch2-table__head span,.ch2-interface-table > button > *, .ch2-interface-table > div:not(.ch2-table__head) > * { padding: 5px 6px; }
+.ch2-interface-table > button > strong,.ch2-route-table > div > strong { color: #151515; }
+.ch2-route-table .ch2-table__head,.ch2-route-table > div:not(.ch2-table__head) { width: max(100%,620px); grid-template-columns: 50px minmax(145px,1.4fr) minmax(125px,1.2fr) 90px minmax(120px,1fr) minmax(115px,1fr); }
+.ch2-route-table > div:not(.ch2-table__head) { min-height: 24px; }
+.ch2-route-table > div > * { padding: 4px 6px; }
+.ch2-route-table > div > strong { color: #255f9b; font-weight: 700; }
+.ch2-route-table .ch2-table__head span,.ch2-vlan-table .ch2-table__head span { background: #dedede; }
+.ch2-monitor .ch2-window[data-window="vlan-edit"] { z-index: 20; top: 50% !important; left: 50% !important; width: min(540px,calc(100% - 36px)) !important; height: auto; max-height: calc(100% - 32px); transform: translate(-50%,-50%); }
+.ch2-monitor .ch2-taskbar { z-index: 30; min-height: 22px; border-top: 1px solid #777; background: #d7d7d7; }
+.ch2-taskbar button { min-height: 20px; border: 1px solid #888; border-radius: 0; background: #eee; font: 11px Arial,sans-serif; }
+.ch2-routeros > .routeros__status { display: flex; min-height: 20px; justify-content: space-between; padding: 3px 8px; border-top: 1px solid #888; background: #e7e7e7; color: #333; font: 11px Arial,sans-serif; }
+@media (max-width: 850px) {
+    .ch2-winbox-quickbar { flex-wrap: wrap; }
+    .ch2-winbox-quickbar > span { display: none; }
+    .ch2-monitor .routeros__body { grid-template-columns: 138px minmax(0,1fr); }
+    .ch2-monitor .ch2-window[data-window="routes"] { width: 96%; }
+    .ch2-monitor .ch2-window[data-window="interfaces"],.ch2-monitor .ch2-window[data-window="vlan"] { left: 4%; width: 92%; }
+}

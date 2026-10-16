@@ -6,7 +6,7 @@
     $panelAttribute = $isWelcome ? 'data-panel' : ($isAdventure ? 'data-adventure-info' : 'data-home-panel');
     $account = $isWelcome ? null : auth()->user();
 @endphp
-<header class="navbar game-navbar{{ $isAdventure ? ' adventure-navbar' : ($isWelcome ? '' : ' homepage-navbar') }}">
+<header class="navbar game-navbar{{ $isWelcome ? '' : ' academy-navbar' }}{{ $isAdventure ? ' adventure-navbar' : ($isWelcome ? '' : ' homepage-navbar') }}">
     <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <defs>
             <symbol id="navbar-home" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 2 1.5 11h2.8v9.3c0 .9.7 1.7 1.7 1.7h4.2v-7h3.6v7H18c1 0 1.7-.8 1.7-1.7V11h2.8L12 2Z"/></symbol>

@@ -91,9 +91,12 @@
             });
             if (!response.ok) throw new Error('Reset gagal.');
             try {
-                window.localStorage.removeItem(chapterOneResetButton.dataset.progressKey);
+                const userId = chapterOneResetButton.dataset.progressKey.split('.').at(-1);
+                const chapterProgressKeys = Array.from({ length: window.localStorage.length }, (_, index) => window.localStorage.key(index))
+                    .filter((key) => key?.startsWith('netguard.chapter-') && key.endsWith(`.${userId}`));
+                chapterProgressKeys.forEach((key) => window.localStorage.removeItem(key));
             } catch {
-                // The server-side progress is already reset.
+                // Server progress is already reset; browser drafts are best-effort cleanup.
             }
             window.location.reload();
         } catch {
@@ -105,7 +108,7 @@
 
     document.querySelectorAll('[data-start-chapter]').forEach((trigger) => {
         trigger.addEventListener('click', () => {
-            openDialog(`Chapter ${trigger.dataset.startChapter} sedang disiapkan`, 'Misi interaktif untuk chapter ini belum tersedia. Kamu sudah bisa membaca materi dan target belajarnya.');
+            openDialog(`Ringkasan Chapter ${trigger.dataset.startChapter}`, 'Chapter ini sudah terbuka. Baca materi, topik, dan target belajarnya pada panel ini. Simulasi interaktif tiap chapter akan dilanjutkan bertahap.');
         });
     });
 
