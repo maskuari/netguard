@@ -1,7 +1,7 @@
 (() => {
     'use strict';
 
-    const tabs = [...document.querySelectorAll('.chapter-card[role="tab"]')];
+    const tabs = [...document.querySelectorAll('.chapter-card__select[role="tab"]')];
     const panels = tabs.map((tab) => document.getElementById(tab.getAttribute('aria-controls')));
     const account = document.querySelector('.adventure-account');
     const accountToggle = account.querySelector('.homepage-account__toggle');
@@ -121,41 +121,63 @@
         if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
     });
 
+    const learning = document.querySelector('#chapter-learning');
+    const dots = [...document.querySelectorAll('[data-chapter-dot]')];
+    let activeIndex = 0;
+
     const selectChapter = (index, focusTab = false) => {
+        activeIndex = (index + tabs.length) % tabs.length;
         tabs.forEach((tab, tabIndex) => {
-            const selected = tabIndex === index;
-            tab.classList.toggle('is-selected', selected);
+            const selected = tabIndex === activeIndex;
+            let distance = tabIndex - activeIndex;
+            if (distance > 2) distance -= tabs.length;
+            if (distance < -2) distance += tabs.length;
+            tab.closest('.chapter-card').dataset.position = String(distance);
+            tab.closest('.chapter-card').classList.toggle('is-selected', selected);
             tab.setAttribute('aria-selected', String(selected));
             tab.tabIndex = selected ? 0 : -1;
             panels[tabIndex].hidden = !selected;
+            dots[tabIndex].classList.toggle('is-selected', selected);
+            dots[tabIndex].setAttribute('aria-current', String(selected));
         });
-
-        if (focusTab) tabs[index].focus();
-        window.history.replaceState(null, '', '#chapter-' + tabs[index].dataset.chapter);
+        learning.hidden = false;
+        if (focusTab) tabs[activeIndex].focus();
+        window.history.replaceState(null, '', '#chapter-' + tabs[activeIndex].dataset.chapter);
     };
+
+    document.querySelector('[data-carousel-previous]').addEventListener('click', () => selectChapter(activeIndex - 1));
+    document.querySelector('[data-carousel-next]').addEventListener('click', () => selectChapter(activeIndex + 1));
+    document.querySelector('[data-close-learning]').addEventListener('click', () => { learning.hidden = true; });
+    dots.forEach((dot, index) => dot.addEventListener('click', () => selectChapter(index)));
+    document.querySelectorAll('[data-open-learning]').forEach((button, index) => {
+        button.addEventListener('click', () => {
+            selectChapter(index);
+            learning.hidden = false;
+        });
+    });
+    document.querySelectorAll('[data-detail-chapter]').forEach((button, index) => {
+        button.addEventListener('click', () => {
+            const chapter = panels[index];
+            openDialog(chapter.dataset.title, chapter.dataset.story);
+            dialogContent.append(chapter.querySelector('.chapter-learning__topics').cloneNode(true));
+            dialogContent.append(chapter.querySelector('.chapter-learning__result').cloneNode(true));
+        });
+    });
 
     tabs.forEach((tab, index) => {
         tab.addEventListener('click', () => selectChapter(index));
         tab.addEventListener('keydown', (event) => {
             let nextIndex;
-
-            if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
-                nextIndex = (index + 1) % tabs.length;
-            } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
-                nextIndex = (index - 1 + tabs.length) % tabs.length;
-            } else if (event.key === 'Home') {
-                nextIndex = 0;
-            } else if (event.key === 'End') {
-                nextIndex = tabs.length - 1;
-            } else {
-                return;
-            }
-
+            if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = index + 1;
+            else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextIndex = index - 1;
+            else if (event.key === 'Home') nextIndex = 0;
+            else if (event.key === 'End') nextIndex = tabs.length - 1;
+            else return;
             event.preventDefault();
             selectChapter(nextIndex, true);
         });
     });
 
     const initialIndex = tabs.findIndex((tab) => window.location.hash === '#chapter-' + tab.dataset.chapter);
-    if (initialIndex > 0) selectChapter(initialIndex);
+    selectChapter(initialIndex > 0 ? initialIndex : 0);
 })();

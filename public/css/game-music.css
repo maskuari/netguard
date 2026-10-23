@@ -14,6 +14,10 @@
 .music-setting[aria-checked="false"] .music-setting__switch { border-color: #a6b4c9; background: #b7c3d5; }
 .music-setting[aria-checked="false"] .music-setting__switch::after { transform: translateX(0); }
 .music-setting:focus-visible { outline: 3px solid #006aff; outline-offset: 3px; }
+.music-track { margin-top: 11px; }
+.music-track__label { display: grid; gap: 6px; color: #354a71; font-size: 12px; font-weight: 800; }
+.music-track__select { width: 100%; min-height: 39px; padding: 7px 10px; border: 1px solid #c9ddf3; border-radius: 10px; outline: none; background: #fff; color: #163c70; font: inherit; font-size: 12px; cursor: pointer; }
+.music-track__select:focus-visible { border-color: #1679f8; outline: 3px solid #006aff33; }
 .music-volume { padding: 12px 2px 2px; }
 .music-volume__label { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #354a71; font-size: 12px; font-weight: 800; }
 .music-volume__label output { color: #0066f5; font-variant-numeric: tabular-nums; }

@@ -4,7 +4,7 @@
         [
             'number' => '01',
             'image' => 'chapter-island-01.webp',
-            'detail_image' => 'CHP1.png',
+            'detail_image' => 'adventure-chapter-01-cartoon.png',
             'short' => 'Perangkat & Router',
             'title' => 'Perangkat dan Konfigurasi Awal Router',
             'summary' => 'Mulai dari alat, kabel, dan koneksi pertama.',
@@ -18,7 +18,7 @@
         [
             'number' => '02',
             'image' => 'chapter-island-02.webp',
-            'detail_image' => 'CHP2.png',
+            'detail_image' => 'adventure-chapter-02-cartoon.png',
             'short' => 'IP, VLAN & DHCP',
             'title' => 'Pengalamatan IP, VLAN dan DHCP',
             'summary' => 'Bagi jaringan dan sambungkan setiap klien.',
@@ -32,7 +32,7 @@
         [
             'number' => '03',
             'image' => 'chapter-island-03.webp',
-            'detail_image' => 'CHP3.png',
+            'detail_image' => 'adventure-chapter-03-cartoon.png',
             'short' => 'Akses Internet',
             'title' => 'Akses Internet melalui Router',
             'summary' => 'Buka jalur dari jaringan lokal ke internet.',
@@ -46,7 +46,7 @@
         [
             'number' => '04',
             'image' => 'chapter-island-04.webp',
-            'detail_image' => 'CHP4.png',
+            'detail_image' => 'adventure-chapter-04-cartoon.png',
             'short' => 'WiFi & HotSpot',
             'title' => 'WiFi, HotSpot dan Pengelolaan Pengguna',
             'summary' => 'Sediakan akses nirkabel yang terkelola.',
@@ -60,7 +60,7 @@
         [
             'number' => '05',
             'image' => 'chapter-island-05.webp',
-            'detail_image' => 'CHP5.png',
+            'detail_image' => 'adventure-chapter-05-cartoon.png',
             'short' => 'VLAN Switch',
             'title' => 'VLAN Switch dan Integrasi Jaringan',
             'summary' => 'Satukan semua bagian jaringan sekolah.',
@@ -83,7 +83,7 @@
         <meta name="description" content="Pilih satu dari lima chapter Adventure Mode NetGuard Academy.">
         <title>Adventure Mode — NetGuard Academy</title>
         <link rel="icon" type="image/png" href="{{ asset('images/logo/logo.png') }}">
-        <link rel="preload" as="image" href="{{ asset('images/background/adventure-map-v2.webp') }}" fetchpriority="high">
+        <link rel="preload" as="image" href="{{ asset('images/background/home.png') }}" fetchpriority="high">
         <link rel="stylesheet" href="{{ asset('css/welcome.css') }}?v={{ filemtime(public_path('css/welcome.css')) }}">
         <link rel="stylesheet" href="{{ asset('css/academy-navbar.css') }}?v={{ filemtime(public_path('css/academy-navbar.css')) }}">
         <link rel="stylesheet" href="{{ asset('css/adventure.css') }}?v={{ filemtime(public_path('css/adventure.css')) }}">
@@ -117,7 +117,7 @@
 
         <div class="academy-scene adventure-scene">
             <div class="classroom adventure-background" aria-hidden="true">
-                <img class="classroom__image" src="{{ asset('images/background/adventure-map-v2.webp') }}" alt="" fetchpriority="high" decoding="async">
+                <img class="classroom__image" src="{{ asset('images/background/home.png') }}" alt="" fetchpriority="high" decoding="async">
             </div>
             @include('game-navbar', ['page' => 'adventure'])
 
@@ -126,68 +126,49 @@
                     <p class="adventure-chapter-notice" role="status">{{ session('chapter_notice') }}</p>
                 @endif
                 <header class="adventure-intro">
-                    <div class="adventure-intro__copy">
-                        <p class="adventure-kicker"><svg class="icon" aria-hidden="true"><use href="#chapter-gamepad"/></svg> ADVENTURE MODE</p>
-                        <h1>Pilih chapter <span>petualanganmu</span></h1>
-                        <p>Bangun jaringan sekolah selangkah demi selangkah. Pilih chapter untuk melihat tantangan dan materi yang akan kamu pelajari.</p>
-                    </div>
-                    <p class="adventure-intro__sticker" aria-hidden="true">Jelajahi<br><span>Dunia Jaringan</span><br>MikroTik!</p>
+                    <h1>Petualangan MikroTik</h1>
+                    <p>Selesaikan setiap chapter untuk menjadi ahli jaringan MikroTik!</p>
                 </header>
 
                 <section class="chapter-section" aria-label="Pilih chapter Adventure Mode">
+                    <button class="chapter-arrow chapter-arrow--previous" type="button" data-carousel-previous aria-label="Chapter sebelumnya"><svg class="icon" aria-hidden="true"><use href="#chapter-chevron"/></svg></button>
                     <div class="chapter-track" role="tablist" aria-label="Lima chapter Adventure Mode">
-                        <svg class="chapter-route" viewBox="0 0 1600 140" preserveAspectRatio="none" aria-hidden="true"><path d="M60 50 C160 140 270 30 360 90 S590 145 680 75 S900 150 1000 85 S1210 145 1320 80 S1490 105 1550 58"/></svg>
                         @foreach ($chapters as $chapter)
-                            <button class="chapter-card{{ $loop->first ? ' is-selected' : '' }}" type="button" role="tab" id="chapter-tab-{{ $chapter['number'] }}" aria-controls="chapter-panel-{{ $chapter['number'] }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}" tabindex="{{ $loop->first ? '0' : '-1' }}" data-chapter="{{ $chapter['number'] }}">
-                                <img class="chapter-card__island" src="{{ asset('images/asset/'.$chapter['image']) }}" alt="" width="700" height="525" decoding="async" draggable="false">
-                                <span class="chapter-card__badge">CHAPTER {{ $chapter['number'] }}</span>
-                                <span class="chapter-card__icon"><svg class="icon" aria-hidden="true"><use href="#{{ $chapter['icon'] }}"/></svg></span>
-                                <span class="chapter-card__title">{{ $chapter['short'] }}</span>
-                                <span class="chapter-card__summary">{{ $chapter['summary'] }}</span>
-                                <span class="chapter-card__status">@if ($loop->first)<span class="chapter-card__mission">{{ $user->completedAdventureChapters() >= 1 ? '5 / 5 misi' : '0 / 5 misi' }}<span class="chapter-card__bar{{ $user->completedAdventureChapters() >= 1 ? ' is-complete' : '' }}"></span></span>@elseif ($user->completedAdventureChapters() >= $loop->iteration)<span class="chapter-card__mission">5 / 5 misi<span class="chapter-card__bar is-complete"></span></span>@else<span class="chapter-card__mission">Chapter terbuka</span>@endif</span>
-                                <span class="chapter-card__marker" aria-hidden="true">{{ $loop->iteration }}</span>
-                            </button>
+                            <article class="chapter-card{{ $loop->first ? ' is-selected' : '' }}" data-chapter-card="{{ $chapter['number'] }}">
+                                <button class="chapter-card__select" type="button" role="tab" id="chapter-tab-{{ $chapter['number'] }}" aria-controls="chapter-panel-{{ $chapter['number'] }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}" tabindex="{{ $loop->first ? '0' : '-1' }}" data-chapter="{{ $chapter['number'] }}" aria-label="Pilih Chapter {{ $chapter['number'] }}: {{ $chapter['short'] }}">
+                                    <span class="chapter-card__visual"><img src="{{ asset('images/asset/'.$chapter['detail_image']) }}" alt="" width="1254" height="1254" decoding="async" draggable="false"></span>
+                                    <span class="chapter-card__badge">CHAPTER {{ $chapter['number'] }}</span>
+                                    <span class="chapter-card__content"><strong>{{ $chapter['short'] }}</strong><span>{{ $chapter['summary'] }}</span><span class="chapter-card__progress" aria-hidden="true"><span></span></span></span>
+                                </button>
+                                <button class="chapter-card__info" type="button" data-open-learning aria-label="Lihat yang akan dipelajari di Chapter {{ $chapter['number'] }}"><svg class="icon" aria-hidden="true"><use href="#chapter-book"/></svg></button>
+                                <div class="chapter-card__action">
+                                    @if ($loop->first)
+                                        <a href="{{ route('chapter.one') }}" data-page-link="chapter-one"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg>{{ $user->completedAdventureChapters() >= 1 ? 'Main Lagi Chapter' : 'Mulai Chapter' }}</a>
+                                    @elseif ($loop->iteration === 2)
+                                        <a href="{{ route('chapter.two') }}" data-page-link="chapter-two"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg>{{ $user->completedAdventureChapters() >= 2 ? 'Main Lagi Chapter' : 'Mulai Chapter' }}</a>
+                                    @else
+                                        <button type="button" data-start-chapter="{{ $chapter['number'] }}"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg>Mulai Chapter</button>
+                                    @endif
+                                </div>
+                            </article>
                         @endforeach
                     </div>
+                    <button class="chapter-arrow chapter-arrow--next" type="button" data-carousel-next aria-label="Chapter berikutnya"><svg class="icon" aria-hidden="true"><use href="#chapter-chevron"/></svg></button>
+                    <aside class="chapter-learning" id="chapter-learning" aria-label="Yang akan dipelajari">
+                        <div class="chapter-learning__heading"><span class="chapter-learning__symbol"><svg class="icon" aria-hidden="true"><use href="#chapter-book"/></svg></span><h2>Yang akan dipelajari</h2><button type="button" data-close-learning aria-label="Tutup yang akan dipelajari"><svg class="icon" aria-hidden="true"><use href="#chapter-close"/></svg></button></div>
+                        @foreach ($chapters as $chapter)
+                            <div class="chapter-panel" role="tabpanel" data-title="{{ $chapter['title'] }}" data-story="{{ $chapter['story'] }}" id="chapter-panel-{{ $chapter['number'] }}" aria-labelledby="chapter-tab-{{ $chapter['number'] }}" @if (! $loop->first) hidden @endif>
+                                <ul class="chapter-learning__topics">@foreach ($chapter['topics'] as $topic)<li><svg class="icon" aria-hidden="true"><use href="#chapter-check"/></svg><span>{{ $topic }}</span></li>@endforeach</ul>
+                                <h3><svg class="icon" aria-hidden="true"><use href="#chapter-flag"/></svg> Target Akhir</h3>
+                                <p class="chapter-learning__result"><strong>{{ $chapter['result'] }}</strong><span>{{ $chapter['outcome'] }}</span></p>
+                                <button class="chapter-learning__detail" type="button" data-detail-chapter="{{ $chapter['number'] }}"><svg class="icon" aria-hidden="true"><use href="#chapter-book"/></svg>Lihat Detail Materi<svg class="icon" aria-hidden="true"><use href="#chapter-chevron"/></svg></button>
+                            </div>
+                        @endforeach
+                    </aside>
                 </section>
-
-                <div class="chapter-panels">
-                    @foreach ($chapters as $chapter)
-                        <section class="chapter-panel" role="tabpanel" id="chapter-panel-{{ $chapter['number'] }}" aria-labelledby="chapter-tab-{{ $chapter['number'] }}" tabindex="0" @if (! $loop->first) hidden @endif>
-                            <div class="chapter-panel__picture"><img src="{{ asset('images/asset/'.$chapter['detail_image']) }}" alt="Ilustrasi {{ $chapter['short'] }}" width="1254" height="1254" decoding="async"></div>
-                            <div class="chapter-panel__story">
-                                <span class="chapter-panel__label">CHAPTER {{ $chapter['number'] }} / 05</span>
-                                <h2>{{ $chapter['title'] }}</h2>
-                                <p>{{ $chapter['story'] }}</p>
-                                <div class="chapter-panel__tags">@foreach ($chapter['tags'] as $tag)<span>{{ $tag }}</span>@endforeach</div>
-                            </div>
-                            <div class="chapter-panel__learning">
-                                <div class="chapter-panel__topics">
-                                    <h3><svg class="icon" aria-hidden="true"><use href="#chapter-book"/></svg> Yang akan dipelajari</h3>
-                                    <ul>@foreach ($chapter['topics'] as $topic)<li><svg class="icon" aria-hidden="true"><use href="#chapter-check"/></svg><span>{{ $topic }}</span></li>@endforeach</ul>
-                                </div>
-                                <div class="chapter-panel__outcome">
-                                    <h3><svg class="icon" aria-hidden="true"><use href="#chapter-flag"/></svg> Target Akhir</h3>
-                                    <div class="chapter-panel__result"><strong>{{ $chapter['result'] }}</strong><span>{{ $chapter['outcome'] }}</span></div>
-                                </div>
-                            </div>
-                            @if ($loop->first)
-                                <div class="chapter-panel__actions">
-                                    <button class="chapter-panel__reset" type="button" data-reset-chapter-one data-reset-url="{{ route('chapter.one.reset') }}" data-progress-key="netguard.chapter-one.v1.{{ $user->id }}">Reset Progres</button>
-                                    <a class="chapter-panel__start" href="{{ route('chapter.one') }}" data-page-link="chapter-one"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg><span>{{ $user->completedAdventureChapters() >= 1 ? 'Main Lagi Chapter 01' : 'Mulai Chapter 01' }}</span><svg class="icon" aria-hidden="true"><use href="#chapter-chevron"/></svg></a>
-                                </div>
-                            @elseif ($loop->iteration === 2)
-                                <a class="chapter-panel__start" href="{{ route('chapter.two') }}" data-page-link="chapter-two"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg><span>{{ $user->completedAdventureChapters() >= 2 ? 'Main Lagi Chapter 02' : 'Mulai Chapter 02' }}</span><svg class="icon" aria-hidden="true"><use href="#chapter-chevron"/></svg></a>
-                            @else
-                                <button class="chapter-panel__start" type="button" data-start-chapter="{{ $chapter['number'] }}"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg><span>Mulai Chapter {{ $chapter['number'] }}</span><svg class="icon" aria-hidden="true"><use href="#chapter-chevron"/></svg></button>
-                            @endif
-                        </section>
-                    @endforeach
-                </div>
-                <footer class="adventure-footer">
-                    <a href="{{ route('homepage') }}" data-page-link="homepage"><svg class="icon" aria-hidden="true"><use href="#chapter-arrow"/></svg> Kembali ke Beranda</a>
-                    <span>NetGuard Academy · MikroTik Mission · © {{ date('Y') }}</span>
-                </footer>
+                <div class="chapter-dots" aria-label="Navigasi chapter">@foreach ($chapters as $chapter)<button class="chapter-dot{{ $loop->first ? ' is-selected' : '' }}" type="button" data-chapter-dot="{{ $chapter['number'] }}" aria-label="Pilih Chapter {{ $chapter['number'] }}" aria-current="{{ $loop->first ? 'true' : 'false' }}"></button>@endforeach</div>
+                <button class="chapter-reset" type="button" data-reset-chapter-one data-reset-url="{{ route('chapter.one.reset') }}" data-progress-key="netguard.chapter-one.v1.{{ $user->id }}">Reset Progres</button>
+                <span class="adventure-watermark">NetGuard Academy · MikroTik Mission · © {{ date('Y') }}</span>
             </main>
             <div class="adventure-loading" role="status" aria-live="polite" hidden><img src="{{ asset('images/asset/netguard_mikrotik_infinity_loader.svg') }}" alt="" width="320" height="320"><span>Keluar dari akun...</span></div>
         </div>
@@ -200,7 +181,7 @@
         @include('game-materials', ['id' => 'adventure-info-materials', 'isWelcome' => false, 'isAdventure' => true])
         <template id="adventure-info-about"><div class="about-note"><span class="note-number">01 — MISIMU DIMULAI DI SINI</span><p>Jelajahi lima chapter, kenali perangkat jaringan, dan siapkan konfigurasi MikroTik selangkah demi selangkah.</p></div></template>
         <template id="adventure-info-resources"><ol class="resource-list"><li><span>01</span><div><h3>Dasar Jaringan</h3><p>Kenali perangkat, kabel, alamat IP dan topologi jaringan.</p></div></li><li><span>02</span><div><h3>Konfigurasi MikroTik</h3><p>Pelajari WinBox, DHCP, koneksi internet, HotSpot, dan VLAN.</p></div></li></ol></template>
-        <template id="adventure-info-help"><div class="help-list"><details open><summary>Bagaimana memilih chapter?</summary><p>Pilih salah satu pulau atau kartu chapter. Detailnya muncul di bagian bawah.</p></details><details><summary>Apakah misi bisa dimainkan?</summary><p>Chapter 1 bisa dimainkan. Setelah menyelesaikannya, Chapter 2 akan terbuka.</p></details></div></template>
+        <template id="adventure-info-help"><div class="help-list"><details open><summary>Bagaimana memilih chapter?</summary><p>Gunakan tombol panah atau pilih kartu chapter. Tekan ikon buku untuk melihat tujuan belajarnya.</p></details><details><summary>Apakah misi bisa dimainkan?</summary><p>Chapter 1 bisa dimainkan. Setelah menyelesaikannya, Chapter 2 akan terbuka.</p></details></div></template>
         @include('game-music-player')
     </body>
 </html>

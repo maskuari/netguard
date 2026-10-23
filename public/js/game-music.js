@@ -5,16 +5,21 @@
     if (!audio || window.NetGuardMusic) return;
 
     const controls = [...document.querySelectorAll('[data-music-toggle]')];
+    const trackControls = [...document.querySelectorAll('[data-music-track]')];
     const volumeControls = [...document.querySelectorAll('[data-music-volume]')];
     const volumeOutputs = [...document.querySelectorAll('[data-music-volume-output]')];
     const feedback = [...document.querySelectorAll('[data-music-feedback]')];
     const userId = audio.dataset.userId || 'user';
     const preferenceKey = `netguard:music:${userId}:enabled`;
+    const trackKey = `netguard:music:${userId}:track`;
     const volumeKey = `netguard:music:${userId}:volume`;
     const positionKey = `netguard:music:${userId}:position`;
     const defaultVolume = 70;
+    const defaultTrack = audio.dataset.defaultTrack || 'Managed_Flow';
+    const trackSources = new Map([...(trackControls[0]?.options ?? [])].map((option) => [option.value, option.dataset.trackSource]));
     let enabled = true;
     let volume = defaultVolume;
+    let track = defaultTrack;
     let waitingForGesture = false;
     let unavailable = false;
     let pagePaused = false;
@@ -42,6 +47,8 @@
     };
 
     enabled = readStorage('localStorage', preferenceKey) !== 'off';
+    const storedTrack = readStorage('localStorage', trackKey);
+    if (trackSources.has(storedTrack)) track = storedTrack;
     const storedVolume = readStorage('localStorage', volumeKey);
     if (storedVolume !== null && storedVolume.trim() !== '') {
         const parsedVolume = Number(storedVolume);
@@ -49,6 +56,12 @@
     }
     const storedPosition = Number(readStorage('sessionStorage', positionKey));
     if (Number.isFinite(storedPosition) && storedPosition > 0) previousPosition = storedPosition;
+
+    const initialTrackSource = trackSources.get(track);
+    if (initialTrackSource && audio.getAttribute('src') !== initialTrackSource) {
+        audio.src = initialTrackSource;
+        audio.load();
+    }
 
     audio.volume = volume / 100;
     audio.loop = true;
@@ -62,6 +75,8 @@
             const state = control.querySelector('[data-music-state]');
             if (state) state.textContent = enabled ? 'Nyala' : 'Mati';
         });
+
+        trackControls.forEach((control) => { control.value = track; });
 
         const message = !enabled ? '' : unavailable
             ? 'Musik belum bisa diputar.'
@@ -89,6 +104,27 @@
             output.value = `${volume}%`;
             output.textContent = `${volume}%`;
         });
+    };
+
+    const setTrack = (value, persist = true) => {
+        if (!trackSources.has(value)) return;
+        if (value === track) {
+            trackControls.forEach((control) => { control.value = track; });
+            return;
+        }
+
+        pausePlayback();
+        track = value;
+        previousPosition = 0;
+        restoredPosition = true;
+        unavailable = false;
+        waitingForGesture = false;
+        writeStorage('sessionStorage', positionKey, '0');
+        if (persist) writeStorage('localStorage', trackKey, track);
+        audio.src = trackSources.get(track);
+        audio.load();
+        updateControls();
+        resumePlayback();
     };
 
     const restorePosition = () => {
@@ -189,6 +225,10 @@
         control.addEventListener('input', () => setVolume(control.value));
     });
 
+    trackControls.forEach((control) => {
+        control.addEventListener('change', () => setTrack(control.value));
+    });
+
     const resumeFromGesture = (event) => {
         if (!event.isTrusted || !waitingForGesture) return;
         if (event.target.closest?.('[data-music-toggle], [data-logout]')) return;
@@ -232,6 +272,7 @@
         pagePaused = false;
         const preference = readStorage('localStorage', preferenceKey);
         if (preference !== null) enabled = preference !== 'off';
+        setTrack(readStorage('localStorage', trackKey) ?? defaultTrack, false);
         const restoredVolume = readStorage('localStorage', volumeKey);
         if (restoredVolume !== null) setVolume(restoredVolume, false);
         audio.muted = !enabled || suspended;
@@ -243,6 +284,9 @@
         if (event.key === preferenceKey || event.key === null) {
             setEnabled(readStorage('localStorage', preferenceKey) !== 'off', false);
         }
+        if (event.key === trackKey || event.key === null) {
+            setTrack(readStorage('localStorage', trackKey) ?? defaultTrack, false);
+        }
         if (event.key === volumeKey || event.key === null) {
             setVolume(readStorage('localStorage', volumeKey) ?? defaultVolume, false);
         }
@@ -250,7 +294,9 @@
 
     window.NetGuardMusic = Object.freeze({
         isEnabled: () => enabled,
+        getTrack: () => track,
         setEnabled,
+        setTrack,
         getVolume: () => volume,
         setVolume,
         toggle: () => setEnabled(!enabled),

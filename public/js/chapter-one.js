@@ -6,11 +6,11 @@
 
     const stageInfo = {
         story: { mission: 0, label: 'MISI 01 / 05', title: 'Jaringan sekolah menunggu bantuanmu', subtitle: 'Dengarkan tugas dari Pak Amat sebelum masuk ke lab.', teacher: 'Sekolah kita membutuhkan jaringan yang rapi. Hari ini kamu jadi Junior Network Engineer!', pose: 'menugaskan', section: '§1.1–1.2', guide: ['Dengarkan cerita sekolah.', 'Kenali masalah jaringan di lab.', 'Terima tugas dari Pak Amat.'] },
-        devices: { mission: 0, label: 'MISI 01 / 05', title: 'Kenali perangkat dan alat', subtitle: 'Sentuh setiap alat untuk memahami fungsinya.', teacher: 'Nama alat dan fungsinya harus kamu pahami sebelum merakit jaringan. Klik satu per satu, ya!', pose: 'ngasih_arahan', section: '§1.3–1.4', guide: ['Kenali hAP dan hEX.', 'Periksa PC, kabel UTP, dan RJ45.', 'Pelajari tang crimping dan LAN tester.'] },
+        devices: { mission: 0, label: 'MISI 01 / 05', title: 'Kenali perangkat dan alat', subtitle: 'Ketuk setiap alat, lalu pahami fungsi dan kegunaannya.', teacher: 'Nama alat dan fungsinya harus kamu pahami sebelum merakit jaringan. Klik satu per satu, ya!', pose: 'ngasih_arahan', section: '§1.3–1.4', guide: ['Ketuk kartu alat untuk melihat detailnya.', 'Baca fungsi dan kegunaan alat.', 'Kenali ketujuh alat sampai semua bertanda centang.'] },
         lesson: { mission: 1, label: 'MATERI 02 / 05', title: 'Pahami kabel straight dan T568B', subtitle: 'Pelajari konsep dan urutan warna sebelum mulai merakit.', teacher: 'Kabel straight memakai susunan pin yang sama pada kedua ujung. Pelajari urutan T568B sebelum menyiapkan kabel.', pose: 'ngasih_arahan', section: '§1.5', guide: ['Pahami arti kabel straight.', 'Hafalkan urutan warna T568B.', 'Gunakan susunan yang sama di kedua ujung.'] },
-        prep: { mission: 1, label: 'MISI 02 / 05', title: 'Mulai merakit kabel straight', subtitle: 'Siapkan kabel sebelum menyusun delapan inti.', teacher: 'Pertama potong kabel, kupas jaket secukupnya, lalu luruskan delapan inti. Jangan sampai inti rusak.', pose: 'memberitahu', section: '§1.5–1.6', guide: ['Potong kabel sesuai kebutuhan.', 'Kupas jaket luar.', 'Urai dan luruskan inti.'] },
-        wiring: { mission: 1, label: 'MISI 02 / 05', title: 'Susun delapan warna T568B', subtitle: 'Isi pin 1–8 pada Ujung A dan Ujung B.', teacher: 'Kabel straight memakai urutan yang sama pada kedua ujung. Perhatikan petunjuk T568B di atas slot.', pose: 'ngasih_arahan', section: '§1.5–1.6', guide: ['Susun warna pin 1–8 di Ujung A.', 'Ulangi urutan yang sama di Ujung B.', 'Periksa sebelum memasang RJ45.'] },
-        terminate: { mission: 1, label: 'MISI 02 / 05', title: 'Pasang RJ45 dan crimp kedua ujung', subtitle: 'Potong rata, masukkan semua inti, lalu tekan tang crimping.', teacher: 'Pastikan semua inti mencapai ujung konektor. Setelah itu tekan tang sampai pin dan pengunci jaket terpasang.', pose: 'memberitahu', section: '§1.6', guide: ['Rapikan dan potong ujung rata.', 'Masukkan semua inti ke RJ45.', 'Crimp Ujung A, lalu ulangi pada Ujung B.'] },
+        prep: { mission: 1, label: 'MISI 02 / 05', title: 'Mulai merakit kabel straight', subtitle: 'Siapkan kabel sebelum menyusun delapan inti.', teacher: 'Pertama potong kabel, kupas jaket memakai bilah pada tang crimping, lalu luruskan delapan inti. Jangan sampai inti rusak.', pose: 'memberitahu', section: '§1.5–1.6', guide: ['Potong kabel sesuai kebutuhan.', 'Kupas jaket dengan bilah tang crimping.', 'Urai dan luruskan inti tanpa mengurutkannya.'] },
+        wiring: { mission: 1, label: 'MISI 02 / 05', title: 'Susun delapan warna T568B', subtitle: 'Isi pin 1–8 pada Ujung A dan Ujung B.', teacher: 'Coba ingat urutan T568B dan susun sendiri delapan inti dari pin 1 sampai 8. Jika ada warna tertukar, kabel bisa gagal menghubungkan perangkat saat diuji.', pose: 'ngasih_arahan', section: '§1.5–1.6', guide: ['Susun sendiri delapan warna dari pin 1 sampai 8 pada Ujung A.', 'Ketuk satu warna sekali; otomatis masuk ke pin kosong berikutnya. Tidak perlu klik dua kali.', 'Atau seret warna ke pin tertentu pada gambar konektor.', 'Salah? Ketuk pin yang terisi untuk melepas, atau tekan Batalkan terakhir.', 'Tekan Periksa, lalu susun Ujung B dengan urutan yang sama. Jika tertukar, kabel bisa gagal terhubung.'] },
+        terminate: { mission: 1, label: 'MISI 02 / 05', title: 'Pasang RJ45 dan crimp kedua ujung', subtitle: 'Potong rata, masukkan semua inti, lalu tekan tang crimping.', teacher: 'Ratakan inti memakai bilah bagian dalam tang. Masukkan inti dan jaket kabel ke RJ45. Setelah itu, masukkan konektor ke lubang 8P di kepala tang lalu tekan kedua gagangnya.', pose: 'memberitahu', section: '§1.6', guide: ['Perhatikan animasi foto, lalu ketuk tombol Potong rata delapan inti. Bilah pemotong berada di bagian dalam tang, dekat gagang.', 'Ketuk Masukkan ke konektor RJ45. Delapan inti harus sampai ke ujung konektor dan jaket kabel ikut masuk.', 'Ketuk Crimp konektor RJ45. Konektor masuk penuh ke lubang 8P di kepala tang, lalu kedua gagang ditekan. Ulangi tiga langkah pada Ujung B.'] },
         tester: { mission: 1, label: 'MISI 02 / 05', title: 'Uji hasil dengan LAN tester', subtitle: 'MAIN dan REMOTE harus menyala 1–8 dengan urutan sama.', teacher: 'Jangan gunakan kabel sebelum lulus uji. Jika ada lampu mati, periksa atau crimp ulang konektornya.', pose: 'ngasih_arahan', section: '§1.7', guide: ['Hubungkan kedua ujung ke tester.', 'Nyalakan tester.', 'Bandingkan urutan lampu 1–8.'] },
         topology: { mission: 2, label: 'MISI 03 / 05', title: 'Pasang topologi awal sekolah', subtitle: 'Tentukan jalur internet, hEX, dan PC pada port hAP.', teacher: 'Modul menetapkan Internet di port 1, hEX di port 2 sebagai jalur trunk, dan PC konfigurasi di port 3.', pose: 'ngasih_arahan', section: '§1.9', guide: ['ether1 → Internet / ISP.', 'ether2 → port 1 hEX.', 'ether3 → PC konfigurasi.'] },
         pc: { mission: 3, label: 'MISI 04 / 05', title: 'Masuk ke PC lab', subtitle: 'Nyalakan komputer, tunggu desktop, lalu buka WinBox.', teacher: 'Koneksi fisik sudah siap. Sekarang nyalakan PC dan buka WinBox seperti saat praktik di lab.', pose: 'bicara_santai', section: '§1.10', guide: ['Tekan tombol daya PC.', 'Tunggu sistem siap.', 'Buka WinBox dari desktop.'] },
@@ -101,6 +101,7 @@
     let prepStep = 0;
     let wireEnd = 0;
     const wirePlacements = [Array(8).fill(null), Array(8).fill(null)];
+    const wireHistory = [[], []];
     let terminateEnd = 0;
     let terminateStep = 0;
     let testerMain = false;
@@ -168,8 +169,12 @@
         document.querySelector('.lab-board').dataset.currentStage = stage;
         const isSimulatorStage = ['pc', 'winbox', 'config'].includes(stage);
         scene.classList.toggle('is-simulator-stage', isSimulatorStage);
+        scene.classList.toggle('is-wiring-stage', stage === 'wiring');
         const labLayout = document.querySelector('.lab-layout');
         labLayout.classList.toggle('is-simulator', isSimulatorStage);
+        labLayout.classList.toggle('is-device-stage', stage === 'devices');
+        document.querySelector('[data-device-panel]').hidden = stage !== 'devices';
+        document.querySelector('[data-lesson-next]').hidden = stage !== 'lesson';
         document.querySelector('[data-simulator-topology]').hidden = !isSimulatorStage;
         document.querySelector('[data-simulator-bottom]').hidden = !isSimulatorStage;
         if (isSimulatorStage) {
@@ -214,12 +219,11 @@
                 button.classList.toggle('is-done', index < prepStep);
                 button.disabled = index < prepStep;
             });
-            document.querySelectorAll('[data-prep-step]').forEach((step, index) => step.classList.toggle('is-done', index < prepStep));
             const prepWorkbench = document.querySelector('[data-prep-workbench]');
-            const prepPhase = ['coil', 'cut', 'stripped', 'sorted'][prepStep];
+            const prepPhase = ['coil', 'cut', 'stripped', 'straight'][prepStep];
             prepWorkbench.dataset.phase = prepPhase;
-            const prepTitles = ['Kabel masih tergulung', 'Kabel dipotong sesuai kebutuhan', 'Alat kupas membuka jaket luar', 'Delapan inti sudah lurus dan siap disusun'];
-            const prepNotes = ['Potong kabel sesuai panjang yang dibutuhkan.', 'Panjang kabel sudah siap. Berikutnya kupas jaket luar secukupnya.', 'Jaket terbuka tanpa melukai delapan inti kabel.', 'Lanjutkan ke puzzle warna T568B.'];
+            const prepTitles = ['Kabel masih tergulung', 'Kabel dipotong sesuai kebutuhan', 'Empat pasang inti masih terpilin rapi', 'Delapan inti lurus, belum berurutan'];
+            const prepNotes = ['Potong kabel sesuai panjang yang dibutuhkan.', 'Berikutnya kupas jaket luar memakai bilah pada tang crimping.', 'Jaket terbuka tanpa melukai inti. Berikutnya urai dan luruskan.', 'Sekarang susun urutan warnanya pada puzzle T568B.'];
             prepWorkbench.querySelector('[data-prep-visual-title]').textContent = prepTitles[prepStep];
             prepWorkbench.querySelector('[data-prep-visual-note]').textContent = prepNotes[prepStep];
             if (prepStep === 3) showContinue('wiring', 'Lanjut ke susun warna →');
@@ -271,7 +275,32 @@
     });
     document.querySelector('[data-lesson-next]').addEventListener('click', () => {
         openDialogue([
-            { speaker: 'teacher', text: 'Bagus. Sekarang praktik: potong kabel sesuai kebutuhan, kupas jaket luar secukupnya, lalu uraikan dan luruskan delapan inti. Setelah siap, susun T568B yang sama pada Ujung A dan Ujung B.' },
+            { speaker: 'teacher', text: 'Sebelum praktik, Bapak ingin memastikan kamu paham kabel straight. Jawab dua pertanyaan singkat ini, ya.' },
+            {
+                speaker: 'teacher',
+                text: 'Apa ciri utama susunan kabel straight?',
+                options: [
+                    { label: 'Urutan warna di kedua ujung sama', correct: true },
+                    { label: 'Urutan warna di kedua ujung berbeda' },
+                    { label: 'Warna kabel boleh dipasang acak' },
+                ],
+                correctFeedback: 'Benar! Setiap pin terhubung ke nomor pin yang sama.',
+                incorrectFeedback: 'Coba ingat: kabel straight memakai susunan warna yang sama di Ujung A dan B.',
+            },
+            { speaker: 'teacher', text: 'Bagus, kamu sudah memahami konsepnya. Sekarang perhatikan urutan T568B.' },
+            {
+                speaker: 'teacher',
+                text: 'Pada susunan T568B, inti warna apa yang berada di pin 1?',
+                options: [
+                    { label: 'Putih-Oranye', correct: true },
+                    { label: 'Oranye' },
+                    { label: 'Putih-Hijau' },
+                ],
+                correctFeedback: 'Tepat! Pin 1 adalah Putih-Oranye pada kedua ujung.',
+                incorrectFeedback: 'Lihat lagi urutan dari atas ke bawah: pin 1 adalah Putih-Oranye.',
+            },
+            { speaker: 'teacher', text: 'Hebat! Kamu sudah siap merakit kabel dengan urutan T568B yang sama pada kedua ujung.' },
+            { speaker: 'teacher', text: 'Sekarang potong kabel, kupas jaket luar secukupnya, lalu uraikan dan luruskan delapan inti sebelum menyusun warnanya.' },
         ], () => setStage('prep'));
     });
     document.querySelector('[data-simulator-next]').addEventListener('click', () => continueButton.click());
@@ -281,6 +310,7 @@
     const dialogue = document.querySelector('[data-dialogue]');
     let dialogueTypingTimer = null;
     let isDialogueTyping = false;
+    let dialogueQuizAnswered = true;
     const dialogueText = dialogue.querySelector('[data-dialogue-text]');
     let dialogueEquipment = null;
     const finishDialogueTyping = () => {
@@ -325,7 +355,46 @@
             equipmentImage.removeAttribute('src');
             equipmentImage.alt = '';
         }
-        dialogue.querySelector('[data-dialogue-count]').textContent = (dialogueIndex + 1) + ' / ' + dialogueLines.length + ' · KLIK UNTUK LANJUT';
+        const answerOptions = dialogue.querySelector('[data-dialogue-options]');
+        const answerFeedback = dialogue.querySelector('[data-dialogue-answer-feedback]');
+        const quizNext = dialogue.querySelector('[data-dialogue-quiz-next]');
+        const dialogueCount = dialogue.querySelector('[data-dialogue-count]');
+        answerOptions.replaceChildren();
+        answerOptions.hidden = !line.options;
+        answerFeedback.hidden = true;
+        answerFeedback.textContent = '';
+        quizNext.hidden = true;
+        dialogueQuizAnswered = !line.options;
+        dialogue.classList.toggle('is-quiz', Boolean(line.options));
+        dialogueCount.textContent = (dialogueIndex + 1) + ' / ' + dialogueLines.length + (line.options ? ' · PILIH JAWABAN' : ' · KLIK UNTUK LANJUT');
+        line.options?.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'chapter-dialogue__option';
+            button.textContent = String.fromCharCode(65 + index) + '. ' + option.label;
+            button.addEventListener('click', (event) => {
+                event.stopPropagation();
+                if (dialogueQuizAnswered) return;
+                if (isDialogueTyping) finishDialogueTyping();
+                answerOptions.querySelectorAll('button').forEach((answer) => answer.classList.remove('is-wrong'));
+                answerFeedback.hidden = false;
+                if (!option.correct) {
+                    button.classList.add('is-wrong');
+                    answerFeedback.dataset.kind = 'error';
+                    answerFeedback.textContent = line.incorrectFeedback;
+                    dialogueCount.textContent = (dialogueIndex + 1) + ' / ' + dialogueLines.length + ' · COBA LAGI';
+                    return;
+                }
+                dialogueQuizAnswered = true;
+                button.classList.add('is-correct');
+                answerOptions.querySelectorAll('button').forEach((answer) => { answer.disabled = true; });
+                answerFeedback.dataset.kind = 'success';
+                answerFeedback.textContent = line.correctFeedback;
+                quizNext.hidden = false;
+                dialogueCount.textContent = (dialogueIndex + 1) + ' / ' + dialogueLines.length + ' · KLIK UNTUK LANJUT';
+            });
+            answerOptions.append(button);
+        });
         typeDialogueLine(line.text);
     };
     const openDialogue = (lines, onComplete = null, equipment = null) => {
@@ -350,6 +419,7 @@
             finishDialogueTyping();
             return;
         }
+        if (!dialogueQuizAnswered) return;
         if (++dialogueIndex < dialogueLines.length) {
             renderDialogue();
             return;
@@ -454,6 +524,10 @@
         }
     });
     dialogue.addEventListener('click', advanceDialogue);
+    dialogue.querySelector('[data-dialogue-quiz-next]').addEventListener('click', (event) => {
+        event.stopPropagation();
+        advanceDialogue();
+    });
 
     const visitedDevices = new Set();
     const saveProgress = () => {
@@ -471,6 +545,7 @@
             prepStep,
             wireEnd,
             wirePlacements,
+            wireHistory,
             terminateEnd,
             terminateStep,
             testerMain,
@@ -593,70 +668,89 @@
             const workbench = document.querySelector('[data-prep-workbench]');
             const duration = reducedMotion.matches ? 160 : 1050;
             const phaseByAction = { cut: 'cutting', strip: 'stripping', straighten: 'straightening' };
-            const titleByAction = { cut: ['Kabel dipotong sesuai kebutuhan', 'Panjang kabel sudah siap. Berikutnya kupas jaket luar secukupnya.'], strip: ['Alat kupas membuka jaket luar', 'Jaket terbuka tanpa melukai delapan inti kabel.'], straighten: ['Delapan inti sedang dirapikan', 'Warna inti sudah siap disusun menurut standar T568B.'] };
+            const titleByAction = { cut: ['Kabel dipotong sesuai kebutuhan', 'Berikutnya kupas jaket luar memakai bilah pada tang crimping.'], strip: ['Empat pasang inti masih terpilin rapi', 'Jaket terbuka tanpa melukai inti. Berikutnya urai dan luruskan.'], straighten: ['Delapan inti lurus, belum berurutan', 'Sekarang susun urutan warnanya pada puzzle T568B.'] };
             button.disabled = true;
             workbench.dataset.phase = phaseByAction[button.dataset.prepAction];
-            setFeedback(button.dataset.prepAction === 'cut' ? 'Gunting memotong kabel sesuai panjang yang dibutuhkan...' : button.dataset.prepAction === 'strip' ? 'Stripper bergerak mengupas jaket luar kabel...' : 'Inti kabel diurai, diluruskan, lalu disiapkan untuk puzzle warna...');
+            setFeedback(button.dataset.prepAction === 'cut' ? 'Gunting memotong kabel sesuai panjang yang dibutuhkan...' : button.dataset.prepAction === 'strip' ? 'Bilah pada tang crimping mengupas jaket luar kabel...' : 'Inti kabel diurai dan diluruskan, tetapi belum disusun warnanya...');
             await new Promise((resolve) => window.setTimeout(resolve, duration));
             if (button.dataset.prepAction === 'cut') workbench.dataset.phase = 'cut';
             if (button.dataset.prepAction === 'strip') workbench.dataset.phase = 'stripped';
-            if (button.dataset.prepAction === 'straighten') workbench.dataset.phase = 'sorted';
+            if (button.dataset.prepAction === 'straighten') workbench.dataset.phase = 'straight';
             workbench.querySelector('[data-prep-visual-title]').textContent = titleByAction[button.dataset.prepAction][0];
             workbench.querySelector('[data-prep-visual-note]').textContent = titleByAction[button.dataset.prepAction][1];
             button.classList.add('is-done');
-            document.querySelector('[data-prep-step="' + prepStep + '"]').classList.add('is-done');
             prepStep++;
             setFeedback('Langkah persiapan ' + prepStep + ' dari 3 selesai.', 'success');
-            if (prepStep === 3) window.setTimeout(() => setStage('wiring'), reducedMotion.matches ? 100 : 750);
+            if (prepStep === 3) showContinue('wiring', 'Lanjut ke susun warna →');
         });
     });
 
     const makeSwatch = (colorId) => {
-        const swatch = document.createElement('span');
-        swatch.className = 'wire-swatch wire-swatch--' + colorId;
-        swatch.setAttribute('aria-hidden', 'true');
+        const swatch = document.createElement('img');
+        swatch.className = 'wire-swatch';
+        swatch.src = document.querySelector('[data-stage="wiring"]').dataset.wireAssets + '/t568b-' + colorId + '.svg';
+        swatch.alt = '';
+        swatch.draggable = false;
         return swatch;
+    };
+
+    const makePinWire = (colorId) => {
+        const wire = document.createElement('img');
+        wire.className = 'wire-swatch wire-swatch--pin';
+        wire.src = document.querySelector('[data-stage="wiring"]').dataset.wireAssets + '/t568b-pin-' + colorId + '.svg';
+        wire.alt = '';
+        wire.draggable = false;
+        return wire;
     };
 
     const addWire = (colorId, targetIndex = -1) => {
         const current = wirePlacements[wireEnd];
-        if (current.includes(colorId)) return;
+        if (!colors.some((color) => color.id === colorId) || current.includes(colorId)) return;
         const index = targetIndex >= 0 ? targetIndex : current.indexOf(null);
-        if (index < 0 || current[index] !== null) return;
+        if (index < 0 || index > 7) return;
+        const replacedColor = current[index];
         current[index] = colorId;
+        wireHistory[wireEnd] = wireHistory[wireEnd].filter((position) => position !== index);
+        wireHistory[wireEnd].push(index);
         renderWiring();
-        setFeedback('Pin ' + (index + 1) + ' terisi. Ketuk slot untuk melepas warna.');
+        saveProgress();
+        setFeedback('Pin ' + (index + 1) + (replacedColor ? ' diganti.' : ' terisi.') + ' Ketuk pin untuk melepasnya.');
+    };
+
+    const removeWire = (index) => {
+        const current = wirePlacements[wireEnd];
+        if (!current[index]) return;
+        current[index] = null;
+        wireHistory[wireEnd] = wireHistory[wireEnd].filter((position) => position !== index);
+        renderWiring();
+        saveProgress();
+        setFeedback('Warna di pin ' + (index + 1) + ' dilepas. Pilih warna lain.');
     };
 
     const renderWiring = () => {
         const current = wirePlacements[wireEnd];
         const slots = document.querySelector('[data-wire-slots]');
         const bank = document.querySelector('[data-wire-bank]');
-        const guide = document.querySelector('[data-wire-guide]');
         document.querySelector('[data-wire-end]').textContent = 'Ujung ' + (wireEnd === 0 ? 'A' : 'B');
         document.querySelector('[data-wire-count]').textContent = current.filter(Boolean).length + ' / 8';
+        const nextEmptyPin = current.indexOf(null);
+        document.querySelector('[data-wire-next]').textContent = nextEmptyPin < 0 ? 'Semua pin terisi. Periksa urutannya.' : 'Ketuk warna untuk pin ' + (nextEmptyPin + 1) + '.';
+        document.querySelector('[data-undo-wire]').disabled = !current.some(Boolean);
         slots.replaceChildren();
         bank.replaceChildren();
-        guide.replaceChildren();
 
         colors.forEach((color, index) => {
-            const hint = document.createElement('span');
-            hint.append(makeSwatch(color.id), document.createTextNode((index + 1) + '. ' + color.label));
-            guide.append(hint);
             const slot = document.createElement('button');
             slot.type = 'button';
             slot.className = 'wire-slot' + (current[index] ? ' is-filled' : '');
-            slot.setAttribute('aria-label', 'Pin ' + (index + 1) + ': ' + (current[index] ? colors.find((entry) => entry.id === current[index]).label : 'kosong'));
+            slot.setAttribute('aria-label', 'Pin ' + (index + 1) + ': ' + (current[index] ? colors.find((entry) => entry.id === current[index]).label + '. Ketuk untuk melepas.' : 'kosong. Seret warna ke sini.'));
+            slot.title = current[index] ? 'Ketuk untuk melepas warna dari pin ' + (index + 1) : 'Pin ' + (index + 1) + ' kosong';
             const number = document.createElement('b');
             number.textContent = String(index + 1);
             slot.append(number);
             if (current[index]) {
-                slot.append(makeSwatch(current[index]));
-                slot.addEventListener('click', () => {
-                    current[index] = null;
-                    renderWiring();
-                    saveProgress();
-                });
+                slot.append(makePinWire(current[index]));
+                slot.addEventListener('click', () => removeWire(index));
             }
             slot.addEventListener('dragover', (event) => event.preventDefault());
             slot.addEventListener('drop', (event) => {
@@ -679,6 +773,12 @@
             bank.append(chip);
         });
     };
+
+    document.querySelector('[data-undo-wire]').addEventListener('click', () => {
+        const current = wirePlacements[wireEnd];
+        const lastPosition = wireHistory[wireEnd].at(-1) ?? current.findLastIndex(Boolean);
+        if (lastPosition >= 0) removeWire(lastPosition);
+    });
 
     document.querySelector('[data-check-wire]').addEventListener('click', () => {
         const current = wirePlacements[wireEnd];
@@ -704,9 +804,9 @@
     });
 
     const terminateSteps = [
-        { title: 'Rapikan dan potong rata', description: 'Potong ujung delapan inti agar panjangnya rata sebelum masuk ke konektor RJ45.', action: 'Potong rata delapan inti' },
-        { title: 'Masukkan semua inti ke RJ45', description: 'Pastikan setiap inti tetap berurutan dan mencapai ujung konektor.', action: 'Masukkan ke konektor RJ45' },
-        { title: 'Tekan tang crimping', description: 'Tekan hingga pin menjepit inti dan pengunci jaket terpasang.', action: 'Crimp konektor sekarang' },
+        { title: 'Potong rata ujung kabel', description: 'Pegang delapan inti yang sudah tersusun. Letakkan ujungnya pada bilah bagian dalam tang, dekat gagang, lalu potong agar panjangnya sama.', action: 'Potong rata delapan inti', alt: 'Delapan inti kabel dipotong rata dengan bilah bagian dalam tang crimping hijau' },
+        { title: 'Masukkan semua inti ke RJ45', description: 'Dorong delapan inti sampai ke ujung konektor. Jaket kabel juga harus masuk agar dapat dijepit oleh pengunci RJ45.', action: 'Masukkan ke konektor RJ45', alt: 'Delapan inti mencapai ujung RJ45 dan jaket kabel masuk ke bagian belakang konektor' },
+        { title: 'Crimp RJ45 di lubang 8P', description: 'Masukkan RJ45 yang sudah terpasang pada kabel ke lubang 8P di kepala tang. Tekan kedua gagang ke dalam, buka tang, lalu keluarkan kabel.', action: 'Crimp konektor RJ45', alt: 'Konektor masuk dari samping ke lubang 8P pada kepala tang, kedua gagang hijau ditekan ke dalam' },
     ];
     const renderTerminate = () => {
         const step = terminateSteps[Math.min(terminateStep, terminateSteps.length - 1)];
@@ -729,8 +829,13 @@
 
     const setTerminateFrame = (index) => {
         const frame = document.querySelector('[data-terminate-frames]');
-        frame.style.backgroundPosition = ((index % 4) / 3 * 100) + '% ' + (Math.floor(index / 4) / 2 * 100) + '%';
+        const stepIndex = Math.min(Math.floor(index / 4), terminateSteps.length - 1);
+        const phase = ['trim', 'insert', 'crimp'][stepIndex];
+        frame.style.backgroundImage = 'url("' + frame.getAttribute('data-frames-' + phase) + '")';
+        frame.style.backgroundPosition = ((index % 4) / 3 * 100) + '% center';
+        frame.dataset.phase = phase;
         frame.dataset.frame = String(index);
+        frame.setAttribute('aria-label', 'Animasi 3D: ' + terminateSteps[stepIndex].alt);
     };
     document.querySelector('[data-terminate-action]').addEventListener('click', async (event) => {
         const actionButton = event.currentTarget;
@@ -739,15 +844,17 @@
         const step = Math.min(terminateStep, 2);
         actionButton.disabled = true;
         const captions = [
-            ['Ujung inti belum rata', 'Alat pemotong mendekat', 'Ujung delapan inti dipotong', 'Semua inti sudah sama panjang'],
+            ['Pegang delapan inti yang sudah tersusun', 'Letakkan ujung inti pada bilah bagian dalam tang', 'Tekan gagang untuk memotong rata', 'Semua inti sudah sama panjang'],
             ['Arahkan inti ke belakang konektor', 'Dorong inti ke jalur RJ45', 'Pastikan inti mencapai ujung', 'Jaket kabel masuk ke pengunci'],
-            ['Pasang RJ45 pada lubang tang', 'Tekan kedua gagang tang', 'Pin menjepit inti kabel', 'Buka tang: konektor terkunci'],
+            ['RJ45 sudah terpasang pada kabel', 'Masukkan konektor penuh ke lubang 8P di kepala tang', 'Tekan kedua gagang untuk mengunci pin dan jaket kabel', 'Buka tang, lalu keluarkan kabel'],
         ];
         for (let frame = 0; frame < 4; frame++) {
             if (revision !== stageRevision) return;
             setTerminateFrame(step * 4 + frame);
-            document.querySelector('[data-frame-caption]').textContent = captions[step][frame];
-            await new Promise((resolve) => window.setTimeout(resolve, reducedMotion.matches ? 180 : 550));
+            const frameCaption = document.querySelector('[data-frame-caption]');
+            frameCaption.textContent = captions[step][frame];
+            const frameDuration = step === 2 && frame === 2 ? 700 : 420;
+            await new Promise((resolve) => window.setTimeout(resolve, reducedMotion.matches ? 180 : frameDuration));
         }
         if (revision !== stageRevision) return;
         terminateStep++;
@@ -1270,6 +1377,11 @@
                 });
             });
         }
+        wirePlacements.forEach((placements, end) => {
+            const savedHistory = Array.isArray(savedProgress.wireHistory?.[end]) ? savedProgress.wireHistory[end] : [];
+            wireHistory[end] = [...new Set([...savedHistory, ...placements.map((color, index) => color ? index : -1)])]
+                .filter((index) => Number.isInteger(index) && index >= 0 && index < 8 && placements[index]);
+        });
         terminateEnd = savedProgress.terminateEnd === 1 ? 1 : 0;
         terminateStep = Math.max(0, Math.min(3, Number(savedProgress.terminateStep) || 0));
         testerMain = Boolean(savedProgress.testerMain);
@@ -1329,12 +1441,11 @@
                 button.classList.toggle('is-done', index < prepStep);
                 button.disabled = index < prepStep;
             });
-            document.querySelectorAll('[data-prep-step]').forEach((step, index) => step.classList.toggle('is-done', index < prepStep));
             const prepWorkbench = document.querySelector('[data-prep-workbench]');
-            const prepPhase = ['coil', 'cut', 'stripped', 'sorted'][prepStep];
+            const prepPhase = ['coil', 'cut', 'stripped', 'straight'][prepStep];
             prepWorkbench.dataset.phase = prepPhase;
-            const prepTitles = ['Kabel masih tergulung', 'Kabel dipotong sesuai kebutuhan', 'Alat kupas membuka jaket luar', 'Delapan inti sudah lurus dan siap disusun'];
-            const prepNotes = ['Potong kabel sesuai panjang yang dibutuhkan.', 'Panjang kabel sudah siap. Berikutnya kupas jaket luar secukupnya.', 'Jaket terbuka tanpa melukai delapan inti kabel.', 'Lanjutkan ke puzzle warna T568B.'];
+            const prepTitles = ['Kabel masih tergulung', 'Kabel dipotong sesuai kebutuhan', 'Empat pasang inti masih terpilin rapi', 'Delapan inti lurus, belum berurutan'];
+            const prepNotes = ['Potong kabel sesuai panjang yang dibutuhkan.', 'Berikutnya kupas jaket luar memakai bilah pada tang crimping.', 'Jaket terbuka tanpa melukai inti. Berikutnya urai dan luruskan.', 'Sekarang susun urutan warnanya pada puzzle T568B.'];
             prepWorkbench.querySelector('[data-prep-visual-title]').textContent = prepTitles[prepStep];
             prepWorkbench.querySelector('[data-prep-visual-note]').textContent = prepNotes[prepStep];
 
