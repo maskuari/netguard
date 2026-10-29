@@ -31,8 +31,12 @@ class ChapterTwoTest extends TestCase
             ->assertSeeText('ether1-internet')
             ->assertSeeText('192.168.40.1/24')
             ->assertSeeText('Addresses to Give Out')
-            ->assertSeeText('PC Guru')
-            ->assertSeeText('EVALUASI PEMAHAMAN');
+            ->assertSeeText('PC-Guru')
+            ->assertSeeText('EVALUASI PEMAHAMAN')
+            ->assertSee('data-quiz-dialog', false)
+            ->assertSee('data-finish-dialog', false)
+            ->assertSeeText('Benar')
+            ->assertSeeText('Salah');
 
         $this->assertSame(1, $user->fresh()->completedAdventureChapters());
     }
@@ -43,7 +47,10 @@ class ChapterTwoTest extends TestCase
         $answers = [1, 2, 3, 0, 2];
 
         $this->actingAs($user)->postJson(route('chapter.two.complete'), ['answers' => $answers])
-            ->assertOk()->assertJsonPath('completedChapters', 2);
+            ->assertOk()->assertJsonPath('completedChapters', 2)
+            ->assertJsonPath('correctAnswers', 5)
+            ->assertJsonPath('incorrectAnswers', 0)
+            ->assertJsonPath('totalQuestions', 5);
         $this->assertSame(2, $user->fresh()->completedAdventureChapters());
 
         $user->completed_adventure_chapters = 3;
@@ -57,7 +64,14 @@ class ChapterTwoTest extends TestCase
         $user = User::factory()->create(['completed_adventure_chapters' => 1]);
 
         $this->actingAs($user)->postJson(route('chapter.two.complete'), ['answers' => [0, 0, 0, 0, 0]])
-            ->assertUnprocessable()->assertJsonPath('score', 1);
+            ->assertUnprocessable()->assertJsonPath('score', 1)
+            ->assertJsonPath('correctAnswers', 1)
+            ->assertJsonPath('incorrectAnswers', 4)
+            ->assertJsonPath('totalQuestions', 5);
+        $this->postJson(route('chapter.two.complete'), ['answers' => [1, 2, 3, 1, 0]])
+            ->assertUnprocessable()
+            ->assertJsonPath('correctAnswers', 3)
+            ->assertJsonPath('incorrectAnswers', 2);
         $this->postJson(route('chapter.two.complete'), ['answers' => [1, 2]])
             ->assertUnprocessable()->assertJsonValidationErrors('answers');
         $this->assertSame(1, $user->fresh()->completedAdventureChapters());

@@ -146,6 +146,12 @@
                                         <a href="{{ route('chapter.one') }}" data-page-link="chapter-one"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg>{{ $user->completedAdventureChapters() >= 1 ? 'Main Lagi Chapter' : 'Mulai Chapter' }}</a>
                                     @elseif ($loop->iteration === 2)
                                         <a href="{{ route('chapter.two') }}" data-page-link="chapter-two"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg>{{ $user->completedAdventureChapters() >= 2 ? 'Main Lagi Chapter' : 'Mulai Chapter' }}</a>
+                                    @elseif ($loop->iteration === 3)
+                                        @if ($user->completedAdventureChapters() >= 2)
+                                            <a href="{{ route('chapter.three') }}" data-page-link="chapter-three"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg>{{ $user->completedAdventureChapters() >= 3 ? 'Main Lagi Chapter' : 'Mulai Chapter' }}</a>
+                                        @else
+                                            <button type="button" disabled aria-label="Selesaikan Chapter 2 untuk membuka Chapter 3"><svg class="icon" aria-hidden="true"><use href="#chapter-lock"/></svg>Selesaikan Chapter 2</button>
+                                        @endif
                                     @else
                                         <button type="button" data-start-chapter="{{ $chapter['number'] }}"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg>Mulai Chapter</button>
                                     @endif
@@ -181,7 +187,7 @@
         @include('game-materials', ['id' => 'adventure-info-materials', 'isWelcome' => false, 'isAdventure' => true])
         <template id="adventure-info-about"><div class="about-note"><span class="note-number">01 — MISIMU DIMULAI DI SINI</span><p>Jelajahi lima chapter, kenali perangkat jaringan, dan siapkan konfigurasi MikroTik selangkah demi selangkah.</p></div></template>
         <template id="adventure-info-resources"><ol class="resource-list"><li><span>01</span><div><h3>Dasar Jaringan</h3><p>Kenali perangkat, kabel, alamat IP dan topologi jaringan.</p></div></li><li><span>02</span><div><h3>Konfigurasi MikroTik</h3><p>Pelajari WinBox, DHCP, koneksi internet, HotSpot, dan VLAN.</p></div></li></ol></template>
-        <template id="adventure-info-help"><div class="help-list"><details open><summary>Bagaimana memilih chapter?</summary><p>Gunakan tombol panah atau pilih kartu chapter. Tekan ikon buku untuk melihat tujuan belajarnya.</p></details><details><summary>Apakah misi bisa dimainkan?</summary><p>Chapter 1 bisa dimainkan. Setelah menyelesaikannya, Chapter 2 akan terbuka.</p></details></div></template>
+        <template id="adventure-info-help"><div class="help-list"><details open><summary>Bagaimana memilih chapter?</summary><p>Gunakan tombol panah atau pilih kartu chapter. Tekan ikon buku untuk melihat tujuan belajarnya.</p></details><details><summary>Apakah misi bisa dimainkan?</summary><p>Chapter 1, 2, dan 3 bisa dimainkan secara berurutan. Selesaikan evaluasi setiap chapter untuk membuka chapter berikutnya.</p></details></div></template>
         @include('game-music-player')
     </body>
 </html>

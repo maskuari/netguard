@@ -26,7 +26,7 @@
 .ch2-guide ol { padding-left: 24px; }
 .ch2-nav { overflow-y: auto; max-height: 550px; scrollbar-width: thin; }.ch2-nav button[data-unlock] { padding-left: 18px; }.ch2-nav button:disabled { color: #8d8d8d; cursor: not-allowed; }.ch2-nav button:disabled:hover { background: transparent; }.ch2-nav__section { font-weight: 800 !important; background: #dadada !important; }
 .ch2-desktop__welcome { position: absolute; inset: 0 0 32px; display: grid; place-content: center; justify-items: center; padding: 30px; color: #474747; text-align: center; opacity: .6; pointer-events: none; }.ch2-desktop__welcome img { object-fit: contain; }.ch2-desktop__welcome strong { margin-top: 10px; font: 700 23px Arial,sans-serif; }.ch2-desktop__welcome p { max-width: 450px; font: 13px/1.45 Arial,sans-serif; }
-.ch2-monitor .ch2-window { position: absolute; top: 25px; left: 11%; display: flex; flex-direction: column; width: min(78%,850px); min-width: 0; min-height: 0; max-height: calc(100% - 56px); overflow: auto; border: 1px solid #565656; border-radius: 0; background: #eee; box-shadow: 3px 5px 0 #0003,0 15px 28px #0004; font-family: Arial,Tahoma,sans-serif; }.ch2-monitor .ch2-window[hidden] { display: none !important; }.ch2-monitor .ch2-window--small { top: 83px; left: 19%; width: min(53%,510px); }.ch2-monitor .ch2-window--medium { top: 65px; left: 17%; width: min(66%,630px); }.ch2-monitor [data-window="edit"],.ch2-monitor [data-window="vlan-edit"] { top: 106px; left: 31%; }
+.ch2-monitor .ch2-window { position: absolute; top: 25px; left: 11%; display: flex; flex-direction: column; width: min(78%,850px); min-width: 0; min-height: 0; max-height: calc(100% - 56px); overflow: auto; border: 1px solid #565656; border-radius: 0; background: #eee; box-shadow: 3px 5px 0 #0003,0 15px 28px #0004; font-family: Arial,Tahoma,sans-serif; }.ch2-monitor .ch2-window[hidden] { display: none; }.ch2-monitor .ch2-window--small { top: 83px; left: 19%; width: min(53%,510px); }.ch2-monitor .ch2-window--medium { top: 65px; left: 17%; width: min(66%,630px); }.ch2-monitor [data-window="edit"],.ch2-monitor [data-window="vlan-edit"] { top: 106px; left: 31%; }
 .ch2-window > header { display: flex; align-items: center; justify-content: space-between; flex: none; min-height: 29px; padding: 3px 5px 3px 8px; background: #4e4bc2; color: #fff; font-size: 12px; font-weight: 800; cursor: move; touch-action: none; user-select: none; }.ch2-window-controls { display: flex; gap: 2px; }.ch2-window-controls button { display: grid; place-items: center; width: 24px; height: 21px; padding: 0; border: 1px solid #777; border-radius: 0; background: #e7e7e7; color: #111; font: 16px/1 Arial,sans-serif; cursor: pointer; }.ch2-window-controls button:hover { background: #fff; }.ch2-window-controls button:last-child:hover { background: #eb5151; color: #fff; }
 .ch2-window > footer { flex: none; min-height: 25px; padding: 5px 9px; border-top: 1px solid #aaa; background: #e4e4e4; color: #474747; font-size: 11px; }.ch2-window-content { display: grid; grid-template-columns: minmax(0,1fr) 75px; gap: 8px; min-height: 100px; padding: 15px; color: #222; }.ch2-window-content label { display: grid; grid-column: 1; grid-template-columns: 75px minmax(0,1fr); align-items: center; gap: 8px; margin: 0; max-width: none; color: #222; font-size: 12px; font-weight: 400; }.ch2-window-content input,.ch2-window-content select,.ch2-address-form input,.ch2-address-form select { width: 100%; min-height: 29px; padding: 3px 6px; border: 1px solid #999; border-radius: 1px; background: #fff; color: #111; font: 12px Arial,sans-serif; }.ch2-window-content input[readonly] { background: #e6e6e6; }.ch2-window-actions { display: flex; grid-column: 2; grid-row: 1 / span 4; flex-direction: column; gap: 5px; }.ch2-window-actions button,.ch2-window-toolbar button,.ch2-address-form button,.ch2-client-list button { min-height: 27px; padding: 4px 9px; border: 1px solid #898989; border-radius: 1px; background: linear-gradient(#fff,#ddd); color: #171717; font: 12px Arial,sans-serif; cursor: pointer; }.ch2-window-actions button:hover,.ch2-window-toolbar button:hover,.ch2-address-form button:hover,.ch2-client-list button:hover { background: #dceafa; border-color: #5b86b4; }.ch2-window-status { grid-column: 1 / -1; margin: 3px 0 0; padding: 8px; border: 1px solid #bdbdbd; background: #fff; font-size: 12px; }.ch2-window-status b { color: #078a62; }
 .ch2-window-tabs { display: flex; flex: none; gap: 3px; padding: 5px 6px 0; border-bottom: 1px solid #aaa; background: #ddd; }.ch2-window-tabs > * { min-height: 25px; padding: 5px 10px; border: 1px solid #aaa; border-bottom: 0; border-radius: 0; background: #e5e5e5; color: #333; font: 11px Arial,sans-serif; }.ch2-window-tabs b { background: #fff; font-weight: 800; }.ch2-window-tabs button:not(:disabled) { cursor: pointer; }.ch2-window-tabs button:disabled { opacity: .52; }.ch2-window-toolbar { display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 5px 8px; border-bottom: 1px solid #aaa; background: #eee; color: #333; font-size: 12px; }.ch2-window-toolbar small { margin-left: auto; color: #5b5b5b; font-size: 11px; }
@@ -76,7 +76,7 @@
 .ch2-vlan-table .ch2-table__head span,.ch2-vlan-table > div:not(.ch2-table__head) > * { min-width: 0; padding: 7px 5px; border-right: 1px solid #d0d0d0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ch2-vlan-table > div:not(.ch2-table__head) { min-height: 25px; }
 .ch2-vlan-table > p { width: max(100%,1120px); margin: 0; padding: 12px 14px; }
-.ch2-window[data-window="vlan-edit"] { top: 50% !important; left: 50% !important; width: min(540px,calc(100% - 36px)) !important; max-height: calc(100% - 32px); transform: translate(-50%,-50%); overflow: hidden; border: 1px solid #5a83ad; box-shadow: 0 8px 20px #0005; }
+.ch2-window[data-window="vlan-edit"] { top: 50%; left: 50%; width: min(540px,calc(100% - 36px)); max-height: calc(100% - 32px); transform: translate(-50%,-50%); overflow: hidden; border: 1px solid #5a83ad; box-shadow: 0 8px 20px #0005; }
 .ch2-window[data-window="vlan-edit"] > header { min-height: 28px; background: linear-gradient(#3184d5,#1765b6); }
 .ch2-vlan-edit-layout { display: grid; grid-template-columns: minmax(0,1fr) 82px; gap: 9px; padding: 0 8px 9px; background: #eee; }
 .ch2-vlan-edit-main { min-width: 0; border: 1px solid #b4b4b4; background: #f5f5f5; }
@@ -99,7 +99,7 @@
     .ch2-dialogue-overlay__content > span { padding: 6px 9px; font-size: 10px; }
     .ch2-dialogue-overlay__content p { min-height: 3.5em; margin: 10px 0; font-size: clamp(15px,4vw,19px); }
     .ch2-dialogue-overlay__content small { font-size: 8px; }
-    .ch2-window[data-window="vlan-edit"] { width: min(430px,calc(100% - 18px)) !important; }
+    .ch2-window[data-window="vlan-edit"] { width: min(430px,calc(100% - 18px)); }
     .ch2-vlan-edit-layout { grid-template-columns: minmax(0,1fr) 67px; gap: 5px; padding: 0 5px 6px; }
     .ch2-vlan-edit-actions button { padding: 2px; font-size: 10px; }
 }
@@ -149,7 +149,7 @@
 .ch2-route-table > div > * { padding: 4px 6px; }
 .ch2-route-table > div > strong { color: #255f9b; font-weight: 700; }
 .ch2-route-table .ch2-table__head span,.ch2-vlan-table .ch2-table__head span { background: #dedede; }
-.ch2-monitor .ch2-window[data-window="vlan-edit"] { z-index: 20; top: 50% !important; left: 50% !important; width: min(540px,calc(100% - 36px)) !important; height: auto; max-height: calc(100% - 32px); transform: translate(-50%,-50%); }
+.ch2-monitor .ch2-window[data-window="vlan-edit"] { z-index: 20; top: 50%; left: 50%; width: min(540px,calc(100% - 36px)); height: auto; max-height: calc(100% - 32px); transform: translate(-50%,-50%); }
 .ch2-monitor .ch2-taskbar { z-index: 30; min-height: 22px; border-top: 1px solid #777; background: #d7d7d7; }
 .ch2-taskbar button { min-height: 20px; border: 1px solid #888; border-radius: 0; background: #eee; font: 11px Arial,sans-serif; }
 .ch2-routeros > .routeros__status { display: flex; min-height: 20px; justify-content: space-between; padding: 3px 8px; border-top: 1px solid #888; background: #e7e7e7; color: #333; font: 11px Arial,sans-serif; }
@@ -160,3 +160,199 @@
     .ch2-monitor .ch2-window[data-window="routes"] { width: 96%; }
     .ch2-monitor .ch2-window[data-window="interfaces"],.ch2-monitor .ch2-window[data-window="vlan"] { left: 4%; width: 92%; }
 }
+
+/* Chapter 2 shares Chapter 1's native WinBox 3 palette and compact workspace. */
+.ch2-scene .lab-main { display: flex; flex-direction: column; min-height: 0; overflow: hidden; padding-bottom: 0; }
+.ch2-scene .ch2-workspace { flex: 1; min-height: 0; grid-template-rows: minmax(0, 1fr); align-items: stretch; }
+.ch2-scene .ch2-workbench { display: flex; min-height: 0; overflow: hidden; border: 1px solid #aabecf; border-radius: 5px; }
+.ch2-scene .ch2-monitor { display: flex; flex: 1; width: 100%; height: 100%; min-height: 0; margin: 0; padding: 0; border: 0; border-radius: 0; background: #dce4e9; box-shadow: none; }
+.ch2-scene .ch2-monitor .simulation-monitor__screen { display: flex; flex: 1; width: 100%; height: 100%; min-height: 0; overflow: hidden; border: 0; border-radius: 0; background: #dce4e9; }
+.ch2-scene .ch2-monitor .ch2-routeros { display: grid; grid-template-rows: 27px 22px 29px minmax(0, 1fr) 21px; width: 100%; height: 100%; min-width: 0; min-height: 0; border: 0; border-radius: 0; color: #263d4e; background: #e9eef2; box-shadow: none; font: 12px/1.2 Tahoma, 'Segoe UI', Arial, sans-serif; }
+.ch2-scene .ch2-routeros > .ch2-winbox-titlebar { min-height: 27px; padding: 0 0 0 6px; border-bottom: 1px solid #c9d4dd; color: #17232b; background: #f2f6f9; font: 12px Tahoma, 'Segoe UI', Arial, sans-serif; }
+.ch2-scene .ch2-routeros > .ch2-winbox-menubar { min-height: 22px; height: 22px; padding: 0 7px; border-bottom: 1px solid #d3dde4; background: #f6f8fa; font: 12px Tahoma, sans-serif; }
+.ch2-scene .ch2-window-chrome { display: flex; align-self: stretch; }
+.ch2-scene .ch2-window-chrome button { width: 33px; border: 0; background: transparent; color: #314c5f; font: 15px Arial, sans-serif; cursor: pointer; }
+.ch2-scene .ch2-window-chrome button:hover { background: #d0e2f1; }
+.ch2-scene .ch2-winbox-quickbar { min-height: 29px; height: 29px; padding: 3px 5px; border-bottom: 1px solid #b6c3cc; background: #e9eef2; font: 12px Tahoma, sans-serif; }
+.ch2-scene .ch2-winbox-quickbar > span { margin-left: 0; }
+.ch2-scene .ch2-winbox-quickbar .wb-session { margin-left: 15px; }
+.ch2-scene .ch2-winbox-quickbar .routeros__connected i { width: 25px; height: 7px; margin: 0; border-color: #388d58; background: linear-gradient(90deg, #5ea978 0 70%, #dfe8e4 70%); }
+.ch2-scene .ch2-monitor .routeros__body { display: grid; grid-template-columns: 153px minmax(0, 1fr); min-height: 0; overflow: hidden; }
+.ch2-scene .ch2-monitor .ch2-nav { z-index: 2000; min-height: 0; max-height: none; padding: 2px 0; overflow: visible; border-right: 1px solid #aebdc7; background: #e9eef2; }
+.ch2-scene .ch2-monitor .ch2-nav .routeros__menu-item { min-height: 22px; height: 22px; padding: 2px 7px; border: 0; font: 12px/1 Tahoma, 'Segoe UI', Arial, sans-serif; }
+.ch2-scene .ch2-monitor .ch2-nav .routeros__menu-item > span { min-height: 0; padding: 0; border: 0; font: inherit; }
+.ch2-scene .ch2-monitor .ch2-nav .routeros__submenu > * { height: 22px; min-height: 22px; padding: 2px 8px; border: 0; font: 12px Tahoma, sans-serif; }
+.ch2-scene .ch2-monitor .ch2-nav .routeros__submenu > button:disabled { color: #97a6b2; background: transparent; }
+.ch2-scene .ch2-monitor .ch2-nav [data-ch2-submenu="ip"] { top: 130px; }
+.ch2-scene .ch2-monitor .ch2-nav [data-ch2-submenu="system"] { top: 215px; }
+.ch2-scene .ch2-monitor .routeros__content.ch2-desktop { min-height: 0; padding: 0; overflow: hidden; background: #cbd6de; }
+.ch2-scene .ch2-monitor .ch2-window { inset: auto; top: 15px; left: 15px; width: calc(100% - 30px); height: calc(100% - 30px); max-height: calc(100% - 20px); min-height: 0; overflow: hidden; border: 1px solid #a1b3c0; border-radius: 3px; color: #263e50; background: #e9eef2; box-shadow: 0 4px 11px #31455350; font: 12px/1.2 Tahoma, 'Segoe UI', Arial, sans-serif; }
+.ch2-scene .ch2-monitor .ch2-window.is-maximized { inset: 0 !important; width: 100% !important; height: 100% !important; max-height: 100%; border: 0; border-radius: 0; transform: none; box-shadow: none; }
+.ch2-scene .ch2-monitor .ch2-window > header { display: flex; min-height: 27px; height: 27px; padding: 0 1px 0 11px; color: #fff; background: #0078c9; font: 12px Tahoma, sans-serif; }
+.ch2-scene .ch2-monitor .ch2-window--list > header, .ch2-scene .ch2-monitor [data-window="routes"] > header { color: #fff; background: #96a8b6; }
+.ch2-scene .ch2-window-controls { align-self: stretch; gap: 0; }
+.ch2-scene .ch2-window-controls button { width: 26px; height: 100%; min-height: 25px; padding: 0; border: 0; color: inherit; background: transparent; font: 15px Arial, sans-serif; }
+.ch2-scene .ch2-window-controls button:hover { background: #ffffff30; }
+.ch2-scene .ch2-window-controls button:last-child:hover { color: #fff; background: #d74c46; }
+.ch2-scene .ch2-monitor .ch2-window--small, .ch2-scene .ch2-monitor .ch2-window--medium { top: 50px; left: clamp(12px, 18%, 210px); width: min(480px, calc(100% - 24px)); height: auto; max-height: calc(100% - 65px); overflow: auto; }
+.ch2-scene .ch2-monitor .ch2-window[data-window="vlan-edit"] { top: 45px; left: clamp(12px, 18%, 210px); width: min(490px, calc(100% - 24px)); height: auto; max-height: calc(100% - 55px); transform: none; }
+.ch2-scene .ch2-monitor .ch2-window[data-window="identity"] { top: 90px; width: min(390px, calc(100% - 24px)); }
+.ch2-scene .ch2-monitor .ch2-window-tabs { gap: 0; min-height: 28px; padding: 3px 6px 0; overflow-x: auto; border-color: #b5c4cf; background: #e9eef2; scrollbar-width: thin; }
+.ch2-scene .ch2-monitor .ch2-window-tabs > * { flex: none; min-height: 25px; padding: 4px 10px; border: 0; border-right: 1px solid #d4dde4; border-radius: 0; color: #263b49; background: transparent; font: 11px Tahoma, sans-serif; }
+.ch2-scene .ch2-monitor .ch2-window-tabs > b { border-bottom: 2px solid #0078c9; background: #f9fbfc; font-weight: 400; }
+.ch2-scene .ch2-monitor .ch2-window-toolbar { min-height: 31px; padding: 3px 6px; gap: 3px; border-color: #c4d0d9; color: #354f62; background: #eef3f6; font: 11px Tahoma, sans-serif; }
+.ch2-scene .ch2-window-toolbar button, .ch2-scene .ch2-window-actions button, .ch2-scene .ch2-vlan-edit-actions button, .ch2-scene .ch2-address-form button, .ch2-scene .ch2-client-list button { min-height: 26px; padding: 3px 7px; border: 1px solid #b0c0ce; border-radius: 2px; color: #233c4e; background: linear-gradient(#fbfdff, #e8eff4); box-shadow: inset 0 0 0 1px #ffffffb0; font: 12px Tahoma, sans-serif; }
+.ch2-scene .ch2-monitor .ch2-window-toolbar--icons button { width: 25px; height: 24px; min-width: 25px; min-height: 24px; padding: 3px; }
+.ch2-scene .ch2-window-toolbar--icons input { min-height: 23px; height: 23px; padding: 3px 5px; border-color: #c4d1dc; border-radius: 2px; font: 11px Tahoma, sans-serif; }
+.ch2-scene .ch2-window-toolbar--icons > span { min-width: 30px; padding: 4px; border-color: #c4d1dc; }
+.ch2-scene .ch2-monitor .ch2-table { min-height: 0; font: 11px/1.2 Tahoma, 'Segoe UI', Arial, sans-serif; }
+.ch2-scene .ch2-table__head, .ch2-scene .ch2-table > button, .ch2-scene .ch2-table > div:not(.ch2-table__head) { min-height: 21px; border: 0; color: #253b49; font: 11px/1.2 Tahoma, 'Segoe UI', Arial, sans-serif; }
+.ch2-scene .ch2-table__head { min-height: 23px; background: linear-gradient(#f2f6f9, #e3ebf1); }
+.ch2-scene .ch2-table__head span, .ch2-scene .ch2-table span, .ch2-scene .ch2-table strong { padding: 3px 5px; border-color: #d7e1e9; font-weight: 400; }
+.ch2-scene .ch2-route-table .ch2-table__head span, .ch2-scene .ch2-vlan-table .ch2-table__head span { background: transparent; }
+.ch2-scene .ch2-vlan-table .ch2-table__head, .ch2-scene .ch2-vlan-table > div:not(.ch2-table__head) { width: max(100%, 1000px); grid-template-columns: 22px 25px minmax(120px, 1.4fr) 70px 60px 78px 65px 65px minmax(105px, 1.2fr) repeat(4, 68px); }
+.ch2-scene .ch2-vlan-table > p { width: auto; padding: 10px; color: #5d7486; font: 11px Tahoma, sans-serif; }
+.ch2-scene .ch2-table > button:hover { background: #e4f1fb; }
+.ch2-scene .ch2-window-content { gap: 6px 12px; padding: 12px; background: #e9eef2; }
+.ch2-scene .ch2-window-content label { color: #0876bb; font: 12px/1.2 Tahoma, 'Segoe UI', Arial, sans-serif; text-align: right; }
+.ch2-scene .ch2-window-content input, .ch2-scene .ch2-window-content select, .ch2-scene .ch2-address-form input, .ch2-scene .ch2-address-form select { min-height: 25px; height: 25px; padding: 3px 5px; border: 1px solid #a8bdcc; border-radius: 1px; color: #1e3545; background: #fff; font: 12px Tahoma, sans-serif; }
+.ch2-scene .ch2-window-content input[readonly] { color: #647582; border-color: #c5d1da; background: #edf1f4; }
+.ch2-scene .ch2-window-content input:focus, .ch2-scene .ch2-window-content select:focus { border-color: #6d9de0; outline: 1px solid #9db9ec; outline-offset: -1px; }
+.ch2-scene .ch2-vlan-edit-layout { gap: 9px; padding: 5px 9px 12px; background: #e9eef2; }
+.ch2-scene .ch2-vlan-edit-main { border: 0; background: transparent; }
+.ch2-scene .ch2-vlan-edit-main .ch2-window-content { gap: 5px; padding: 10px 2px; }
+.ch2-scene .ch2-vlan-edit-main .ch2-window-content label { min-height: 25px; grid-template-columns: 87px minmax(0, 1fr); }
+.ch2-scene .ch2-vlan-edit-actions { padding-top: 3px; }
+.ch2-scene .ch2-vlan-edit-actions button:first-child, .ch2-scene .ch2-window-actions button:first-child { border-color: #6c9cdd; outline: 1px solid #c1d5f6; outline-offset: -3px; }
+.ch2-scene .ch2-monitor .ch2-window > footer { min-height: 22px; padding: 4px 9px; border-color: #c2ced7; color: #526a7c; background: #edf2f6; font: 11px Tahoma, sans-serif; }
+.ch2-scene .ch2-monitor .ch2-taskbar { min-height: 0; padding: 0; border: 0; background: #d1dce5; }
+.ch2-scene .ch2-taskbar:empty { display: none; }
+.ch2-scene .ch2-monitor .routeros__status { min-height: 21px; height: 21px; align-items: center; padding: 2px 7px; border-color: #b8c6d0; color: #485f70; background: #eaf0f5; font: 11px Tahoma, sans-serif; }
+.ch2-scene .ch2-guide { position: relative; top: auto; height: 100%; min-height: 0; padding: 18px; overflow-y: auto; scrollbar-width: thin; }
+.ch2-scene .ch2-guide > img { display: none; }
+.ch2-scene .ch2-monitor .ch2-routeros.is-app-restored { width: calc(100% - 36px); height: calc(100% - 28px); margin: 14px 18px; border: 1px solid #a8b8c5; border-radius: 3px; }
+@media (max-height: 800px) and (min-width: 1101px) {
+    .ch2-scene .ch2-monitor .ch2-nav .routeros__menu-item { min-height: 18px; height: 18px; font-size: 11px; }
+    .ch2-scene .ch2-monitor .ch2-nav [data-ch2-submenu="ip"] { top: 100px; }
+    .ch2-scene .ch2-monitor .ch2-nav [data-ch2-submenu="system"] { top: 160px; }
+    .ch2-scene .ch2-monitor .ch2-window--small, .ch2-scene .ch2-monitor .ch2-window--medium { top: 10px; max-height: calc(100% - 20px); }
+}
+@media (max-width: 1100px) {
+    .ch2-scene .lab-main { display: block; overflow: auto; }
+    .ch2-scene .ch2-workspace { grid-template-rows: auto; }
+    .ch2-scene .ch2-workbench { height: 620px; }
+    .ch2-scene .ch2-guide { height: auto; margin-top: 0; }
+    .ch2-scene .ch2-guide ol { grid-template-columns: 1fr; }
+    .ch2-scene .ch2-monitor .routeros__body { grid-template-columns: 133px minmax(0, 1fr); }
+    .ch2-scene .ch2-monitor .ch2-nav .routeros__menu-item { padding-left: 4px; font-size: 11px; }
+    .ch2-scene .ch2-routeros .routeros__title { max-width: calc(100% - 40px); font-size: 10px; }
+    .ch2-scene .ch2-winbox-quickbar .wb-session { margin-left: 3px; font-size: 10px; }
+    .ch2-scene .ch2-winbox-quickbar .wb-toolbar-icon, .ch2-scene .ch2-winbox-quickbar .wb-safe-mode, .ch2-scene .ch2-winbox-quickbar .wb-session { display: inline-flex; }
+}
+
+.ch2-scene .ch2-monitor .ch2-window.is-maximized { max-height: 100% !important; }
+.ch2-scene .ch2-interface-table strong { display: flex; align-items: center; gap: 4px; }
+.ch2-scene .ch2-interface-table strong > span { padding: 0; border: 0; }
+
+.ch2-scene .ch2-window-chrome { flex: none; }
+.ch2-scene .ch2-window-chrome button:last-child:hover { color: #fff; background: #d74c46; }
+.ch2-scene .ch2-monitor .winbox-reopen { min-height: 0; height: 100%; }
+
+.ch2-scene .ch2-monitor .ch2-nav [data-ch2-submenu="system"] { top: 6px; max-height: calc(100% - 12px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+
+/* Keep every WinBox layer behind the full-screen conversation. */
+.ch2-scene > .lab-scroll { z-index: 0; isolation: isolate; }
+.ch2-dialogue-overlay { cursor: pointer; }
+
+/* Reuse the Chapter 1 story composition before the Chapter 2 workbench. */
+.ch2-prologue { z-index: 1400; cursor: pointer; }
+.ch2-prologue:focus { outline: none; }
+.ch2-prologue .chapter-prologue__click-hint { letter-spacing: .04em; }
+.ch2-prologue-replay { width: 100%; margin-top: 12px; }
+
+/* Each validated VLAN has its own persistent completion row. */
+.ch2-vlan-checklist { margin: 4px 0 18px; padding: 12px; border: 1px solid #b9ddf8; border-radius: 13px; background: #edf7ff; }
+.ch2-vlan-checklist__heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; color: #153e70; font-size: 12px; }
+.ch2-vlan-checklist__heading > span { color: #4f7297; font-size: 11px; white-space: nowrap; }
+.ch2-vlan-checklist ul { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+.ch2-vlan-checklist li { display: flex; align-items: flex-start; gap: 9px; padding: 11px 9px; border: 1px solid #c5dff3; border-radius: 10px; color: #234971; background: #fff; transition: background .2s ease, border-color .2s ease; }
+.ch2-vlan-task__mark { display: grid; flex: none; place-items: center; width: 25px; height: 25px; border: 1px solid #b9d6ed; border-radius: 50%; color: #4175a7; background: #eef7ff; font-size: 12px; font-weight: 900; }
+.ch2-vlan-checklist li > div { display: grid; min-width: 0; gap: 4px; }
+.ch2-vlan-checklist li b { font-size: 13px; line-height: 1.3; }
+.ch2-vlan-checklist li small { color: #55799a; font-size: 11px; line-height: 1.35; }
+.ch2-vlan-task__status { color: #718ca5; font-size: 10px; font-weight: 700; }
+.ch2-vlan-checklist li.is-done { border-color: #76cba6; color: #09684d; background: #e4f8ee; }
+.ch2-vlan-checklist li.is-done .ch2-vlan-task__mark { border-color: #0f9c6b; color: #fff; background: #0f9c6b; }
+.ch2-vlan-checklist li.is-done small, .ch2-vlan-checklist li.is-done .ch2-vlan-task__status { color: #238466; }
+
+.ch2-scene .ch2-vlan-table [data-vlan-row] { cursor: pointer; }
+.ch2-scene .ch2-vlan-table [data-vlan-row]:hover { background: #e4f1fb; }
+.ch2-scene .ch2-vlan-table [data-vlan-row].is-selected { color: #173e5d; background: #badcf7; }
+.ch2-scene .ch2-vlan-table [data-vlan-row]:focus-visible { outline: 2px solid #4a94cf; outline-offset: -2px; }
+.ch2-scene .ch2-window-toolbar button:disabled { opacity: .45; cursor: default; }
+
+.ch2-scene .ch2-window-toolbar [data-vlan-tool="remove"]:disabled .wb-icon { filter: grayscale(1); }
+
+.ch2-scene .ch2-monitor .ch2-window[data-window="address-edit"] { top: 45px; left: clamp(12px, 18%, 210px); width: min(490px, calc(100% - 24px)); height: auto; max-height: calc(100% - 55px); transform: none; }
+
+.ch2-scene .ch2-address-table [data-address-row] { cursor: pointer; }
+.ch2-scene .ch2-address-table [data-address-row]:hover { background: #e4f1fb; }
+.ch2-scene .ch2-address-table [data-address-row].is-selected { color: #173e5d; background: #badcf7; }
+.ch2-scene .ch2-address-table [data-address-row]:focus-visible { outline: 2px solid #4a94cf; outline-offset: -2px; }
+.ch2-scene .ch2-window-toolbar [data-remove-address]:disabled .wb-icon { filter: grayscale(1); }
+
+.ch2-scene .ch2-monitor .ch2-window[data-window="address-edit"], .ch2-scene .ch2-monitor .ch2-window[data-window="address-comment"] { top: 42px; left: clamp(12px, 20%, 230px); width: min(440px, calc(100% - 24px)); height: auto; max-height: calc(100% - 52px); transform: none; border-color: #8ca7bc; box-shadow: 2px 3px 8px #0005; }
+.ch2-scene [data-window="address-edit"] .ch2-vlan-edit-layout { grid-template-columns: minmax(0, 1fr) 78px; gap: 10px; padding: 8px 9px 10px; }
+.ch2-scene [data-window="address-edit"] .ch2-window-content { min-height: 0; gap: 6px; padding: 2px 0; }
+.ch2-scene [data-window="address-edit"] .ch2-window-content label { grid-template-columns: 60px minmax(0, 1fr); }
+.ch2-scene [data-window="address-edit"] .ch2-vlan-edit-actions { padding-top: 0; }
+.ch2-scene [data-window="address-edit"] > footer { min-height: 20px; padding: 3px 8px; border-color: #bdcbd5; background: #e9eef2; color: #334e63; font: 11px Tahoma, sans-serif; }
+.ch2-scene [data-window="address-comment"] textarea { display: block; width: 100%; min-height: 96px; margin-top: 4px; padding: 5px; resize: vertical; border: 1px solid #a8bdcc; background: #fff; color: #1e3545; font: 12px Tahoma, sans-serif; }
+.ch2-scene .ch2-address-table [data-address-row].is-disabled { color: #84909a; }
+.ch2-scene .ch2-address-table [data-address-row-comment] { grid-column: 2 / -1; padding: 2px 6px 4px; color: #886a28; font: 11px Tahoma, sans-serif; }
+.ch2-scene .ch2-window-toolbar [data-address-tool]:disabled .wb-icon { filter: grayscale(1); }
+
+.ch2-scene .ch2-monitor .ch2-window[data-window="dhcp-setup"] { top: 45px; left: clamp(12px, 20%, 230px); width: min(490px, calc(100% - 24px)); height: auto; max-height: calc(100% - 55px); transform: none; border-color: #8ca7bc; box-shadow: 2px 3px 8px #0005; }
+.ch2-scene .ch2-dhcp-wizard { min-height: 130px; padding: 16px 14px 20px; background: #e9eef2; color: #253b49; font: 12px Tahoma, sans-serif; }
+.ch2-dhcp-wizard [hidden], .ch2-dhcp-table[hidden], .ch2-dhcp-networks[hidden] { display: none !important; }
+.ch2-dhcp-wizard p { margin: 0 0 20px; font: inherit; }
+.ch2-dhcp-wizard label { display: grid; grid-template-columns: minmax(110px, 42%) minmax(0, 1fr); align-items: center; gap: 10px; color: #0876bb; font: inherit; text-align: right; }
+.ch2-dhcp-wizard input, .ch2-dhcp-wizard select { width: 100%; min-width: 0; height: 25px; padding: 3px 5px; border: 1px solid #a8bdcc; border-radius: 1px; background: #fff; color: #1e3545; font: 12px Tahoma, sans-serif; }
+.ch2-dhcp-wizard-actions { display: flex; justify-content: flex-end; gap: 6px; padding: 8px 10px; border-top: 1px solid #bdcbd5; background: #e9eef2; }
+.ch2-dhcp-wizard-actions button { min-width: 70px; min-height: 26px; padding: 3px 7px; border: 1px solid #b0c0ce; border-radius: 2px; background: linear-gradient(#fbfdff, #e8eff4); color: #233c4e; font: 12px Tahoma, sans-serif; cursor: pointer; }
+.ch2-dhcp-wizard-actions button:last-child { border-color: #6c9cdd; outline: 1px solid #c1d5f6; outline-offset: -3px; }
+.ch2-dhcp-wizard-actions button:disabled { opacity: .45; cursor: default; }
+.ch2-scene .ch2-monitor .ch2-window-toolbar .ch2-dhcp-setup-button { width: auto; min-width: 86px; margin-left: 6px; padding: 3px 8px; font: 11px Tahoma, sans-serif; white-space: nowrap; }
+.ch2-scene .ch2-dhcp-table .ch2-table__head, .ch2-scene .ch2-dhcp-table > div:not(.ch2-table__head) { grid-template-columns: 30px minmax(80px, .8fr) minmax(120px, 1.4fr) minmax(90px, 1fr) minmax(100px, 1fr) 70px; width: max(100%, 610px); }
+.ch2-scene .ch2-dhcp-table [data-pool-row] { cursor: pointer; }
+.ch2-scene .ch2-dhcp-table [data-pool-row]:hover { background: #e4f1fb; }
+.ch2-scene .ch2-dhcp-table [data-pool-row].is-selected { color: #173e5d; background: #badcf7; }
+.ch2-scene .ch2-dhcp-table [data-pool-row].is-disabled { color: #84909a; }
+.ch2-scene .ch2-dhcp-table [data-pool-row]:focus-visible { outline: 2px solid #4a94cf; outline-offset: -2px; }
+.ch2-scene .ch2-window-toolbar [data-dhcp-remove]:disabled .wb-icon, .ch2-scene .ch2-window-toolbar [data-dhcp-tool]:disabled .wb-icon { filter: grayscale(1); }
+.ch2-scene .ch2-window-tabs [data-dhcp-tab].is-active { border-bottom: 2px solid #0078d7; background: #fff; color: #163c5d; }
+
+.ch2-dhcp-instruction { margin: 4px 0 16px; padding: 13px; border: 1px solid #92caff; border-radius: 12px; background: #edf7ff; color: #21466f; }
+.ch2-dhcp-instruction__step { color: #0078d7; font-size: 10px; font-weight: 800; letter-spacing: .04em; }
+.ch2-dhcp-instruction h3 { margin: 8px 0; color: #13385f; font-size: 16px; line-height: 1.3; }
+.ch2-dhcp-instruction p { margin: 8px 0; font-size: 12px; line-height: 1.5; }
+.ch2-dhcp-instruction dl { margin: 10px 0; }
+.ch2-dhcp-instruction dt { margin: 9px 0 4px; font-size: 11px; font-weight: 800; }
+.ch2-dhcp-instruction dd { margin: 0; padding: 7px 8px; border: 1px solid #c4def5; border-radius: 6px; background: #fff; }
+.ch2-dhcp-instruction code { color: #164b80; font: 12px/1.5 Consolas, monospace; overflow-wrap: anywhere; user-select: text; }
+.ch2-dhcp-instruction .ch2-dhcp-instruction__action { margin-bottom: 0; color: #145b91; font-weight: 800; }
+
+.ch2-scene .ch2-lease-table .ch2-table__head, .ch2-scene .ch2-lease-table > div:not(.ch2-table__head) { grid-template-columns: 26px 25px minmax(115px, 1.2fr) minmax(145px, 1.4fr) minmax(110px, 1fr) 85px 85px 100px; width: max(100%, 800px); }
+.ch2-scene .ch2-lease-table [data-lease-row] { cursor: pointer; }
+.ch2-scene .ch2-lease-table [data-lease-row]:hover { background: #e4f1fb; }
+.ch2-scene .ch2-lease-table [data-lease-row].is-selected { color: #173e5d; background: #badcf7; }
+.ch2-scene .ch2-lease-table [data-lease-row]:focus-visible { outline: 2px solid #4a94cf; outline-offset: -2px; }
+.ch2-scene .ch2-monitor .ch2-window-toolbar .ch2-lease-static-button { width: auto; min-width: 76px; margin-left: 5px; padding: 3px 7px; font: 11px Tahoma, sans-serif; white-space: nowrap; }
+.ch2-scene .ch2-window-toolbar [data-remove-lease]:disabled .wb-icon { filter: grayscale(1); }
+.ch2-verify-note { margin: 0 0 10px; color: #44698e; font-size: 12px; line-height: 1.45; }
+.ch2-verify-checklist [data-request-ip] { width: 100%; margin-top: 5px; padding: 9px 10px; border: 1px solid #80baff; border-radius: 7px; background: #eff7ff; color: #0067ca; font: inherit; font-size: 12px; font-weight: 700; line-height: 1.3; cursor: pointer; }
+.ch2-verify-checklist [data-request-ip]:hover { background: #deeeff; }
+.ch2-verify-checklist [data-request-ip]:disabled { opacity: .6; cursor: wait; }
+.ch2-verify-checklist .is-requesting { border-color: #72b3f1; background: #e8f4ff; }
+
+.ch2-verify-checklist [data-request-ip][hidden] { display: none; }

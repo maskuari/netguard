@@ -30,7 +30,11 @@ class ChapterOneTest extends TestCase
             ->assertSeeText('MikroTik hEX')
             ->assertSeeText('LAN tester')
             ->assertSeeText('ether1-internet')
-            ->assertSeeText('System / Identity');
+            ->assertSeeText('System / Identity')
+            ->assertSee('data-quiz-dialog', false)
+            ->assertSee('data-finish-dialog', false)
+            ->assertSeeText('Benar')
+            ->assertSeeText('Salah');
 
         $this->assertSame(0, $user->fresh()->completedAdventureChapters());
     }
@@ -57,6 +61,38 @@ class ChapterOneTest extends TestCase
         }
     }
 
+    public function test_both_chapters_share_the_system_menu_and_keep_identity_available(): void
+    {
+        $user = User::factory()->create(['completed_adventure_chapters' => 1]);
+        $menus = [];
+
+        foreach ([
+            ['chapter.one', '//*[@data-system-menu]', 'data-config-nav'],
+            ['chapter.two', '//*[@data-ch2-submenu="system"]', 'data-open-window'],
+        ] as [$route, $selector, $identityAttribute]) {
+            $response = $this->actingAs($user)->get(route($route))->assertOk();
+            $document = new \DOMDocument;
+            $previousErrorMode = libxml_use_internal_errors(true);
+            $document->loadHTML($response->getContent());
+            libxml_clear_errors();
+            libxml_use_internal_errors($previousErrorMode);
+            $xpath = new \DOMXPath($document);
+            $items = [];
+
+            foreach ($xpath->query($selector.'/*') as $item) {
+                $items[] = trim($item->textContent);
+            }
+
+            $menus[] = $items;
+            $this->assertSame(1, $xpath->query($selector.'/button[@'.$identityAttribute.'="identity"]')->length);
+        }
+
+        $this->assertSame($menus[0], $menus[1]);
+        $this->assertGreaterThan(6, count($menus[0]));
+        $this->assertContains('Reset Configuration', $menus[0]);
+        $this->assertContains('Watchdog', $menus[0]);
+    }
+
     public function test_correct_chapter_evaluation_saves_progress_once(): void
     {
         $user = User::factory()->create();
@@ -65,7 +101,10 @@ class ChapterOneTest extends TestCase
         $this->actingAs($user)
             ->postJson(route('chapter.one.complete'), ['answers' => $answers])
             ->assertOk()
-            ->assertJsonPath('completedChapters', 1);
+            ->assertJsonPath('completedChapters', 1)
+            ->assertJsonPath('correctAnswers', 5)
+            ->assertJsonPath('incorrectAnswers', 0)
+            ->assertJsonPath('totalQuestions', 5);
 
         $this->assertSame(1, $user->fresh()->completedAdventureChapters());
 
@@ -86,7 +125,15 @@ class ChapterOneTest extends TestCase
         $this->actingAs($user)
             ->postJson(route('chapter.one.complete'), ['answers' => [0, 0, 0, 0, 0]])
             ->assertUnprocessable()
-            ->assertJsonPath('score', 1);
+            ->assertJsonPath('score', 1)
+            ->assertJsonPath('correctAnswers', 1)
+            ->assertJsonPath('incorrectAnswers', 4)
+            ->assertJsonPath('totalQuestions', 5);
+
+        $this->postJson(route('chapter.one.complete'), ['answers' => [1, 2, 0, 0, 0]])
+            ->assertUnprocessable()
+            ->assertJsonPath('correctAnswers', 3)
+            ->assertJsonPath('incorrectAnswers', 2);
 
         $this->postJson(route('chapter.one.complete'), ['answers' => [1, 2]])
             ->assertUnprocessable()

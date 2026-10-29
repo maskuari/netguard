@@ -1,0 +1,23 @@
+.ch3-scene [hidden] { display: none !important; }
+.ch3-scene .ch2-monitor [data-window="dns"], .ch3-scene .ch2-monitor [data-window="nat-edit"] { top: 40px; left: clamp(10px, 18%, 200px); width: min(520px, calc(100% - 20px)); height: auto; max-height: calc(100% - 50px); transform: none; border-color: #8ca7bc; }
+.ch3-scene .ch3-checkbox input { justify-self: start; width: 15px; height: 15px; }
+.ch3-scene .ch3-nat-table .ch2-table__head, .ch3-scene .ch3-nat-table > div:not(.ch2-table__head) { grid-template-columns: 30px minmax(100px, 1fr) 80px minmax(130px, 1.2fr) 90px 80px; width: max(100%, 600px); }
+.ch3-scene [data-nat-row] { cursor: pointer; }
+.ch3-scene [data-nat-row].is-selected { background: #badcf7; }
+.ch3-scene [data-nat-row].is-disabled { color: #87949d; }
+.ch3-scene [data-nat-tab].is-active { border-bottom: 2px solid #0078d7; background: #fff; }
+.ch3-terminal { flex: 1; min-height: 0; padding: 12px; overflow: auto; background: #fff; color: #111; font: 13px/1.5 Consolas, monospace; }
+.ch3-terminal pre { margin: 0 0 8px; white-space: pre-wrap; font: inherit; }
+.ch3-terminal label { display: flex; gap: 8px; align-items: center; }
+.ch3-terminal label span { flex: none; }
+.ch3-terminal input { width: 100%; min-width: 0; padding: 0; border: 0; outline: 0; background: transparent; color: #111; font: inherit; }
+.ch3-ping-output { padding: 12px; white-space: pre-wrap; color: #173e5d; font: 11px/1.5 Consolas, monospace; }
+.ch3-client-tests { margin: 0 0 15px; padding: 12px; border: 1px solid #b5daf5; border-radius: 11px; background: #f1f8ff; }
+.ch3-client-tests p { margin: 0 0 10px; color: #44698e; font-size: 12px; line-height: 1.45; }
+.ch3-client-tests button { display: block; width: 100%; margin-top: 8px; padding: 10px; border: 1px solid #8cc5fa; border-radius: 7px; background: #fff; color: #0067ca; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.ch3-client-tests pre { margin-bottom: 0; white-space: pre-wrap; overflow-wrap: anywhere; color: #1f5f50; font: 11px/1.5 Consolas, monospace; }
+.ch3-guide > [data-main-action] { width: 100%; margin-bottom: 12px; }
+.ch3-guide > [data-previous] { width: 100%; }
+.ch3-guide li small { overflow-wrap: anywhere; }
+.ch3-scene [data-nat-tool]:disabled svg { filter: grayscale(1); }
+.ch3-scene .ch3-tools-menu { width: 160px; }

@@ -102,10 +102,17 @@ class ChapterOneController extends Controller
             }
         }
 
+        $evaluationResult = [
+            'score' => $score,
+            'correctAnswers' => $score,
+            'incorrectAnswers' => count(self::QUESTIONS) - $score,
+            'totalQuestions' => count(self::QUESTIONS),
+        ];
+
         if ($score !== count(self::QUESTIONS)) {
             return response()->json([
                 'message' => 'Masih ada jawaban yang belum tepat. Pelajari petunjuknya lalu coba lagi.',
-                'score' => $score,
+                ...$evaluationResult,
             ], 422);
         }
 
@@ -116,6 +123,7 @@ class ChapterOneController extends Controller
         return response()->json([
             'message' => 'Chapter 1 selesai! Progresmu sudah tersimpan.',
             'completedChapters' => $user->completedAdventureChapters(),
+            ...$evaluationResult,
         ]);
     }
 }

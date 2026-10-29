@@ -64,14 +64,21 @@ class ChapterTwoController extends Controller
             }
         }
 
+        $evaluationResult = [
+            'score' => $score,
+            'correctAnswers' => $score,
+            'incorrectAnswers' => count(self::QUESTIONS) - $score,
+            'totalQuestions' => count(self::QUESTIONS),
+        ];
+
         if ($score !== count(self::QUESTIONS)) {
-            return response()->json(['message' => 'Masih ada jawaban yang perlu diperbaiki. Baca kembali rekap dan coba lagi.', 'score' => $score], 422);
+            return response()->json(['message' => 'Masih ada jawaban yang perlu diperbaiki. Baca kembali rekap dan coba lagi.', ...$evaluationResult], 422);
         }
 
         $user = $request->user();
         $user->completed_adventure_chapters = max($user->completedAdventureChapters(), 2);
         $user->save();
 
-        return response()->json(['message' => 'Chapter 2 selesai! Progresmu sudah tersimpan.', 'completedChapters' => $user->completedAdventureChapters()]);
+        return response()->json(['message' => 'Chapter 2 selesai! Progresmu sudah tersimpan.', 'completedChapters' => $user->completedAdventureChapters(), ...$evaluationResult]);
     }
 }

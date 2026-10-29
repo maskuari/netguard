@@ -182,7 +182,7 @@
 .topology-ports select, .routeros input, .winbox-credentials input { width: 100%; min-height: 38px; padding: 7px 10px; border: 1px solid #a9cde9; border-radius: 7px; color: #13335d; background: #fff; font: inherit; }
 .topology-ports select.is-wrong { border-color: #ed6060; background: #fff1f1; }
 .topology-ports select.is-right { border-color: #40c391; background: #ecfff6; }
-.lab-stage[data-stage="topology"] > .lab-button { display: flex; margin: 16px auto 0; }
+.lab-stage[data-stage="topology"] > .lab-button { display: flex; margin: 10px auto 0; }
 .pc-scene { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 10px 0 15px; }
 .pc-monitor { width: min(90%, 590px); }
 .pc-screen { position: relative; display: grid; place-items: center; height: 300px; overflow: hidden; border: 13px solid #1c3555; border-bottom-width: 24px; border-radius: 18px; background: #071831; box-shadow: 0 13px 23px #102f6070, inset 0 0 0 2px #6b91bd; }
@@ -535,10 +535,10 @@
 /* The PC and WinBox missions use the full practical-simulation composition. */
 .lab-layout.is-simulator { grid-template-columns: clamp(220px, 17cqw, 310px) minmax(0, 1fr) clamp(220px, 17cqw, 310px); align-items: stretch; gap: clamp(10px, 1cqw, 18px); }
 .lab-layout.is-simulator .sim-topology { display: flex; flex-direction: column; min-width: 0; min-height: 100%; padding: 16px 13px; border: 1px solid #c7e0fb; border-radius: 18px; background: linear-gradient(160deg, #fff, #eff7ff); box-shadow: 0 12px 28px #0a417032; animation: lab-stage-in .35s ease both; }
-.sim-topology[hidden], .simulator-bottom[hidden] { display: none !important; }
+.sim-topology[hidden] { display: none !important; }
 .sim-topology > header { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid #dceafa; }
 .sim-topology > header > span { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; color: #fff; background: linear-gradient(135deg, #38b9ff, #0875ef); font-size: 23px; }
-.sim-topology > header small, .simulator-bottom small { color: #0871df; font-size: 10px; font-weight: 900; letter-spacing: .1em; }
+.sim-topology > header small { color: #0871df; font-size: 10px; font-weight: 900; letter-spacing: .1em; }
 .sim-topology > header h2 { margin: 0; color: #062d75; font-size: clamp(15px, 1.15cqw, 20px); line-height: 1.15; }
 .sim-topology__diagram { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; min-height: 280px; padding: 13px 4px; }
 .sim-topology__cloud { display: grid; place-content: center; width: 90px; height: 66px; border: 3px solid #0786f6; border-radius: 40px; color: #083675; background: #dff3ff; text-align: center; font-size: 14px; font-weight: 900; line-height: 1.05; }
@@ -557,9 +557,6 @@
 .sim-topology__ports > b { margin-bottom: 2px; color: #0c3975; font-size: 13px; }
 .sim-topology__ports > span { display: flex; align-items: center; gap: 7px; color: #345576; font-size: 11px; font-weight: 750; }
 .sim-topology__ports i { display: grid; place-items: center; width: 21px; height: 21px; border-radius: 50%; color: #fff; background: #087bfa; font-style: normal; font-weight: 900; }
-.sim-topology__teacher { display: flex; align-items: center; gap: 7px; min-height: 92px; margin-top: 10px; padding: 5px 8px 0 0; border-top: 1px solid #deebf8; }
-.sim-topology__teacher img { align-self: flex-end; flex: none; width: 78px; height: 110px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 5px 6px #163e7340); animation: lab-character-in .35s ease both; }
-.sim-topology__teacher p { position: relative; margin: 0; padding: 9px; border: 1px solid #c9e4fb; border-radius: 11px 11px 11px 2px; color: #20436f; background: #fff; font-size: 10px; font-weight: 700; line-height: 1.35; box-shadow: 0 4px 8px #15457a20; }
 .lab-layout.is-simulator .lab-board { min-height: 625px; height: 100%; border-color: #8cc9ff; }
 .lab-layout.is-simulator .lab-board__header { padding: 12px 18px 10px; }
 .lab-layout.is-simulator .lab-board__header h1 { font-size: clamp(19px, 1.45cqw, 27px); }
@@ -585,51 +582,26 @@
 .simulation-monitor .routeros__body { min-height: 420px; }
 .simulation-monitor .routeros__content { min-height: 420px; }
 .simulation-monitor .winbox-child { min-height: 350px; }
-.simulator-bottom { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(230px, .92fr) minmax(320px, 1.25fr) minmax(210px, .8fr); gap: 12px; padding: 13px; border: 1px solid #a7d5ff; border-radius: 19px; background: linear-gradient(120deg, #eff8ff, #fff); box-shadow: 0 12px 28px #0a41702a; animation: lab-stage-in .35s ease both; }
-.simulator-bottom__mission, .simulator-bottom__parameters { display: flex; align-items: flex-start; gap: 12px; min-width: 0; padding: 9px; }
-.simulator-bottom__mission > span, .simulator-bottom__parameters > span { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 13px; color: #fff; background: linear-gradient(145deg, #3abaff, #006fee); font-size: 25px; font-weight: 900; }
-.simulator-bottom__mission p { margin: 6px 0 0; color: #1c3f70; font-size: 13px; font-weight: 700; line-height: 1.4; }
-.simulator-bottom__parameters dl { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 13px; margin: 7px 0 0; }
-.simulator-bottom__parameters dl > div { display: flex; gap: 6px; min-width: 0; font-size: 11px; line-height: 1.35; }
-.simulator-bottom__parameters dt { flex: none; color: #5d7293; }
-.simulator-bottom__parameters dd { overflow: hidden; margin: 0; color: #183f74; font-weight: 800; text-overflow: ellipsis; }
-.simulator-bottom__action { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100px; padding: 10px; border-radius: 12px; color: #fff; background: linear-gradient(125deg, #178bff, #0064ec); text-align: center; box-shadow: 0 5px 0 #0049b9; }
-.simulator-bottom__action > span { font-size: 21px; }
-.simulator-bottom__action b { font-size: 14px; }
-.simulator-bottom__action small { margin-top: 4px; color: #d7ecff; font-size: 10px; letter-spacing: 0; }
 .lab-stage[data-stage="pc"] .pc-scene { min-height: 420px; justify-content: center; padding-top: 20px; }
 .lab-stage[data-stage="pc"] .pc-monitor { width: min(88%, 700px); }
 .lab-stage[data-stage="pc"] .pc-screen { height: clamp(250px, 24cqh, 360px); }
-.chapter-one-scene.is-simulator-stage .lab-header { border-color: #53baff; color: #fff; background: linear-gradient(105deg, #1689ff, #0063e6 70%, #0475ed); box-shadow: 0 11px 28px #004ba44d, inset 0 1px 0 #ffffff75; }
-.chapter-one-scene.is-simulator-stage .lab-heading span, .chapter-one-scene.is-simulator-stage .lab-heading small { color: #e2f3ff; }
-.chapter-one-scene.is-simulator-stage .lab-heading strong { color: #fff; font-size: clamp(16px, 1.55cqw, 27px); }
-.chapter-one-scene.is-simulator-stage .lab-hud, .chapter-one-scene.is-simulator-stage .lab-time { border-color: #ffffff77; background: #f6fbff; }
-.chapter-one-scene.is-simulator-stage .lab-back, .chapter-one-scene.is-simulator-stage .lab-settings summary { border-color: #ffffffa8; color: #0565d6; background: #fff; }
-.chapter-one-scene.is-simulator-stage .lab-hud > span, .chapter-one-scene.is-simulator-stage .lab-time > span { color: #1663ad; }
-.chapter-one-scene.is-simulator-stage .lab-heading { flex-basis: 30%; }
-.chapter-one-scene.is-simulator-stage .lab-avatar { box-shadow: 0 0 0 2px #fff; }
 .chapter-one-scene.is-simulator-stage .lab-mission-track, .chapter-one-scene.is-simulator-stage .lab-board__header, .chapter-one-scene.is-simulator-stage .lab-board__footer { display: none; }
 .chapter-one-scene.is-simulator-stage .lab-main { margin-top: 12px; }
 @container (max-width: 1200px) {
     .lab-layout.is-simulator { grid-template-columns: minmax(0, 1fr) 240px; }
     .lab-layout.is-simulator .sim-topology { display: none !important; }
-    .simulator-bottom { grid-template-columns: 1fr 1fr; }
-    .simulator-bottom__action { grid-column: 1 / -1; min-height: 74px; }
 }
 @container (max-width: 720px) {
     .lab-layout.is-simulator { grid-template-columns: minmax(0, 1fr); }
     .lab-layout.is-simulator .lab-guide { min-height: auto; padding: 12px 14px; }
     .lab-layout.is-simulator .lab-guide ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .lab-layout.is-simulator .lab-guide > img { display: none; }
-    .simulator-bottom { grid-template-columns: 1fr; }
-    .simulator-bottom__action { grid-column: auto; }
     .simulation-monitor { padding: 12px 10px 14px; border-width: 3px; }
     .simulation-monitor__screen, .lab-stage[data-stage="winbox"] .simulation-monitor__screen, .lab-stage[data-stage="config"] .simulation-monitor__screen { min-height: 390px; }
     .simulation-monitor .winbox-login { min-width: 590px; }
     .simulation-monitor .routeros { min-width: 650px; }
     .simulation-monitor__screen:has(.winbox-login), .simulation-monitor__screen:has(.routeros) { overflow-x: auto; }
 }
-.simulator-bottom__action .lab-button { min-height: 36px; margin-top: 7px; padding: 6px 18px; border-color: #fff; color: #0756b8; background: #fff; box-shadow: none; }
 @container (max-width: 650px) {
     .device-card { min-height: 145px; }
     .device-card img { height: 90px; }
@@ -1000,32 +972,32 @@
 @keyframes plug-insert { 0% { transform: translateX(32px) rotate(-8deg); } 40% { transform: translateX(-4px) rotate(2deg); } 75% { transform: translateX(-50px) rotate(-1deg); } 100% { transform: translateX(-42px) rotate(0); } }
 @keyframes scissors-trim { 0% { transform: translate(20px,-12px) rotate(-35deg); } 45% { transform: translate(0,0) rotate(2deg); } 70% { transform: translate(-6px,5px) rotate(18deg); } 100% { transform: translate(0,0) rotate(0); } }
 
-.tester-layout { grid-template-columns: minmax(0, 1.35fr) minmax(230px, .8fr); align-items: center; gap: clamp(16px, 2cqw, 28px); }
+.tester-layout { grid-template-columns: minmax(0, 1fr) minmax(230px, .8fr); align-items: center; gap: clamp(12px, 1.5cqw, 22px); }
 .tester-bench { min-width: 0; }
-.tester-bench__devices { position: relative; width: min(100%, 720px); aspect-ratio: 4 / 3; margin: 0 auto; overflow: visible; }
+.tester-bench__devices { position: relative; width: min(100%, 390px); aspect-ratio: 3 / 2; margin: 0 auto 48px; overflow: visible; }
 .tester-bench__devices > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 15px 18px #0b2a4d4a); }
 .tester-bench__device-label { position: absolute; z-index: 2; top: 22%; padding: 5px 11px; border: 1px solid #7ecbff; border-radius: 999px; color: #e9f8ff; background: #0969c9; box-shadow: 0 3px 8px #001a3970; font-size: clamp(10px, .9cqw, 13px); font-weight: 950; letter-spacing: .09em; }
-.tester-bench__device-label--main { left: 18%; }
-.tester-bench__device-label--remote { right: 12%; }
+.tester-bench__device-label--main { left: 20%; }
+.tester-bench__device-label--remote { right: 16%; }
 .tester-hardware-leds { position: absolute; z-index: 4; top: 23%; display: grid; width: 3%; height: 30%; grid-template-rows: repeat(8, 1fr); place-items: center; pointer-events: none; }
-.tester-hardware-leds--main { left: 40%; }
+.tester-hardware-leds--main { left: 42.5%; }
 .tester-hardware-leds--remote { left: 73.5%; }
 .tester-hardware-leds i { display: block; width: clamp(5px, .58cqw, 8px); height: clamp(5px, .58cqw, 8px); border: 1px solid #a2a9a5; border-radius: 50%; background: radial-gradient(circle at 36% 30%, #59625e, #141a1b 70%); box-shadow: 0 1px 2px #000b; transition: background .15s ease, box-shadow .15s ease; }
 .tester-hardware-leds i.is-on, .tester-hardware-leds i.is-passed { border-color: #b4ffac; background: radial-gradient(circle at 35% 30%, #d2ffbb, #37ec54 50%, #0f7027); box-shadow: 0 0 8px 3px #42ff61b5; }
-.tester-port { position: absolute; z-index: 5; display: grid; width: 20%; height: 14%; place-items: center; padding: 0; border: 2px dashed #08aaff; border-radius: 8px; color: #fff; background: #0877d994; box-shadow: 0 0 0 4px #38baff30, 0 0 18px #00aaff70; cursor: crosshair; transition: border-color .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease; }
-.tester-port--main { top: 74%; left: 24%; }
-.tester-port--remote { top: 75%; left: 64%; }
-.tester-port span { font-size: clamp(7px, .58cqw, 9px); font-weight: 950; letter-spacing: .04em; text-shadow: 0 1px 3px #00234c; }
+.tester-port { position: absolute; z-index: 5; display: grid; width: 13%; height: 11%; min-height: 30px; place-items: center; padding: 0; border: 2px solid #08aaff; border-radius: 8px; color: #fff; background: #0877d938; box-shadow: 0 0 0 3px #38baff30, 0 0 12px #00aaff70; cursor: crosshair; transition: border-color .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease; }
+.tester-port--main { top: 1%; left: 25%; }
+.tester-port--remote { top: 2%; left: 69%; }
+.tester-port span { position: absolute; top: calc(100% + 3px); padding: 3px 5px; border-radius: 5px; color: #0757a7; background: #f3fbff; font-size: 9px; font-weight: 950; letter-spacing: .02em; white-space: nowrap; text-shadow: none; }
 .tester-port.is-drop-target, .tester-port.is-connected { border-style: solid; border-color: #71ff9c; background: #0b9a62d9; box-shadow: 0 0 0 5px #41f58745, 0 0 22px #44ef8c; transform: scale(1.05); }
 .tester-cable-paths { position: absolute; z-index: 3; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
-.tester-cable-paths path { fill: none; stroke: #0786ec; stroke-width: 18; stroke-linecap: round; stroke-dasharray: 15 11; opacity: 0; filter: drop-shadow(0 3px 3px #06284880); transition: opacity .25s ease; }
+.tester-cable-paths path { fill: none; stroke: #0786ec; stroke-width: 9; stroke-linecap: round; stroke-dasharray: 15 11; opacity: 0; filter: drop-shadow(0 3px 3px #06284880); transition: opacity .25s ease; }
 .tester-cable-paths [data-tester-path="remote"] { stroke: #00a4c7; }
 .tester-cable-paths path.is-visible { opacity: .9; animation: cable-signal 1.4s linear infinite; }
-.tester-inserted { position: absolute; z-index: 6; top: 74%; display: grid; width: 18%; height: 12%; place-items: center; border: 2px solid #b8e7ff; border-radius: 4px; color: #fff; background: linear-gradient(#bceaff,#4694d5 45%,#1161a5); box-shadow: inset 0 2px 5px #fff8, 0 2px 9px #052b50; opacity: 0; transform: translateY(14px) scale(.7); transition: opacity .25s ease, transform .35s cubic-bezier(.2,.8,.2,1); font-size: 11px; font-weight: 950; }
+.tester-inserted { position: absolute; z-index: 6; top: 1%; display: grid; width: 12%; height: 10%; place-items: center; border: 2px solid #b8e7ff; border-radius: 4px; color: #fff; background: linear-gradient(#bceaff,#4694d5 45%,#1161a5); box-shadow: inset 0 2px 5px #fff8, 0 2px 9px #052b50; opacity: 0; transform: translateY(14px) scale(.7); transition: opacity .25s ease, transform .35s cubic-bezier(.2,.8,.2,1); font-size: 11px; font-weight: 950; }
 .tester-inserted--main { left: 25%; }
-.tester-inserted--remote { left: 65%; }
+.tester-inserted--remote { left: 69%; }
 .tester-inserted.is-visible { opacity: 1; transform: translateY(0) scale(1); }
-.tester-cable-ends { position: absolute; z-index: 8; right: 0; bottom: -2%; left: 0; display: flex; justify-content: space-around; pointer-events: none; }
+.tester-cable-ends { position: absolute; z-index: 8; right: 0; bottom: -48px; left: 0; display: flex; justify-content: space-around; pointer-events: none; }
 .tester-cable-end { display: flex; align-items: center; gap: 5px; min-width: 0; padding: 3px 8px; border: 1px solid #8ccfff; border-radius: 12px; color: #0757a7; background: #f4fbffed; box-shadow: 0 7px 17px #0d3b6c32; cursor: grab; pointer-events: auto; touch-action: none; transition: opacity .25s ease, transform .25s ease, box-shadow .25s ease; }
 .tester-cable-end img { width: clamp(44px, 6cqw, 76px); height: clamp(34px, 5cqw, 62px); object-fit: contain; transform: rotate(-90deg); }
 .tester-cable-end > span { font-size: 10px; font-weight: 950; white-space: nowrap; }
@@ -1047,7 +1019,7 @@
     .prep-workbench__cable-wrap { height: 170px; }
     .prep-workbench__caption { padding: 8px 4px; border-top: 2px solid #11a9f4; border-left: 0; }
     .tester-layout { grid-template-columns: 1fr; }
-    .tester-bench__devices { width: min(100%, 560px); }
+    .tester-bench__devices { width: min(100%, 350px); }
 }
 @container (max-width: 560px) {
     .lab-stage[data-stage="prep"] .prep-tools { grid-template-columns: 1fr; }
@@ -1077,22 +1049,27 @@
 .lab-stage[data-stage="terminate"] .terminate-visual { display: flex; flex-direction: column; width: 100%; height: auto; overflow: visible; gap: 12px; background: #f0f8ff; border-radius: 18px; padding: 12px; }
 
 .terminate-frame-caption { display: block; padding: 8px 18px; color: #124c80; background: #fff; border-radius: 20px; font-size: 14px; font-weight: 700; text-align: center; }
-.topology-workbench { margin: 20px auto; max-width: 980px; }
-.topology-hap { position: relative; width: 100%; margin-bottom: 42px; }
+.topology-workbench { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 270px); align-items: center; gap: 18px; max-width: 1100px; margin: 10px auto 0; }
+.topology-hap { position: relative; width: min(100%, 690px); margin: 0 auto 20px; }
 .topology-hap > img { display: block; width: 100%; height: auto; }
-.topology-socket { position: absolute; top: 64%; width: 10%; height: 16%; padding: 0; border: 2px dashed #78d7ff; border-radius: 5px; background: #009dff1a; cursor: pointer; }
+.topology-socket { position: absolute; top: 64%; width: 10%; height: 16%; padding: 0; border: 2px dashed #7bd2ff; border-radius: 5px; background: #009dff12; cursor: pointer; transition: border-color .2s ease, background .2s ease, box-shadow .2s ease; }
 .topology-socket--1 { left: 34%; }.topology-socket--2 { left: 45.5%; }.topology-socket--3 { left: 57%; }
-.topology-socket > span { position: absolute; bottom: 100%; left: 50%; transform: translate(-50%, -8px); padding: 3px 7px; border-radius: 5px; color: white; background: #063a66; font-size: clamp(9px, 1cqw, 14px); white-space: nowrap; }
-.topology-socket > b { position: absolute; top: 100%; left: 50%; transform: translate(-50%, 12px); width: 125%; padding: 5px 2px; border-radius: 6px; color: #08447c; background: #f5fcff; box-shadow: 0 2px 6px #09274630; font-size: clamp(9px, .9cqw, 13px); }
-.topology-socket.is-drop-target, .topology-socket:focus-visible { border-style: solid; background: #62d1ff80; outline: 3px solid #b7ecff; }
-.topology-socket.is-connected { border: 2px solid #31bd76; background: linear-gradient(#a2e8ffcf, #076ed9eb); box-shadow: inset 0 3px 0 #eeffff, 0 0 8px #45d58a; }
-.topology-socket.is-connected::after { content: ''; position: absolute; left: 39%; top: 75%; width: 22%; height: 90%; border-radius: 0 0 10px 10px; background: #087bd6; }
+.topology-socket > span { position: absolute; bottom: 100%; left: 50%; transform: translate(-50%, -5px); padding: 2px 5px; border-radius: 5px; color: white; background: #063a66; font-size: clamp(9px, .8cqw, 12px); white-space: nowrap; }
+.topology-socket > b { position: absolute; top: 100%; left: 50%; transform: translate(-50%, 5px); width: max-content; max-width: 140%; padding: 3px 6px; border-radius: 6px; color: #08447c; background: #f5fcff; box-shadow: 0 2px 6px #09274630; font-size: clamp(9px, .75cqw, 11px); white-space: nowrap; }
+.topology-socket.is-drop-target, .topology-socket:focus-visible { border-style: solid; background: #62d1ff55; outline: 3px solid #b7ecff; }
+.topology-socket.is-connected { border-color: #18be79; background: #16d99318; box-shadow: 0 0 0 2px #d9fff0, 0 0 9px #29c98688; }
+.topology-socket__plug { position: absolute; z-index: 2; top: 2%; left: -38%; width: 110%; height: auto; opacity: 0; pointer-events: none; clip-path: inset(0 0 22% 0); transform: translateY(14px) scale(.82); transform-origin: 70% 10%; transition: opacity .2s ease, transform .28s cubic-bezier(.2,.8,.2,1); }
+.topology-socket.is-connected .topology-socket__plug { opacity: 1; transform: translateY(0) scale(1); }
+.topology-socket.is-connected > b { color: #08704d; background: #e5fff3; transform: translate(-50%, 22px); }
 .topology-socket.is-wrong { border-color: #ff5252; box-shadow: 0 0 0 3px #ff525244; }
-.topology-cables { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
-.topology-cables button { display: grid; justify-items: center; gap: 6px; padding: 14px; border: 2px solid #c0dff5; border-radius: 14px; color: #153b65; background: #fff; font: inherit; cursor: grab; touch-action: manipulation; }
-.topology-cables button:active { cursor: grabbing; }.topology-cables button.is-selected { border-color: #0079ed; background: #e8f6ff; }.topology-cables button.is-connected { border-color: #73cc9a; }
-.topology-cables img { width: 90px; height: 70px; object-fit: contain; pointer-events: none; }
-.topology-cables span { font-weight: 800; }.topology-cables small { color: #5a7490; font-size: 12px; }
+.topology-actions { display: grid; gap: 12px; align-content: center; }
+.topology-actions > .lab-button { width: 100%; justify-content: center; }
+.topology-cables { display: grid; gap: 9px; }
+.topology-cables button { display: grid; grid-template-columns: 48px minmax(0, 1fr); grid-template-rows: auto auto; align-items: center; gap: 0 9px; min-height: 68px; padding: 7px 10px; border: 2px solid #c0dff5; border-radius: 12px; color: #153b65; background: #fff; font: inherit; text-align: left; cursor: grab; touch-action: manipulation; }
+.topology-cables button:active { cursor: grabbing; }.topology-cables button.is-selected { border-color: #0079ed; background: #e8f6ff; }.topology-cables button.is-connected { border-color: #73cc9a; background: #f4fff8; }
+.topology-cables img { grid-row: 1 / 3; width: 48px; height: 48px; object-fit: contain; pointer-events: none; }
+.topology-cables span { align-self: end; font-size: 13px; font-weight: 800; }.topology-cables small { align-self: start; color: #5a7490; font-size: 10px; }
+@container (max-width: 800px) { .topology-workbench { grid-template-columns: 1fr; gap: 4px; }.topology-hap { width: min(100%, 560px); margin-bottom: 16px; }.topology-cables { grid-template-columns: repeat(3, minmax(0, 1fr)); }.topology-cables button { grid-template-columns: 1fr; justify-items: center; padding: 6px 4px; text-align: center; }.topology-cables img { grid-row: auto; width: 36px; height: 34px; }.topology-cables span { font-size: 11px; }.topology-cables small { font-size: 9px; } }
 .pc-screen__desktop button img { width: 56px; height: 56px; object-fit: contain; }
 .winbox-login__logo img { width: 74px; height: 74px; object-fit: contain; margin: 10px auto; }
 .tester-hardware-leds i.is-on { box-shadow: 0 0 12px 5px #51ff4d; background: #b3ff93; }
@@ -1131,11 +1108,11 @@
 @container (max-width: 650px) { .simulation-monitor__screen { overflow-x: auto; }.topology-cables { gap: 6px; }.topology-cables button { padding: 8px 4px; font-size: 12px; }.topology-cables small { font-size: 10px; } }
 
 .tester-hardware-leds { width: 8%; height: 32%; border-radius: 8px; background: linear-gradient(90deg, #252e36, #313944); box-shadow: inset 0 0 5px #0f141b; }
-.tester-hardware-leds--main { left: 40%; top: 20.5%; }
-.tester-hardware-leds--remote { left: 73%; top: 22%; height: 30.5%; }
+.tester-hardware-leds--main { left: 42.5%; top: 25%; height: 40%; }
+.tester-hardware-leds--remote { left: 73.5%; top: 29%; height: 39%; }
 .tester-hardware-leds i { position: relative; width: clamp(6px,.68cqw,11px); height: clamp(6px,.68cqw,11px); margin-right: 30%; }
 .tester-hardware-leds i::after { content: attr(data-tester-hardware-led); position: absolute; left: calc(100% + 5px); top: -1px; color: #c2d7e9; font: 9px/1 Arial,sans-serif; }
-@container (min-width: 1500px) { .lab-layout.is-simulator { grid-template-columns: 200px minmax(0,1fr) 240px; }.lab-layout.is-simulator .sim-topology { display: flex !important; } }
+@container (min-width: 1500px) { .lab-layout.is-simulator { grid-template-columns: minmax(0,1fr) 260px; } }
 
 .winbox-connect-close { float: right; width: 22px; height: 20px; padding: 0; border: 1px solid #999; color: #111; background: #eee; font: 15px Arial,sans-serif; cursor: pointer; }
 
@@ -1147,7 +1124,7 @@
 .lab-guide__continue[hidden], .lab-device-panel[hidden] { display: none !important; }
 .lab-guide__lesson-next { position: relative; z-index: 1; width: 100%; margin-top: 12px; white-space: normal; }
 .lab-guide__lesson-next[hidden] { display: none !important; }
-.lab-layout.is-simulator .lab-guide__feedback, .lab-layout.is-simulator .lab-guide__continue { display: none !important; }
+.lab-layout.is-simulator .lab-guide__feedback { display: none !important; }
 .lab-watermark { width: min(100%, 1820px); margin: 14px auto 2px; color: #44668e; font-size: 12px; font-weight: 700; text-align: center; text-shadow: 0 1px 2px #fff; }
 
 /* The equipment summary lives in the right-hand detail area during mission one. */
@@ -1269,3 +1246,281 @@
 }
 
 .terminate-frames { width: min(100%, 250px); aspect-ratio: 3 / 4; overflow: hidden; flex: none; border-radius: 12px; background-color: #e6f6ff; background-size: 400% 100%; background-position: 0 center; background-repeat: no-repeat; }
+
+/* Keep the simulator inside the Chapter 1 frame. */
+.lab-layout.is-simulator .lab-board { min-height: 590px; }
+.lab-layout.is-simulator .lab-guide { display: flex; flex-direction: column; min-height: 590px; padding: 15px 13px; }
+.lab-layout.is-simulator .lab-guide > img { display: none; }
+.lab-stage[data-stage="pc"] .pc-scene { min-height: 0; padding-top: 0; }
+.lab-stage[data-stage="pc"] .pc-monitor { width: min(80%, 620px); }
+.lab-stage[data-stage="pc"] .pc-screen { height: clamp(230px, 22cqh, 315px); }
+@container (max-width: 1000px) { .lab-layout.is-simulator .lab-guide { min-height: 0; } }
+
+/* Simulator panels share the available viewport height; only dense side content scrolls. */
+@media (min-width: 1001px) {
+    .chapter-one-scene.is-simulator-stage .lab-main { display: flex; flex-direction: column; min-height: 0; overflow: hidden; padding-bottom: 0; }
+    .lab-layout.is-simulator { flex: 1; min-height: 0; grid-template-rows: minmax(0, 1fr); align-items: stretch; }
+    .lab-layout.is-simulator .lab-board { height: 100%; min-height: 0; }
+    .lab-layout.is-simulator .lab-board__body { min-height: 0; overflow: auto; }
+    .lab-layout.is-simulator .sim-topology { height: 100%; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+    .lab-layout.is-simulator .lab-guide { height: 100%; min-height: 0; overflow: hidden; }
+    .lab-layout.is-simulator .lab-guide__steps { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+}
+
+.lab-layout.is-simulator .lab-guide__continue:not([hidden]) { display: flex; }
+
+/* The network plan is taught once, immediately after the equipment introduction. */
+.topology-lesson { display: grid; gap: 18px; max-width: 1120px; margin: 0 auto; }
+.topology-lesson__intro { padding: 18px 22px; border: 1px solid #acd9ff; border-radius: 17px; background: linear-gradient(110deg, #e7f6ff, #fff); }
+.topology-lesson__intro > span { color: #0073e7; font-size: 11px; font-weight: 900; letter-spacing: .09em; }
+.topology-lesson__intro h2 { margin: 6px 0; font-size: clamp(23px, 2cqw, 34px); }
+.topology-lesson__intro p { max-width: 780px; margin: 0; color: #45678e; font-size: 15px; line-height: 1.45; }
+.topology-lesson__content { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(240px, .85fr); gap: 17px; align-items: stretch; }
+.topology-lesson__diagram, .topology-lesson__routes { border: 1px solid #b8ddfc; border-radius: 17px; background: #f6fbff; }
+.topology-lesson__diagram { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 380px; padding: 18px; }
+.topology-lesson__internet { display: grid; place-items: center; width: 120px; height: 65px; border: 3px solid #1688f3; border-radius: 40px; color: #0a3676; background: #e1f4ff; line-height: 1.1; }
+.topology-lesson__internet small { color: #557aa1; font-size: 11px; }
+.topology-lesson__line { width: 4px; height: 18px; background: #1989f0; }
+.topology-lesson__router { display: flex; flex-direction: column; align-items: center; width: min(100%, 310px); padding: 9px; border: 1px solid #b9dbf7; border-radius: 13px; background: #fff; }
+.topology-lesson__router img { width: 185px; height: 88px; object-fit: contain; }
+.topology-lesson__router b, .topology-lesson__endpoints b { color: #143c76; font-size: 14px; }
+.topology-lesson__split { display: flex; width: min(72%, 290px); height: 24px; border-top: 4px solid #1989f0; margin-top: 15px; }
+.topology-lesson__split span { width: 50%; height: 24px; border-left: 4px solid #1989f0; }
+.topology-lesson__endpoints { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: min(100%, 380px); }
+.topology-lesson__endpoints > div { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 92px; padding: 8px; border: 1px solid #b9dbf7; border-radius: 12px; background: #e9f7ff; }
+.topology-lesson__endpoints img { width: 110px; height: 64px; object-fit: contain; }
+.topology-lesson__routes { padding: 23px; }
+.topology-lesson__routes h3 { margin: 0 0 8px; color: #0c3471; font-size: 22px; }
+.topology-lesson__routes > p { margin: 0 0 20px; color: #4e7097; line-height: 1.45; }
+.topology-lesson__routes ol { display: grid; gap: 13px; margin: 0; padding: 0; list-style: none; }
+.topology-lesson__routes li { display: flex; align-items: center; gap: 13px; padding: 12px; border: 1px solid #c6e3fb; border-radius: 11px; color: #193d74; background: #fff; font-weight: 700; }
+.topology-lesson__routes li b { min-width: 64px; color: #0075ea; }
+@container (max-width: 850px) { .topology-lesson__content { grid-template-columns: 1fr; } .topology-lesson__diagram { min-height: 340px; } }
+
+/* WinBox 3 classic: native density, pale grey panels, blue child dialogs and a single MDI workspace. */
+.lab-stage[data-stage="config"], .lab-stage[data-stage="winbox"] { display: flex; flex: 1; flex-direction: column; width: 100%; height: 100%; min-height: 0; gap: 7px; }
+.lab-layout.is-simulator .lab-board[data-current-stage="config"] .lab-board__body, .lab-layout.is-simulator .lab-board[data-current-stage="winbox"] .lab-board__body { justify-content: stretch; padding: 0; }
+.lab-stage .simulation-monitor--classic { display: flex; flex: 1; width: 100%; max-width: none; min-height: 0; margin: 0; padding: 0; border: 0; border-radius: 0; background: #dce4e9; box-shadow: none; }
+.lab-stage .simulation-monitor--classic .simulation-monitor__screen { display: flex; flex: 1; width: 100%; height: 100%; min-height: 0; overflow: hidden; border: 0; border-radius: 0; background: #dce4e9; }
+.simulation-monitor--classic .wb-icon { display: inline-block; flex: none; width: 16px; height: 16px; vertical-align: middle; }
+.lab-stage .simulation-monitor--classic .routeros { display: grid; grid-template-rows: 27px 22px 29px minmax(0, 1fr) 21px; width: 100%; height: 100%; min-width: 0; min-height: 0; margin: 0; overflow: hidden; border: 1px solid #a8b5c0; border-radius: 3px; color: #1c252b; background: #e9eef2; font: 12px/1.2 Tahoma, 'Segoe UI', Arial, sans-serif; box-shadow: none; }
+.simulation-monitor--classic .routeros > header, .simulation-monitor--classic .winbox-window > header { display: flex; flex: none; align-items: center; min-height: 27px; padding: 0 0 0 6px; border: 0; border-bottom: 1px solid #c9d4dd; color: #17232b; background: #f2f6f9; font-size: 12px; font-weight: 400; }
+.simulation-monitor--classic .routeros__title { display: flex; align-items: center; gap: 4px; min-width: 0; overflow: hidden; white-space: nowrap; letter-spacing: 0; }
+.simulation-monitor--classic .routeros__title img { width: 17px; height: 17px; margin-right: 2px; object-fit: contain; }
+.simulation-monitor--classic .routeros__title b { font-weight: 400; }
+.simulation-monitor--classic .winbox-window-controls { align-self: stretch; gap: 0; }
+.simulation-monitor--classic .winbox-window-controls button { width: 32px; height: 100%; min-height: 22px; padding: 0; border: 0; border-radius: 0; color: inherit; background: transparent; font: 15px/1 Arial, sans-serif; box-shadow: none; }
+.simulation-monitor--classic .winbox-window-controls button:hover { background: #cddce7; }
+.simulation-monitor--classic .winbox-window-controls button:last-child:hover { color: #fff; background: #d74b43; }
+.simulation-monitor--classic .routeros__menubar { display: flex; flex: none; align-items: center; gap: 16px; height: 22px; padding: 0 7px; border-bottom: 1px solid #d3dde4; color: #17232b; background: #f6f8fa; font-size: 12px; }
+.simulation-monitor--classic .routeros__toolbar { gap: 4px; min-height: 29px; height: 29px; padding: 3px 5px; border-bottom: 1px solid #b6c3cc; background: #e9eef2; font-size: 12px; }
+.simulation-monitor--classic .wb-toolbar-icon, .simulation-monitor--classic .wb-safe-mode { display: inline-flex; align-items: center; justify-content: center; height: 23px; padding: 2px 5px; border: 1px solid #bac7d0; border-radius: 2px; background: linear-gradient(#fff, #e9eff3); box-shadow: inset 0 0 0 1px #ffffff70; }
+.simulation-monitor--classic .wb-safe-mode { margin-left: 3px; padding: 2px 10px; }
+.simulation-monitor--classic .wb-session { display: inline-flex; align-items: center; gap: 5px; margin-left: 15px; }
+.simulation-monitor--classic .wb-session > span { padding: 3px 6px; border: 1px solid #c3cdd6; background: #fff; }
+.simulation-monitor--classic .routeros__connected { display: flex; align-items: center; margin-left: auto; padding-right: 5px; }
+.simulation-monitor--classic .routeros__connected i { width: 25px; height: 7px; border: 1px solid #388d58; background: linear-gradient(90deg, #5ea978 0 70%, #dfe8e4 70%); }
+.lab-stage .simulation-monitor--classic .routeros__body { display: grid; grid-template-columns: 153px minmax(0, 1fr); min-height: 0; overflow: hidden; }
+.simulation-monitor--classic .routeros nav { position: relative; z-index: 20; display: flex; flex-direction: column; gap: 0; min-height: 0; padding: 2px 0; border-right: 1px solid #aebdc7; background: #e9eef2; }
+.simulation-monitor--classic .routeros nav .routeros__menu-item { display: flex; flex: none; align-items: center; gap: 6px; width: 100%; height: 22px; min-height: 22px; padding: 2px 7px; border: 0; border-radius: 0; color: #263b49; background: transparent; font: 12px/1 Tahoma, 'Segoe UI', Arial, sans-serif; text-align: left; }
+.simulation-monitor--classic .routeros nav .routeros__menu-item > span { display: inline; width: auto; min-height: 0; padding: 0; border: 0; color: inherit; background: none; font: inherit; }
+.simulation-monitor--classic .routeros nav button.routeros__menu-item:hover, .simulation-monitor--classic .routeros nav .routeros__menu-item.is-active, .simulation-monitor--classic .routeros nav .routeros__menu-item[aria-expanded="true"] { color: #143e63; background: linear-gradient(#d5eafa, #b8daf5); }
+.simulation-monitor--classic .wb-menu-arrow { margin-left: auto; color: #657985; font: 19px/12px Arial, sans-serif; }
+.simulation-monitor--classic .routeros nav .routeros__submenu { position: absolute; z-index: 1000; top: min(210px, max(0px, calc(100% - 355px))); left: calc(100% - 1px); width: 170px; padding: 3px 0; border: 1px solid #94a8b7; background: #edf2f6; box-shadow: 3px 3px 5px #15283a45; }
+.simulation-monitor--classic .routeros__submenu[hidden] { display: none !important; }
+.simulation-monitor--classic .routeros nav .routeros__submenu > * { display: flex; align-items: center; gap: 7px; width: 100%; height: 21px; min-height: 21px; padding: 2px 8px; border: 0; border-radius: 0; color: #273d4b; background: transparent; font: 12px/1 Tahoma, 'Segoe UI', Arial, sans-serif; }
+.simulation-monitor--classic .routeros nav .routeros__submenu > button:hover { background: #bfddf5; }
+.lab-stage .simulation-monitor--classic .routeros__content { position: relative; display: block; min-width: 0; min-height: 0; padding: 0; overflow: hidden; background: #cbd6de; }
+.simulation-monitor--classic .routeros__content > .winbox-desktop { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; opacity: 1; background: transparent; pointer-events: none; }
+.lab-stage .simulation-monitor--classic .winbox-child { position: absolute; top: 0; left: 0; width: 100%; min-width: 0; min-height: 0; max-height: 100%; margin: 0; overflow: hidden; border: 1px solid #a1b3c0; border-radius: 3px; color: #21323e; background: #e9eef2; box-shadow: 0 4px 11px #31455350; font: 12px/1.2 Tahoma, 'Segoe UI', Arial, sans-serif; }
+.simulation-monitor--classic .winbox-child[hidden] { display: none !important; }
+.simulation-monitor--classic .winbox-child > header { display: flex; flex: none; align-items: center; justify-content: space-between; height: 27px; min-height: 27px; padding: 0 1px 0 11px; border: 0; color: #fff; background: #0078c9; font-size: 12px; font-weight: 400; }
+.simulation-monitor--classic .winbox-child > header .winbox-window-controls button { width: 26px; min-height: 25px; font-size: 15px; }
+.simulation-monitor--classic .winbox-child > header .winbox-window-controls button:hover { background: #3399db; }
+.lab-stage .simulation-monitor--classic .winbox-child--list { display: flex; flex-direction: column; inset: 0; width: 100%; height: 100%; border: 0; border-radius: 0; box-shadow: none; }
+.simulation-monitor--classic .winbox-child--list > header { height: 26px; min-height: 26px; color: #fff; background: #96a8b6; }
+.lab-stage .simulation-monitor--classic .winbox-child--dialog { top: 52px; left: clamp(15px, 17%, 200px); width: min(480px, calc(100% - 30px)); height: auto; max-height: calc(100% - 65px); }
+.lab-stage .simulation-monitor--classic [data-config-panel="identity"] { top: clamp(20px, 20%, 130px); left: clamp(15px, 23%, 270px); width: min(390px, calc(100% - 30px)); }
+.lab-stage .simulation-monitor--classic .winbox-child.is-maximized { inset: 0 !important; width: 100% !important; height: 100% !important; max-height: 100%; }
+.simulation-monitor--classic .winbox-child__tabs { display: flex; flex: none; align-items: stretch; gap: 0; min-height: 28px; padding: 3px 7px 0; overflow-x: auto; border-bottom: 1px solid #b5c4cf; background: #e9eef2; scrollbar-width: thin; }
+.simulation-monitor--classic .winbox-child__tabs > * { display: flex; align-items: center; flex: none; min-height: 25px; padding: 3px 11px; border: 0; border-right: 1px solid #d4dde4; border-radius: 0; color: #263b49; background: transparent; font-size: 11px; font-weight: 400; }
+.simulation-monitor--classic .winbox-child__tabs > strong { border-bottom: 2px solid #0078c9; background: #f9fbfc; }
+.simulation-monitor--classic .winbox-child__tools { display: flex; flex: none; align-items: center; gap: 3px; height: 31px; padding: 3px 6px; border-bottom: 1px solid #c4d0d9; background: #eef3f6; }
+.simulation-monitor--classic .winbox-child__tools > span { display: inline-flex; align-items: center; justify-content: center; width: 25px; height: 24px; padding: 3px; border: 1px solid #ccd8e1; border-radius: 1px; background: linear-gradient(#fbfdfe, #e8eff4); }
+.simulation-monitor--classic .winbox-child__tools .wb-find { display: flex; align-items: center; gap: 4px; width: 115px; max-width: 150px; min-height: 23px; height: 23px; margin: 0 0 0 auto; padding: 2px 4px; border: 1px solid #c4d1dc; border-radius: 2px; background: #fff; }
+.simulation-monitor--classic .wb-find .wb-icon { width: 13px; height: 13px; }
+.simulation-monitor--classic .wb-find input { width: 100%; height: 18px; min-height: 18px; margin: 0; padding: 0; border: 0; outline: 0; background: transparent; font: 11px Tahoma, sans-serif; }
+.simulation-monitor--classic .interface-list { flex: 1; min-height: 0; overflow: auto; border: 0; background: #fff; scrollbar-width: thin; }
+.simulation-monitor--classic .interface-list__head, .simulation-monitor--classic .interface-list > button, .simulation-monitor--classic .interface-list__static { display: grid; grid-template-columns: 23px 19px minmax(140px, 1.7fr) minmax(72px, 1fr) 48px 72px 58px repeat(4, minmax(65px, 1fr)); gap: 0; align-items: center; width: 100%; min-width: 800px; height: 21px; min-height: 21px; padding: 0; border: 0; border-radius: 0; color: #253b49; background: #fff; font: 11px/1.2 Tahoma, 'Segoe UI', Arial, sans-serif; }
+.simulation-monitor--classic .interface-list__head { position: sticky; z-index: 1; top: 0; height: 23px; min-height: 23px; background: linear-gradient(#f2f6f9, #e3ebf1); }
+.simulation-monitor--classic .interface-list__head > *, .simulation-monitor--classic .interface-list > button > *, .simulation-monitor--classic .interface-list__static > * { display: flex; align-items: center; gap: 4px; height: 100%; min-width: 0; overflow: hidden; padding: 2px 5px; border-right: 1px solid #e1e8ed; font-weight: 400; text-overflow: ellipsis; white-space: nowrap; }
+.simulation-monitor--classic .interface-list__head > * { border-right-color: #cbd7e1; border-bottom: 1px solid #c6d3dd; }
+.simulation-monitor--classic .interface-list > button strong { color: inherit; font-weight: 400; }
+.simulation-monitor--classic .interface-list > button:hover { color: #1a3b53; background: #e4f1fb; }
+.simulation-monitor--classic .interface-list > button.is-selected { background: #badcf7; }
+.simulation-monitor--classic .interface-list > [hidden] { display: none !important; }
+.simulation-monitor--classic .winbox-child__body { display: grid; grid-template-columns: minmax(0, 1fr) 80px; gap: 14px; padding: 12px 11px 14px 14px; }
+.simulation-monitor--classic .winbox-child__fields { display: flex; flex-direction: column; gap: 5px; min-width: 0; padding-top: 1px; }
+.simulation-monitor--classic .winbox-child__body label { display: grid; grid-template-columns: 85px minmax(0, 1fr); align-items: center; gap: 7px; width: 100%; max-width: none; margin: 0; color: #0876bb; font: 12px/1.2 Tahoma, 'Segoe UI', Arial, sans-serif; text-align: right; }
+.simulation-monitor--classic .winbox-child__body input { width: 100%; height: 25px; min-height: 25px; padding: 3px 5px; border: 1px solid #a8bdcc; border-radius: 1px; color: #1e3545; background: #fff; font: 12px Tahoma, 'Segoe UI', Arial, sans-serif; box-shadow: inset 0 1px 2px #182f4610; }
+.simulation-monitor--classic .winbox-child__body input:focus { border-color: #6d9de0; outline: 1px solid #9db9ec; outline-offset: -1px; }
+.simulation-monitor--classic .winbox-child__body input[readonly] { color: #647582; border-color: #c5d1da; background: #edf1f4; }
+.simulation-monitor--classic .winbox-child__actions { display: flex; grid-column: 2; grid-row: 1; flex-direction: column; gap: 5px; min-width: 0; }
+.simulation-monitor--classic .winbox-child__actions button, .simulation-monitor--classic .winbox-control { width: 100%; height: 26px; min-height: 26px; padding: 3px 7px; border: 1px solid #b0c0ce; border-radius: 2px; color: #233c4e; background: linear-gradient(#fbfdff, #e8eff4); box-shadow: inset 0 0 0 1px #ffffffb0; font: 12px Tahoma, 'Segoe UI', Arial, sans-serif; }
+.simulation-monitor--classic .winbox-child__actions button:first-child { border-color: #6c9cdd; outline: 1px solid #c1d5f6; outline-offset: -3px; }
+.simulation-monitor--classic .winbox-child__actions button:disabled { color: #8c9ba6; cursor: default; }
+.simulation-monitor--classic .winbox-child__actions button:hover:not(:disabled), .simulation-monitor--classic .winbox-control:hover { border-color: #6c9cdd; background: #e0effc; }
+.simulation-monitor--classic .winbox-child > footer { display: flex; flex: none; justify-content: space-between; min-height: 22px; padding: 4px 9px; border-top: 1px solid #c2ced7; color: #526a7c; background: #edf2f6; font-size: 11px; }
+.simulation-monitor--classic .routeros__status { align-items: center; height: 21px; min-height: 21px; padding: 2px 7px; border-top: 1px solid #b8c6d0; color: #485f70; background: #eaf0f5; font-size: 11px; }
+.simulation-monitor--classic .winbox-taskbar { z-index: 25; min-height: 0; height: auto; padding: 0; border: 0; background: #d1dce5; }
+.simulation-monitor--classic .winbox-taskbar:empty { display: none; }
+.simulation-monitor--classic .winbox-taskbar button { height: 24px; padding: 2px 9px; border-color: #a4b6c4; color: #263e50; background: #eaf1f6; font: 11px Tahoma, sans-serif; }
+.lab-stage[data-stage="config"] .config-checks { display: flex; flex: none; flex-wrap: wrap; gap: 5px; margin: 0; padding: 0 9px 7px; }
+.lab-stage[data-stage="config"] .config-checks span { padding: 4px 7px; font-size: 10px; line-height: 1.2; }
+.lab-stage .simulation-monitor--classic .routeros.is-app-restored { width: calc(100% - 36px); height: calc(100% - 28px); margin: 14px 18px; }
+/* The loader keeps the native connection form above its Neighbors table. */
+.lab-stage[data-stage="winbox"] .simulation-monitor--classic .simulation-monitor__screen { align-items: center; justify-content: center; padding: 12px; }
+.lab-stage .simulation-monitor--classic .wb-loader { display: flex; flex-direction: column; width: min(100%, 900px); height: min(100%, 580px); min-height: 0; border: 1px solid #a8b8c5; border-radius: 3px; background: #eaf0f4; box-shadow: 0 4px 14px #334c6340; color: #243d4f; font: 12px/1.2 Tahoma, 'Segoe UI', Arial, sans-serif; }
+.simulation-monitor--classic .wb-loader .winbox-login { display: flex; flex: 1; flex-direction: column; min-height: 0; padding: 0; overflow: hidden; }
+.simulation-monitor--classic .wb-loader .winbox-connect { position: static; inset: auto; display: block; flex: none; width: 100%; min-width: 0; max-width: none; margin: 0; padding: 15px 18px 12px; border: 0; border-radius: 0; background: #edf2f6; box-shadow: none; }
+.simulation-monitor--classic .wb-loader .winbox-connect > header { display: none; }
+.simulation-monitor--classic .wb-loader .winbox-credentials { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 105px; gap: 6px 18px; max-width: 620px; padding: 0; }
+.simulation-monitor--classic .wb-loader .winbox-credentials > label { display: grid; grid-column: 1; grid-template-columns: 85px minmax(0, 1fr); align-items: center; gap: 8px; margin: 0; color: #2b4355; font-size: 12px; text-align: right; }
+.simulation-monitor--classic .wb-loader .winbox-credentials input { width: 100%; height: 25px; min-height: 25px; padding: 3px 6px; border: 1px solid #a7bccd; border-radius: 1px; color: #263c4b; background: #fff; font: 12px Tahoma, sans-serif; }
+.simulation-monitor--classic .wb-loader .winbox-credentials > button { grid-column: 2; grid-row: 1; }
+.simulation-monitor--classic .wb-loader__options { display: flex; grid-column: 1 / -1; gap: 18px; padding: 3px 0 0 93px; }
+.simulation-monitor--classic .wb-loader__options label { display: flex; align-items: center; gap: 5px; font-size: 11px; }
+.simulation-monitor--classic .wb-loader .wb-loader__options input { width: 13px; height: 13px; min-height: 0; padding: 0; accent-color: #267ac4; }
+.simulation-monitor--classic .wb-loader .winbox-neighbors { display: block; flex: 1; min-width: 0; min-height: 0; padding: 0 7px; border: 0; }
+.simulation-monitor--classic .winbox-neighbors__list { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.simulation-monitor--classic .wb-loader .winbox-tabs { display: flex; flex: none; height: 29px; padding: 2px 0 0; border-bottom: 1px solid #b8c8d5; }
+.simulation-monitor--classic .wb-loader .winbox-tabs > * { display: flex; align-items: center; margin: 0; padding: 4px 13px; border: 1px solid #c0cdd7; border-bottom: 0; color: #2f4759; background: #e3ebf1; font-size: 12px; font-weight: 400; }
+.simulation-monitor--classic .wb-loader .winbox-tabs > strong { border-bottom: 2px solid #087cc8; background: #fafcfe; }
+.simulation-monitor--classic .wb-loader .winbox-toolbar { display: flex; flex: none; height: 31px; padding: 3px 0; background: #edf2f6; }
+.simulation-monitor--classic .wb-loader .winbox-toolbar button { min-height: 24px; padding: 3px 12px; border: 1px solid #b6c6d4; border-radius: 1px; color: #263f53; background: linear-gradient(#fff, #e8f0f6); font: 11px Tahoma, sans-serif; }
+.simulation-monitor--classic .wb-loader .winbox-table { flex: 1; min-height: 0; overflow: auto; border: 1px solid #c0ced9; background: #fff; }
+.simulation-monitor--classic .wb-loader .winbox-table__head, .simulation-monitor--classic .wb-loader .winbox-table > button { display: grid; grid-template-columns: 1.7fr 1.3fr 1fr 1fr 1fr; width: 100%; min-width: 550px; min-height: 22px; padding: 0; border: 0; border-radius: 0; color: #2c4355; background: #fff; font: 11px Tahoma, sans-serif; text-align: left; }
+.simulation-monitor--classic .wb-loader .winbox-table__head { position: sticky; top: 0; z-index: 1; background: linear-gradient(#f3f7fa, #e1eaf2); }
+.simulation-monitor--classic .wb-loader .winbox-table__head > *, .simulation-monitor--classic .wb-loader .winbox-table > button > * { display: block; padding: 4px 6px; border-right: 1px solid #d6e0e8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.simulation-monitor--classic .wb-loader .winbox-table > button.is-selected { background: #b9dbf6; }
+.simulation-monitor--classic .wb-loader__status { flex: none; min-height: 22px; padding: 4px 8px; color: #526b7e; background: #eaf0f5; font-size: 11px; }
+.simulation-monitor--classic .wb-loader.is-app-restored { width: min(88%, 760px); height: min(88%, 510px); }
+@media (max-height: 800px) and (min-width: 1001px) {
+    .simulation-monitor--classic .routeros nav .routeros__menu-item { height: 18px; min-height: 18px; font-size: 11px; }
+    .simulation-monitor--classic .routeros nav .routeros__menu-item .wb-icon { width: 14px; height: 14px; }
+    .simulation-monitor--classic .routeros nav .routeros__menu-item > span { font-size: inherit; }
+    .lab-stage .simulation-monitor--classic .winbox-child--dialog { top: 15px; max-height: calc(100% - 25px); overflow: auto; }
+}
+@media (max-width: 1000px) {
+    .lab-stage[data-stage="config"] { height: 620px; min-height: 620px; }
+    .lab-stage[data-stage="winbox"] { height: 530px; min-height: 530px; }
+    .lab-stage .simulation-monitor--classic .routeros__body { grid-template-columns: 132px minmax(0, 1fr); }
+    .simulation-monitor--classic .routeros nav .routeros__menu-item { height: 21px; min-height: 21px; padding-left: 4px; font-size: 11px; }
+    .simulation-monitor--classic .routeros__title { max-width: calc(100% - 100px); font-size: 10px; }
+    .simulation-monitor--classic .wb-session { margin-left: 4px; font-size: 10px; }
+    .simulation-monitor--classic .winbox-child__body { gap: 7px; padding: 9px; grid-template-columns: minmax(0, 1fr) 70px; }
+    .simulation-monitor--classic .winbox-child__body label { grid-template-columns: 67px minmax(0, 1fr); gap: 4px; font-size: 11px; }
+}
+
+.simulation-monitor--classic .winbox-reopen { height: 100%; min-height: 0; }
+@container (max-width: 1000px) {
+    .chapter-one-scene.is-simulator-stage .lab-main { display: block; overflow: auto; padding-bottom: 12px; }
+    .lab-layout.is-simulator { grid-template-rows: auto; }
+    .lab-layout.is-simulator .lab-board { height: auto; min-height: 0; }
+    .lab-layout.is-simulator .lab-guide { height: auto; min-height: 0; overflow: visible; }
+    .lab-layout.is-simulator .lab-guide__steps { overflow: visible; }
+    .lab-stage[data-stage="config"] { height: 620px; min-height: 620px; }
+    .lab-stage[data-stage="winbox"] { height: 530px; min-height: 530px; }
+}
+
+.simulation-monitor--classic .routeros nav .routeros__submenu[data-system-menu] { top: 6px; max-height: calc(100% - 12px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+
+.device-recognition-checklist { margin: 12px 0; padding: 10px; border: 1px solid #bbdcf6; border-radius: 11px; background: #edf7ff; color: #244c76; }
+.device-recognition-checklist[hidden] { display: none; }
+.device-recognition-checklist__heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; }
+.device-recognition-checklist__heading > span { flex: none; color: #55789b; font-size: 11px; }
+.device-recognition-checklist > p { margin: 8px 0; font-size: 11px; line-height: 1.4; }
+.device-recognition-checklist ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin: 0; padding: 0; list-style: none; }
+.device-recognition-checklist li { display: flex; align-items: center; gap: 6px; min-height: 36px; padding: 6px; border: 1px solid #c9dff0; border-radius: 7px; background: #fff; font-size: 11px; font-weight: 700; line-height: 1.25; }
+.device-recognition-checklist__mark { display: grid; flex: none; place-items: center; width: 19px; height: 19px; border: 1px solid #bbd8ed; border-radius: 50%; background: #edf5fc; color: #537da3; font-size: 11px; }
+.device-recognition-checklist li.is-done { border-color: #81d2af; background: #e5f8ee; color: #08694d; }
+.device-recognition-checklist li.is-done .device-recognition-checklist__mark { border-color: #0aa174; background: #0aa174; color: #fff; }
+.device-recognition-checklist .device-recognition-checklist__complete { margin: 9px 0 0; color: #087750; font-weight: 800; }
+.lab-layout.is-device-stage [data-guide-list], .lab-layout.is-device-stage [data-feedback] { display: none; }
+
+.lab-board[data-current-stage="topologyLesson"] .lab-board__body { padding: 14px; }
+.topology-lesson { max-width: 1120px; gap: 0; }
+.topology-lesson__content { gap: 14px; align-items: center; }
+.topology-lesson__diagram { min-height: 0; padding: 14px 16px; justify-content: flex-start; }
+.topology-lesson__internet { width: 110px; height: 46px; border-width: 2px; font-size: 15px; }
+.topology-lesson__line { position: relative; flex: none; height: 18px; width: 3px; }
+.topology-lesson__line > span { position: absolute; top: 1px; left: 9px; color: #0874ce; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.topology-lesson__router { width: min(100%, 285px); padding: 7px; }
+.topology-lesson__router img { width: 145px; height: 65px; }
+.topology-lesson__split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: min(100%, 380px); height: 35px; margin-top: 0; border: 0; }
+.topology-lesson__split > span { display: flex; flex-direction: column; align-items: center; width: auto; height: 35px; border: 0; }
+.topology-lesson__split b { padding: 2px 6px; border-radius: 4px; background: #e2f2ff; color: #086dbe; font-size: 11px; line-height: 16px; }
+.topology-lesson__split i { flex: 1; width: 3px; background: #1989f0; }
+.topology-lesson__endpoints { gap: 12px; }
+.topology-lesson__endpoints > div { min-height: 0; padding: 7px; text-align: center; }
+.topology-lesson__endpoints img { width: 100px; height: 48px; }
+.topology-lesson__endpoints b { font-size: 12px; }
+.topology-lesson__endpoints small { margin-top: 3px; color: #55799c; font-size: 10px; line-height: 1.3; }
+.topology-lesson__routes { padding: 17px; }
+.topology-lesson__routes h3 { font-size: 20px; }
+.topology-lesson__routes > p { margin-bottom: 14px; font-size: 13px; }
+.topology-lesson__routes ol { gap: 9px; }
+.topology-lesson__routes li { gap: 10px; padding: 10px; font-size: 13px; }
+.topology-lesson__routes li small { display: block; margin-top: 4px; color: #5b7a9e; font-size: 11px; font-weight: 400; }
+.topology-lesson__routes .topology-lesson__module-note { margin: 13px 0 0; font-size: 11px; }
+@media (min-width: 1000px) and (max-height: 800px) {
+    .lab-board[data-current-stage="topologyLesson"] .lab-board__header { padding: 12px 18px; }
+    .lab-board[data-current-stage="topologyLesson"] .lab-board__header h1 { font-size: 24px; }
+    .lab-board[data-current-stage="topologyLesson"] .lab-board__body { padding: 10px 12px; }
+    .topology-lesson__diagram { padding: 10px; }
+    .topology-lesson__router img { height: 55px; }
+    .topology-lesson__endpoints img { height: 40px; }
+}
+
+/* Give the topology lesson readable device sizes and room for its explanation. */
+.topology-lesson { width: 100%; max-width: none; }
+.topology-lesson__content { grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 18px; align-items: stretch; }
+.topology-lesson__diagram { padding: 20px 18px; justify-content: center; }
+.topology-lesson__internet { width: 140px; height: 56px; font-size: 18px; }
+.topology-lesson__internet small { font-size: 12px; }
+.topology-lesson__line { height: 24px; }
+.topology-lesson__line > span { left: 10px; font-size: 13px; }
+.topology-lesson__router { width: min(100%, 360px); padding: 10px; }
+.topology-lesson__router img { width: 230px; height: 100px; }
+.topology-lesson__router b { font-size: 17px; }
+.topology-lesson__split { width: min(100%, 440px); height: 42px; gap: 16px; }
+.topology-lesson__split > span { height: 42px; }
+.topology-lesson__split b { font-size: 13px; line-height: 20px; }
+.topology-lesson__endpoints { width: min(100%, 440px); gap: 16px; }
+.topology-lesson__endpoints > div { padding: 10px 8px; }
+.topology-lesson__endpoints img { width: 155px; height: 78px; }
+.topology-lesson__endpoints b { font-size: 14px; }
+.topology-lesson__endpoints small { font-size: 11px; }
+.topology-lesson__routes { display: flex; flex-direction: column; justify-content: center; padding: 22px; }
+.topology-lesson__routes h3 { margin-bottom: 10px; font-size: 23px; }
+.topology-lesson__routes > p { font-size: 14px; line-height: 1.55; }
+.topology-lesson__routes ol { gap: 10px; }
+.topology-lesson__routes li { align-items: flex-start; padding: 12px; font-size: 15px; line-height: 1.35; }
+.topology-lesson__routes li b { min-width: 64px; }
+.topology-lesson__routes li small { margin-top: 5px; font-size: 13px; line-height: 1.45; }
+.topology-lesson__routes .topology-lesson__module-note { margin-top: 15px; font-size: 13px; line-height: 1.5; }
+.topology-lesson__routes .topology-lesson__source { margin: 9px 0 0; color: #5b7a9e; font-size: 11px; }
+.chapter-one-scene.is-topology-lesson-stage .lab-guide { min-height: 0; padding-bottom: 18px; }
+.chapter-one-scene.is-topology-lesson-stage .lab-guide > img { display: none; }
+@media (min-width: 1000px) and (max-height: 760px) {
+    .topology-lesson__diagram { padding: 12px; }
+    .topology-lesson__internet { height: 44px; }
+    .topology-lesson__router img { height: 75px; width: 190px; }
+    .topology-lesson__endpoints img { height: 60px; width: 135px; }
+    .topology-lesson__routes { padding: 16px; }
+    .topology-lesson__routes li { padding: 9px; }
+}
+@container (max-width: 850px) {
+    .topology-lesson__content { grid-template-columns: 1fr; }
+    .topology-lesson__routes { padding: 17px; }
+}
