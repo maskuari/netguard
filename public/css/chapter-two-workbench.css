@@ -356,3 +356,24 @@
 .ch2-verify-checklist .is-requesting { border-color: #72b3f1; background: #e8f4ff; }
 
 .ch2-verify-checklist [data-request-ip][hidden] { display: none; }
+
+.ch2-scene .ch2-interface-table .ch2-table__head, .ch2-scene .ch2-interface-table > button, .ch2-scene .ch2-interface-table > div:not(.ch2-table__head) { display: grid; grid-template-columns: 23px 19px minmax(140px, 1.7fr) minmax(72px, 1fr) 48px 72px 58px repeat(4, minmax(65px, 1fr)); width: 100%; min-width: 800px; min-height: 21px; height: 21px; padding: 0; font: 11px/1.2 Tahoma, 'Segoe UI', Arial, sans-serif; }
+.ch2-scene .ch2-interface-table .ch2-table__head > *, .ch2-scene .ch2-interface-table > button > *, .ch2-scene .ch2-interface-table > .interface-list__static > * { display: flex; align-items: center; gap: 4px; height: 100%; min-width: 0; padding: 2px 5px; overflow: hidden; border-right: 1px solid #e1e8ed; font-weight: 400; white-space: nowrap; text-overflow: ellipsis; }
+.ch2-scene .ch2-interface-table .ch2-table__head { height: 23px; min-height: 23px; background: linear-gradient(#f2f6f9, #e3ebf1); }
+
+/* Child windows stay invisible until a player explicitly opens their menu or tab. */
+.ch2-scene:not(.ch3-scene) .ch2-monitor .ch2-window[data-window]:not([data-player-open="true"]), .ch2-scene:not(.ch3-scene) .ch2-monitor .ch2-window[data-window][hidden] { display: none !important; }
+
+.ch2-scene .ch2-monitor [data-window="wan-edit"] { top: 42px; left: clamp(12px, 18%, 210px); width: min(550px, calc(100% - 24px)); height: auto; max-height: calc(100% - 52px); }
+.ch2-scene [data-window="wan-edit"] .ch2-window-content { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 8px; min-height: 175px; padding: 12px 8px; }
+.ch2-scene [data-window="wan-edit"] .ch2-window-content label { grid-template-columns: 125px minmax(0, 1fr); }
+.ch2-scene [data-window="wan-edit"] .ch2-window-content .ch2-wan-check { display: flex; justify-content: flex-start; padding-left: 133px; gap: 6px; }
+.ch2-scene [data-window="wan-edit"] .ch2-wan-check input { width: 13px; min-height: 13px; height: 13px; padding: 0; }
+.ch2-scene [data-window="wan-edit"] [data-wan-panel][hidden] { display: none !important; }
+.ch2-scene .ch2-wan-table > .ch2-table__head, .ch2-scene .ch2-wan-table > [data-wan-row] { grid-template-columns: 28px minmax(145px, 1.5fr) 100px 120px 95px 145px 100px; min-width: 800px; min-height: 24px; font: 11px Tahoma, sans-serif; }
+.ch2-scene .ch2-wan-table [data-wan-row].is-selected { background: #b9dbf6; }
+.ch2-scene .ch2-wan-table [data-wan-row].is-disabled { color: #8797a3; }
+.ch2-scene .ch2-wan-table [data-wan-row][hidden] { display: none !important; }
+
+.ch2-scene [data-wan-status].is-bound-highlight, .ch2-scene [data-wan-edit-status].is-bound-highlight { position: relative; color: #006e4c; background: #d9f8e9; font-weight: 700; box-shadow: inset 0 0 0 2px #18a878; border-radius: 3px; }
+.ch2-scene [data-wan-edit-status].is-bound-highlight { padding: 3px 8px; }

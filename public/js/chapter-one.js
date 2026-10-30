@@ -3,22 +3,23 @@
 
     const scene = document.querySelector('.chapter-one-scene');
     if (!scene) return;
+    const navbar = window.NetGuardChapterNavbar;
 
     const stageInfo = {
-        story: { mission: 0, label: 'MISI 01 / 05', title: 'Jaringan sekolah menunggu bantuanmu', subtitle: 'Dengarkan tugas dari Pak Amat sebelum masuk ke lab.', teacher: 'Sekolah kita membutuhkan jaringan yang rapi. Hari ini kamu jadi Junior Network Engineer!', pose: 'menugaskan', section: '§1.1–1.2', guide: ['Dengarkan cerita sekolah.', 'Kenali masalah jaringan di lab.', 'Terima tugas dari Pak Amat.'] },
-        devices: { mission: 0, label: 'MISI 01 / 05', title: 'Kenali perangkat dan alat', subtitle: 'Ketuk setiap alat, lalu pahami fungsi dan kegunaannya.', teacher: 'Nama alat dan fungsinya harus kamu pahami sebelum merakit jaringan. Klik satu per satu, ya!', pose: 'ngasih_arahan', section: '§1.3–1.4', guide: ['Ketuk kartu alat untuk melihat detailnya.', 'Baca fungsi dan kegunaan alat.', 'Kenali ketujuh alat sampai semua bertanda centang.'] },
-        topologyLesson: { mission: 0, label: 'MATERI 01 / 05', title: 'Topologi yang digunakan', subtitle: 'Kenali jalur Internet, hEX, dan PC sebelum merakit kabel.', teacher: 'Router hAP ada di tengah. Internet masuk ke ether1, hEX ke ether2, dan PC konfigurasi ke ether3. Ingat jalur ini untuk praktik nanti.', pose: 'ngasih_arahan', section: '§1.2 dan §1.9', guide: ['Baca materi “Pahami tiga jalur jaringan” di sebelah kiri sampai selesai.', 'Amati diagram, lalu cocokkan setiap port hAP dengan perangkat tujuan dan fungsinya. Pahami juga arti trunk.', 'Setelah memahami materinya, klik Lanjut ke kabel straight di bawah.'] },
-        lesson: { mission: 1, label: 'MATERI 02 / 05', title: 'Pahami kabel straight dan T568B', subtitle: 'Pelajari konsep dan urutan warna sebelum mulai merakit.', teacher: 'Kabel straight memakai susunan pin yang sama pada kedua ujung. Pelajari urutan T568B sebelum menyiapkan kabel.', pose: 'ngasih_arahan', section: '§1.5', guide: ['Pahami arti kabel straight.', 'Hafalkan urutan warna T568B.', 'Gunakan susunan yang sama di kedua ujung.'] },
-        prep: { mission: 1, label: 'MISI 02 / 05', title: 'Mulai merakit kabel straight', subtitle: 'Siapkan kabel sebelum menyusun delapan inti.', teacher: 'Pertama potong kabel, kupas jaket memakai bilah pada tang crimping, lalu luruskan delapan inti. Jangan sampai inti rusak.', pose: 'memberitahu', section: '§1.5–1.6', guide: ['Potong kabel sesuai kebutuhan.', 'Kupas jaket dengan bilah tang crimping.', 'Urai dan luruskan inti tanpa mengurutkannya.'] },
-        wiring: { mission: 1, label: 'MISI 02 / 05', title: 'Susun delapan warna T568B', subtitle: 'Isi pin 1–8 pada Ujung A dan Ujung B.', teacher: 'Coba ingat urutan T568B dan susun sendiri delapan inti dari pin 1 sampai 8. Jika ada warna tertukar, kabel bisa gagal menghubungkan perangkat saat diuji.', pose: 'ngasih_arahan', section: '§1.5–1.6', guide: ['Susun sendiri delapan warna dari pin 1 sampai 8 pada Ujung A.', 'Ketuk satu warna sekali; otomatis masuk ke pin kosong berikutnya. Tidak perlu klik dua kali.', 'Atau seret warna ke pin tertentu pada gambar konektor.', 'Salah? Ketuk pin yang terisi untuk melepas, atau tekan Batalkan terakhir.', 'Tekan Periksa, lalu susun Ujung B dengan urutan yang sama. Jika tertukar, kabel bisa gagal terhubung.'] },
-        terminate: { mission: 1, label: 'MISI 02 / 05', title: 'Pasang RJ45 dan crimp kedua ujung', subtitle: 'Potong rata, masukkan semua inti, lalu tekan tang crimping.', teacher: 'Ratakan inti memakai bilah bagian dalam tang. Masukkan inti dan jaket kabel ke RJ45. Setelah itu, masukkan konektor ke lubang 8P di kepala tang lalu tekan kedua gagangnya.', pose: 'memberitahu', section: '§1.6', guide: ['Perhatikan animasi foto, lalu ketuk tombol Potong rata delapan inti. Bilah pemotong berada di bagian dalam tang, dekat gagang.', 'Ketuk Masukkan ke konektor RJ45. Delapan inti harus sampai ke ujung konektor dan jaket kabel ikut masuk.', 'Ketuk Crimp konektor RJ45. Konektor masuk penuh ke lubang 8P di kepala tang, lalu kedua gagang ditekan. Ulangi tiga langkah pada Ujung B.'] },
-        tester: { mission: 1, label: 'MISI 02 / 05', title: 'Uji hasil dengan LAN tester', subtitle: 'MAIN dan REMOTE harus menyala 1–8 dengan urutan sama.', teacher: 'Jangan gunakan kabel sebelum lulus uji. Jika ada lampu mati, periksa atau crimp ulang konektornya.', pose: 'ngasih_arahan', section: '§1.7', guide: ['Hubungkan kedua ujung ke tester.', 'Nyalakan tester.', 'Bandingkan urutan lampu 1–8.'] },
-        topology: { mission: 2, label: 'MISI 03 / 05', title: 'Pasang topologi awal sekolah', subtitle: 'Tentukan jalur internet, hEX, dan PC pada port hAP.', teacher: 'Modul menetapkan Internet di port 1, hEX di port 2 sebagai jalur trunk, dan PC konfigurasi di port 3.', pose: 'ngasih_arahan', section: '§1.9', guide: ['Misi: sambungkan tiga jalur ke port hAP yang tepat.', 'Seret kabel Internet / ISP ke ether1, Port 1 hEX ke ether2, dan PC konfigurasi ke ether3.', 'Bisa juga klik nama kabel, lalu klik port tujuannya. Klik port yang terisi untuk melepas kabel jika salah.', 'Setelah ketiganya terpasang, klik Periksa sambungan.'] },
-        pc: { mission: 3, label: 'MISI 04 / 05', title: 'Masuk ke PC lab', subtitle: 'Nyalakan komputer, tunggu desktop, lalu buka WinBox.', teacher: 'Koneksi fisik sudah siap. Sekarang nyalakan PC dan buka WinBox seperti saat praktik di lab.', pose: 'bicara_santai', section: '§1.10', guide: ['Misi: buka WinBox melalui PC lab.', 'Klik tombol Nyalakan PC di bawah monitor. Tunggu sampai desktop muncul.', 'Klik ikon WinBox pada layar PC untuk mulai mencari router.'] },
-        winbox: { mission: 3, label: 'MISI 04 / 05', title: 'Temukan router di WinBox', subtitle: 'Refresh Neighbors, pilih MAC Address, lalu Connect.', teacher: 'Pilih MAC Address router yang muncul. Pada perangkat latihan ini login admin dan password kosong, sesuai modul.', pose: 'ngasih_arahan', section: '§1.10', guide: ['Misi: temukan router hAP dan masuk ke WinBox.', 'Klik Refresh pada tab Neighbors, lalu tunggu router muncul.', 'Klik satu kali baris MAC Address router. Alamatnya akan terisi pada kotak koneksi.', 'Pastikan User berisi admin dan Password kosong untuk latihan ini, lalu klik Connect.'] },
-        config: { mission: 4, label: 'MISI 05 / 05', title: 'Atur Identity dan Interfaces', subtitle: 'Nama router dan tiga interface harus sesuai perannya.', teacher: 'Ubah identity menjadi Router. Lalu beri nama ether1-internet, ether2-vlan, dan ether3-local.', pose: 'ngasih_arahan', section: '§1.11–1.12', guide: ['Misi: beri nama router dan tiga port sesuai fungsinya.', 'Di menu kiri klik System, lalu Identity. Isi Name dengan Router dan klik OK.', 'Klik Interfaces, lalu klik dua kali baris ether1 (layar sentuh: ketuk sekali). Isi Name dengan ether1-internet dan klik OK.', 'Ulangi untuk ether2 menjadi ether2-vlan dan ether3 menjadi ether3-local.', 'Pastikan empat tugas bertanda selesai, lalu lanjut ke evaluasi.'] },
-        quiz: { mission: 4, label: 'MISI 05 / 05', title: 'Evaluasi Chapter 1', subtitle: 'Tunjukkan bahwa kamu memahami hasil konfigurasi.', teacher: 'Pahami alasan setiap langkah. Jawab lima soal, lalu sistem akan menyimpan progres chaptermu.', pose: 'mikir', section: 'Rekap Chapter 1', guide: ['Jawab lima soal pemahaman.', 'Periksa kembali jika ada yang keliru.', 'Selesaikan chapter untuk menyimpan progres.'] },
-        finish: { mission: 5, label: 'CHAPTER SELESAI', title: 'Misi pertama berhasil!', subtitle: 'Jaringan fisik dan konfigurasi awal sudah siap.', teacher: 'Kerja bagus! Kabel, port, WinBox, identity, dan interface sudah siap untuk misi berikutnya.', pose: 'mantap', section: 'Chapter 1 selesai', guide: ['Kabel straight lulus LAN tester.', 'Topologi awal sesuai modul.', 'Router siap dikonfigurasi lebih lanjut.'] },
+        story: { mission: 0, label: 'MISI 01 / 05', title: 'Jaringan sekolah menunggu bantuanmu', subtitle: 'Dengarkan tugas dari Pak Amat sebelum masuk ke lab.', teacher: 'Sekolah kita membutuhkan jaringan yang rapi. Hari ini kamu jadi Junior Network Engineer!', pose: 'menugaskan', section: 'Pengantar jaringan sekolah', guide: ['Dengarkan cerita sekolah.', 'Kenali masalah jaringan di lab.', 'Terima tugas dari Pak Amat.'] },
+        devices: { mission: 0, label: 'MISI 01 / 05', title: 'Kenali perangkat dan alat', subtitle: 'Ketuk setiap alat, lalu pahami fungsi dan kegunaannya.', teacher: 'Nama alat dan fungsinya harus kamu pahami sebelum merakit jaringan. Klik satu per satu, ya!', pose: 'ngasih_arahan', section: 'Mengenal perangkat dan alat jaringan', guide: ['Ketuk kartu alat untuk melihat detailnya.', 'Baca fungsi dan kegunaan alat.', 'Kenali ketujuh alat sampai semua bertanda centang.'] },
+        topologyLesson: { mission: 0, label: 'MATERI 01 / 05', title: 'Topologi yang digunakan', subtitle: 'Kenali jalur Internet, hEX, dan PC sebelum merakit kabel.', teacher: 'Router hAP ada di tengah. Internet masuk ke ether1, hEX ke ether2, dan PC konfigurasi ke ether3. Ingat jalur ini untuk praktik nanti.', pose: 'ngasih_arahan', section: 'Topologi dan fungsi port router', guide: ['Baca materi “Pahami tiga jalur jaringan” di sebelah kiri sampai selesai.', 'Amati diagram, lalu cocokkan setiap port hAP dengan perangkat tujuan dan fungsinya. Pahami juga arti trunk.', 'Setelah memahami materinya, klik Lanjut ke kabel straight di bawah.'] },
+        lesson: { mission: 1, label: 'MATERI 02 / 05', title: 'Pahami kabel straight dan T568B', subtitle: 'Pelajari konsep dan urutan warna sebelum mulai merakit.', teacher: 'Kabel straight memakai susunan pin yang sama pada kedua ujung. Pelajari urutan T568B sebelum menyiapkan kabel.', pose: 'ngasih_arahan', section: 'Kabel straight dan urutan warna T568B', guide: ['Pahami arti kabel straight.', 'Hafalkan urutan warna T568B.', 'Gunakan susunan yang sama di kedua ujung.'] },
+        prep: { mission: 1, label: 'MISI 02 / 05', title: 'Mulai merakit kabel straight', subtitle: 'Siapkan kabel sebelum menyusun delapan inti.', teacher: 'Pertama potong kabel, kupas jaket memakai bilah pada tang crimping, lalu luruskan delapan inti. Jangan sampai inti rusak.', pose: 'memberitahu', section: 'Persiapan merakit kabel straight', guide: ['Potong kabel sesuai kebutuhan.', 'Kupas jaket dengan bilah tang crimping.', 'Urai dan luruskan inti tanpa mengurutkannya.'] },
+        wiring: { mission: 1, label: 'MISI 02 / 05', title: 'Susun delapan warna T568B', subtitle: 'Isi pin 1–8 pada Ujung A dan Ujung B.', teacher: 'Coba ingat urutan T568B dan susun sendiri delapan inti dari pin 1 sampai 8. Jika ada warna tertukar, kabel bisa gagal menghubungkan perangkat saat diuji.', pose: 'ngasih_arahan', section: 'Menyusun warna kabel T568B', guide: ['Susun sendiri delapan warna dari pin 1 sampai 8 pada Ujung A.', 'Ketuk satu warna sekali; otomatis masuk ke pin kosong berikutnya. Tidak perlu klik dua kali.', 'Atau seret warna ke pin tertentu pada gambar konektor.', 'Salah? Ketuk pin yang terisi untuk melepas, atau tekan Batalkan terakhir.', 'Tekan Periksa, lalu susun Ujung B dengan urutan yang sama. Jika tertukar, kabel bisa gagal terhubung.'] },
+        terminate: { mission: 1, label: 'MISI 02 / 05', title: 'Pasang RJ45 dan crimp kedua ujung', subtitle: 'Potong rata, masukkan semua inti, lalu tekan tang crimping.', teacher: 'Ratakan inti memakai bilah bagian dalam tang. Masukkan inti dan jaket kabel ke RJ45. Setelah itu, masukkan konektor ke lubang 8P di kepala tang lalu tekan kedua gagangnya.', pose: 'memberitahu', section: 'Memasang RJ45 dan crimping', guide: ['Ratakan delapan inti dengan pemotong pada tang. Pertahankan urutan T568B dari pin 1–8: putih-oranye, oranye, putih-hijau, biru, putih-biru, hijau, putih-cokelat, cokelat.', 'Masukkan inti ke jalur RJ45 seperti pada gambar. Pastikan tiap inti masuk ke jalurnya sendiri, tidak bersilang, dan mencapai ujung konektor.', 'Dorong jaket luar kabel ikut masuk ke RJ45 agar terjepit pengunci. Periksa kembali urutan warna sebelum crimping.', 'Masukkan RJ45 penuh ke lubang 8P pada tang, lalu tekan gagang sampai pin menjepit inti. Ulangi pada Ujung B dengan urutan T568B yang sama.', 'Setelah kedua ujung selesai, uji dengan LAN tester. Lampu MAIN dan REMOTE harus menyala berurutan 1–8 dengan urutan yang sama.'] },
+        tester: { mission: 1, label: 'MISI 02 / 05', title: 'Uji hasil dengan LAN tester', subtitle: 'MAIN dan REMOTE harus menyala 1–8 dengan urutan sama.', teacher: 'Jangan gunakan kabel sebelum lulus uji. Jika ada lampu mati, periksa atau crimp ulang konektornya.', pose: 'ngasih_arahan', section: 'Menguji kabel dengan LAN tester', guide: ['Hubungkan kedua ujung ke tester.', 'Nyalakan tester.', 'Bandingkan urutan lampu 1–8.'] },
+        topology: { mission: 2, label: 'MISI 03 / 05', title: 'Pasang topologi awal sekolah', subtitle: 'Tentukan jalur internet, hEX, dan PC pada port hAP.', teacher: 'Modul menetapkan Internet di port 1, hEX di port 2 sebagai jalur trunk, dan PC konfigurasi di port 3.', pose: 'ngasih_arahan', section: 'Menghubungkan perangkat ke port router', guide: ['Misi: sambungkan tiga jalur ke port hAP yang tepat.', 'Seret kabel Internet / ISP ke ether1, Port 1 hEX ke ether2, dan PC konfigurasi ke ether3.', 'Bisa juga klik nama kabel, lalu klik port tujuannya. Klik port yang terisi untuk melepas kabel jika salah.', 'Setelah ketiganya terpasang, klik Periksa sambungan.'] },
+        pc: { mission: 3, label: 'MISI 04 / 05', title: 'Masuk ke PC lab', subtitle: 'Nyalakan komputer, tunggu desktop, lalu buka WinBox.', teacher: 'Koneksi fisik sudah siap. Sekarang nyalakan PC dan buka WinBox seperti saat praktik di lab.', pose: 'bicara_santai', section: 'Menyalakan PC dan membuka WinBox', guide: ['Misi: buka WinBox melalui PC lab.', 'Klik tombol Nyalakan PC di bawah monitor. Tunggu sampai desktop muncul.', 'Klik ikon WinBox pada layar PC untuk mulai mencari router.'] },
+        winbox: { mission: 3, label: 'MISI 04 / 05', title: 'Temukan router di WinBox', subtitle: 'Refresh Neighbors, pilih MAC Address, lalu Connect.', teacher: 'Pilih MAC Address router yang muncul. Pada perangkat latihan ini login admin dan password kosong, sesuai modul.', pose: 'ngasih_arahan', section: 'Menghubungkan WinBox ke router', guide: ['Misi: temukan router hAP dan masuk ke WinBox.', 'Klik Refresh pada tab Neighbors, lalu tunggu router muncul.', 'Klik satu kali baris MAC Address router. Alamatnya akan terisi pada kotak koneksi.', 'Pastikan User berisi admin dan Password kosong untuk latihan ini, lalu klik Connect.'] },
+        config: { mission: 4, label: 'MISI 05 / 05', title: 'Atur Identity dan Interfaces', subtitle: 'Nama router dan tiga interface harus sesuai perannya.', teacher: 'Ubah identity menjadi Router. Lalu beri nama ether1-internet, ether2-vlan, dan ether3-local.', pose: 'ngasih_arahan', section: 'Menamai router dan interface', guide: ['Misi: beri nama router dan tiga port sesuai fungsinya.', 'Di menu kiri klik System, lalu Identity. Isi Name dengan Router dan klik OK.', 'Klik Interfaces, lalu klik dua kali baris ether1 (layar sentuh: ketuk sekali). Isi Name dengan ether1-internet dan klik OK.', 'Ulangi untuk ether2 menjadi ether2-vlan dan ether3 menjadi ether3-local.', 'Pastikan empat tugas bertanda selesai, lalu lanjut ke evaluasi.'] },
+        quiz: { mission: 4, label: 'MISI 05 / 05', title: 'Evaluasi Chapter 1', subtitle: 'Tunjukkan bahwa kamu memahami hasil konfigurasi.', teacher: 'Pahami alasan setiap langkah. Jawab lima soal, lalu sistem akan menyimpan progres chaptermu.', pose: 'mikir', section: 'Evaluasi pemahaman', guide: ['Jawab lima soal pemahaman.', 'Periksa kembali jika ada yang keliru.', 'Selesaikan chapter untuk menyimpan progres.'] },
+        finish: { mission: 5, label: 'CHAPTER SELESAI', title: 'Misi pertama berhasil!', subtitle: 'Jaringan fisik dan konfigurasi awal sudah siap.', teacher: 'Kerja bagus! Kabel, port, WinBox, identity, dan interface sudah siap untuk misi berikutnya.', pose: 'mantap', section: 'Ringkasan hasil praktik', guide: ['Kabel straight lulus LAN tester.', 'Topologi awal sesuai modul.', 'Router siap dikonfigurasi lebih lanjut.'] },
     };
 
     const openingDialogue = [
@@ -95,6 +96,11 @@
     const evaluation = window.NetGuardEvaluation;
     let evaluationResult = null;
     let stage = 'story';
+    let progressiveGuide = null;
+    let pcDesktop = null;
+    const wireVerified = [false, false];
+    let topologyChecked = false;
+    let loginAccepted = false;
     let dialogueLines = [];
     let dialogueIndex = 0;
     let dialogueComplete = null;
@@ -118,7 +124,6 @@
     let identitySaved = false;
     const interfaceSaved = { ether1: false, ether2: false, ether3: false };
     let editingInterface = null;
-    let elapsed = 0;
     const progressStorageKey = 'netguard.chapter-one.v1.' + scene.dataset.userId;
     let savedProgress = null;
     try {
@@ -130,10 +135,13 @@
         savedProgress = null;
     }
 
+    const explainedConfiguration = new Set(savedProgress?.explainedConfiguration || []);
+
     const setFeedback = (message, kind = '') => {
         feedback.textContent = message;
         feedback.dataset.kind = kind;
-        if (stage === 'winbox') document.querySelector('[data-neighbor-status]').textContent = message;
+        if (kind === 'error' || kind === 'success') window.NetGuardAudio?.play(kind === 'error' ? 'error' : 'correct');
+
         saveProgress();
     };
 
@@ -150,6 +158,7 @@
         continueButton.dataset.next = '';
     };
 
+    const updateBackAvailability = () => navbar.setBackEnabled(stage !== 'story' || !dialogue.hidden || synopsisIndex > 0);
     const renderDeviceChecklist = () => {
         const checklist = document.querySelector('[data-device-checklist]');
         checklist.hidden = stage !== 'devices';
@@ -174,18 +183,74 @@
         document.querySelector('[data-device-task-complete]').hidden = completed !== cards.length;
     };
 
+    const renderPreparationChecklist = () => { progressiveGuide?.refresh(); };
+
+    const renderConfigurationChecklist = () => { progressiveGuide?.refresh(); };
+
+    const resetFromStage = (destination) => {
+        const order = ['story', 'devices', 'topologyLesson', 'lesson', 'prep', 'wiring', 'terminate', 'tester', 'topology', 'pc', 'winbox', 'config', 'quiz', 'finish'];
+        const index = order.indexOf(destination);
+        const resets = (name) => order.indexOf(name) >= index;
+        if (resets('devices')) {
+            visitedDevices.clear();
+            document.querySelectorAll('[data-device]').forEach((node) => node.classList.remove('is-visited', 'is-selected'));
+        }
+        if (resets('prep')) prepStep = 0;
+        if (resets('wiring')) wireVerified.fill(false);
+        if (resets('topology')) topologyChecked = false;
+        if (resets('winbox')) loginAccepted = false;
+        if (resets('wiring')) {
+            wireEnd = 0;
+            wirePlacements.forEach((row) => row.fill(null)); wireHistory.forEach((row) => { row.length = 0; });
+        }
+        if (resets('terminate')) { terminateEnd = 0; terminateStep = 0; }
+        if (resets('tester')) { testerMain = false; testerRemote = false; testerPassed = false; selectedTesterEnd = null; }
+        if (resets('topology')) {
+            selectedTopologyCable = null;
+            document.querySelectorAll('[data-port]').forEach((node) => { node.value = ''; });
+        }
+        if (resets('pc')) { pcPowered = false; pcBooting = false; }
+        if (resets('winbox')) {
+            neighborsLoaded = false; macSelected = false;
+            document.querySelector('[data-connect-to]').value = '';
+            document.querySelector('[data-connect-dialog]').hidden = true;
+            document.querySelectorAll('[data-neighbor-row]').forEach((row) => { row.hidden = true; row.classList.remove('is-selected'); });
+        }
+        if (resets('config')) {
+            identitySaved = false; configCelebrated = false; editingInterface = null;
+            explainedConfiguration.clear();
+            document.querySelector('[data-identity-input]').value = 'MikroTik';
+            document.querySelector('[data-router-identity]').textContent = 'MikroTik';
+            Object.keys(interfaceSaved).forEach((name) => {
+                interfaceSaved[name] = false;
+                document.querySelector('[data-interface-name="' + name + '"]').textContent = name;
+                const check = document.querySelector('[data-config-check="' + name + '"]');
+                check.classList.remove('is-done'); check.textContent = '○ ' + name;
+            });
+            const check = document.querySelector('[data-config-check="identity"]');
+            check.classList.remove('is-done'); check.textContent = '○ Identity: Router';
+        }
+        evaluationResult = null; evaluation.clear();
+        document.querySelectorAll('[data-quiz-form] input').forEach((node) => { node.checked = false; });
+        order.slice(index).forEach((name) => shownMissionDialogue.delete(name));
+    };
+
     const setStage = (nextStage) => {
         stageRevision++;
         window.clearInterval(testerInterval);
         testerInterval = null;
         pcBooting = false;
         stage = nextStage;
+        pcDesktop?.hideDesktop();
+        pcDesktop?.setAvailable(pcPowered && ['pc', 'winbox', 'config'].includes(stage));
+        updateBackAvailability();
         renderDeviceChecklist();
         const info = stageInfo[stage];
         document.querySelector('.lab-board').dataset.currentStage = stage;
         const isSimulatorStage = ['pc', 'winbox', 'config'].includes(stage);
         scene.classList.toggle('is-simulator-stage', isSimulatorStage);
         scene.classList.toggle('is-wiring-stage', stage === 'wiring');
+        scene.classList.toggle('is-terminate-stage', stage === 'terminate');
         scene.classList.toggle('is-topology-lesson-stage', stage === 'topologyLesson');
         const labLayout = document.querySelector('.lab-layout');
         labLayout.classList.toggle('is-simulator', isSimulatorStage);
@@ -196,14 +261,12 @@
         document.querySelector('[data-stage-label]').textContent = info.label;
         document.querySelector('[data-stage-title]').textContent = info.title;
         document.querySelector('[data-stage-subtitle]').textContent = info.subtitle;
-        document.querySelector('[data-module-section]').textContent = 'Chapter 1 · ' + info.section;
+        document.querySelector('[data-module-section]').textContent = 'Bab 1 · ' + info.section;
         teacherText.textContent = info.teacher;
         teacherImage.src = scene.dataset.teacherBase + '/' + info.pose + '.png';
-        guideList.replaceChildren(...info.guide.map((line) => {
-            const item = document.createElement('li');
-            item.textContent = line;
-            return item;
-        }));
+        progressiveGuide?.refresh();
+        guideList.scrollTop = 0;
+        renderPreparationChecklist();
         document.querySelectorAll('[data-mission-step]').forEach((step) => {
             const index = Number(step.dataset.missionStep);
             step.classList.toggle('is-complete', index < info.mission);
@@ -249,24 +312,42 @@
         }
         if (missionDialogue[stage] && !shownMissionDialogue.has(stage)) {
             shownMissionDialogue.add(stage);
-            openDialogue(missionDialogue[stage]);
+            openDialogue(missionDialogue[stage], stage === 'config' ? () => {
+                if (!identitySaved && !explainedConfiguration.has('material-identity')) showConfigurationLearning('identity');
+            } : null);
         }
         saveProgress();
     };
 
     const previousStage = { topologyLesson: 'devices', lesson: 'topologyLesson', prep: 'lesson', wiring: 'prep', terminate: 'wiring', tester: 'terminate', topology: 'tester', pc: 'topology', winbox: 'pc', config: 'winbox', quiz: 'config', finish: 'quiz' };
-    document.querySelector('[data-lab-back]').addEventListener('click', () => {
+    const goToPreviousStep = () => {
+        if (configurationLearning.open) { configurationLearning.close(); return; }
+        if (quizDialog.open) quizDialog.close();
+        if (finishDialog.open) finishDialog.close();
+        if (!dialogue.hidden && dialogueIndex > 0) {
+            dialogueIndex--; renderDialogue(); saveProgress(); return;
+        }
+        if (stage === 'story' || stage === 'devices') {
+            const wasDialogue = !dialogue.hidden;
+            const wasDevices = stage === 'devices';
+            finishDialogueTyping();
+            dialogue.hidden = true; dialogueComplete = null;
+            scene.classList.remove('is-dialogue-open');
+            if (stage === 'devices') { resetFromStage('story'); setStage('story'); }
+            synopsisIndex = wasDevices || wasDialogue || synopsisIndex >= synopsisScenes.length ? synopsisScenes.length - 1 : Math.max(0, synopsisIndex - 1);
+            prologue.hidden = false; synopsis.hidden = false; scene.classList.add('is-prologue');
+            renderSynopsisScene(); saveProgress(); return;
+        }
+        if (!dialogue.hidden) {
+            finishDialogueTyping(); dialogue.hidden = true; prologue.hidden = true; dialogueComplete = null;
+            scene.classList.remove('is-dialogue-open'); updateBackAvailability(); return;
+        }
         const destination = previousStage[stage];
-        if (!destination) {
-            window.location.assign(document.querySelector('[data-lab-back]').dataset.backUrl);
-            return;
-        }
-        if (stage === 'tester') {
-            terminateEnd = 1;
-            terminateStep = 2;
-        }
+        if (!destination) return;
+        resetFromStage(destination);
         setStage(destination);
-    });
+    };
+    navbar.bindPrevious(goToPreviousStep);
 
     continueButton.addEventListener('click', () => {
         if (continueButton.dataset.next === 'lesson-briefing') {
@@ -337,6 +418,7 @@
         }, 34);
     };
     const renderDialogue = () => {
+        updateBackAvailability();
         const line = dialogueLines[dialogueIndex];
         const isTeacher = line.speaker === 'teacher';
         dialogue.classList.toggle('is-student', !isTeacher);
@@ -384,12 +466,14 @@
                 answerOptions.querySelectorAll('button').forEach((answer) => answer.classList.remove('is-wrong'));
                 answerFeedback.hidden = false;
                 if (!option.correct) {
+                    window.NetGuardAudio?.play('error');
                     button.classList.add('is-wrong');
                     answerFeedback.dataset.kind = 'error';
                     answerFeedback.textContent = line.incorrectFeedback;
                     dialogueCount.textContent = (dialogueIndex + 1) + ' / ' + dialogueLines.length + ' · COBA LAGI';
                     return;
                 }
+                window.NetGuardAudio?.play('correct');
                 dialogueQuizAnswered = true;
                 button.classList.add('is-correct');
                 answerOptions.querySelectorAll('button').forEach((answer) => { answer.disabled = true; });
@@ -435,6 +519,7 @@
         const completed = dialogueComplete;
         dialogueComplete = null;
         if (completed) completed();
+        updateBackAvailability();
     };
     let synopsisIndex = 0;
     let synopsisTypingTimer = null;
@@ -481,6 +566,7 @@
         }, 36);
     };
     const renderSynopsisScene = () => {
+        updateBackAvailability();
         const story = synopsisScenes[synopsisIndex];
         document.querySelector('[data-synopsis-kicker]').textContent = story.kicker;
         document.querySelector('[data-synopsis-count]').textContent = 'ADEGAN ' + String(synopsisIndex + 1).padStart(2, '0') + ' / ' + String(synopsisScenes.length).padStart(2, '0');
@@ -541,6 +627,7 @@
         const configPanel = activeConfigPanel;
         const progressSnapshot = {
             version: 1,
+            explainedConfiguration: [...explainedConfiguration],
             stage,
             continueNext: continueButton.dataset.next || null,
             synopsisIndex,
@@ -550,6 +637,7 @@
             prepStep,
             wireEnd,
             wirePlacements,
+            wireVerified,
             wireHistory,
             terminateEnd,
             terminateStep,
@@ -570,7 +658,6 @@
             configPanel,
             quizAnswers,
             evaluationResult,
-            elapsed,
         };
 
         try {
@@ -673,6 +760,7 @@
                 return;
             }
             const workbench = document.querySelector('[data-prep-workbench]');
+            const revision = stageRevision;
             const duration = reducedMotion.matches ? 160 : 1050;
             const phaseByAction = { cut: 'cutting', strip: 'stripping', straighten: 'straightening' };
             const titleByAction = { cut: ['Kabel dipotong sesuai kebutuhan', 'Berikutnya kupas jaket luar memakai bilah pada tang crimping.'], strip: ['Empat pasang inti masih terpilin rapi', 'Jaket terbuka tanpa melukai inti. Berikutnya urai dan luruskan.'], straighten: ['Delapan inti lurus, belum berurutan', 'Sekarang susun urutan warnanya pada puzzle T568B.'] };
@@ -680,6 +768,7 @@
             workbench.dataset.phase = phaseByAction[button.dataset.prepAction];
             setFeedback(button.dataset.prepAction === 'cut' ? 'Gunting memotong kabel sesuai panjang yang dibutuhkan...' : button.dataset.prepAction === 'strip' ? 'Bilah pada tang crimping mengupas jaket luar kabel...' : 'Inti kabel diurai dan diluruskan, tetapi belum disusun warnanya...');
             await new Promise((resolve) => window.setTimeout(resolve, duration));
+            if (revision !== stageRevision || stage !== 'prep') return;
             if (button.dataset.prepAction === 'cut') workbench.dataset.phase = 'cut';
             if (button.dataset.prepAction === 'strip') workbench.dataset.phase = 'stripped';
             if (button.dataset.prepAction === 'straighten') workbench.dataset.phase = 'straight';
@@ -687,6 +776,7 @@
             workbench.querySelector('[data-prep-visual-note]').textContent = titleByAction[button.dataset.prepAction][1];
             button.classList.add('is-done');
             prepStep++;
+            renderPreparationChecklist();
             setFeedback('Langkah persiapan ' + prepStep + ' dari 3 selesai.', 'success');
             if (prepStep === 3) showContinue('wiring', 'Lanjut ke susun warna →');
         });
@@ -717,6 +807,7 @@
         if (index < 0 || index > 7) return;
         const replacedColor = current[index];
         current[index] = colorId;
+        wireVerified[wireEnd] = false;
         wireHistory[wireEnd] = wireHistory[wireEnd].filter((position) => position !== index);
         wireHistory[wireEnd].push(index);
         renderWiring();
@@ -728,6 +819,7 @@
         const current = wirePlacements[wireEnd];
         if (!current[index]) return;
         current[index] = null;
+        wireVerified[wireEnd] = false;
         wireHistory[wireEnd] = wireHistory[wireEnd].filter((position) => position !== index);
         renderWiring();
         saveProgress();
@@ -799,6 +891,7 @@
             setFeedback('Urutan belum tepat. Periksa kembali pin ' + (firstWrong + 1) + ' dengan petunjuk T568B.', 'error');
             return;
         }
+        wireVerified[wireEnd] = true;
         if (wireEnd === 0) {
             wireEnd = 1;
             renderWiring();
@@ -807,7 +900,8 @@
             return;
         }
         setFeedback('Kedua ujung memakai T568B yang sama. Siap memasang RJ45!', 'success');
-        window.setTimeout(() => setStage('terminate'), reducedMotion.matches ? 100 : 650);
+        const revision = stageRevision;
+        window.setTimeout(() => { if (revision === stageRevision) setStage('terminate'); }, reducedMotion.matches ? 100 : 650);
     });
 
     const terminateSteps = [
@@ -1006,10 +1100,14 @@
 
     const cableLabels = { internet: 'Internet / ISP', switch: 'Port 1 hEX', pc: 'PC konfigurasi' };
     let selectedTopologyCable = null;
+    const renderTopologyChecklist = () => { progressiveGuide?.refresh(); };
+
     const renderTopology = () => {
+        renderTopologyChecklist();
         document.querySelectorAll('[data-port]').forEach((input) => {
             const socket = document.querySelector('[data-topology-socket="' + input.dataset.port + '"]');
             socket.classList.toggle('is-connected', Boolean(input.value));
+            socket.classList.toggle('is-correct', input.value === expectedPorts[input.dataset.port]);
             socket.classList.remove('is-wrong');
             socket.setAttribute('aria-label', 'ether' + input.dataset.port + ': ' + (cableLabels[input.value] || 'Kosong'));
             document.querySelector('[data-port-label="' + input.dataset.port + '"]').textContent = cableLabels[input.value] || 'Kosong';
@@ -1047,13 +1145,17 @@
         const incorrect = [...document.querySelectorAll('[data-port]')].filter((input) => input.value !== expectedPorts[input.dataset.port]);
         incorrect.forEach((input) => document.querySelector('[data-topology-socket="' + input.dataset.port + '"]').classList.add('is-wrong'));
         if (incorrect.length) {
+            window.NetGuardAudio?.play('error');
             openDialogue([{ speaker: 'teacher', text: 'Mari periksa lagi. Kabel Internet masuk ke ether1, port 1 hEX dihubungkan ke ether2, dan PC konfigurasi ke ether3. Pilih kabel lalu pindahkan ke port yang sesuai. Pembagian ini memudahkan konfigurasi berikutnya.' }]);
             return;
         }
+        topologyChecked = true;
         openDialogue([{ speaker: 'teacher', text: 'Bagus! Internet, hEX, dan PC sudah terhubung ke port yang sesuai. Kita siap masuk ke PC. Tekan tombol daya, tunggu desktop muncul, lalu buka WinBox.' }], () => setStage('pc'));
     });
 
     const renderPcState = () => {
+        pcDesktop?.setAvailable(pcPowered && ['pc', 'winbox', 'config'].includes(stage));
+        if (pcPowered && stage === 'pc') pcDesktop?.showPreview();
         document.querySelector('.pc-screen__off').hidden = pcPowered || pcBooting;
         document.querySelector('.pc-screen__boot').hidden = !pcBooting;
         document.querySelector('.pc-screen__desktop').hidden = !pcPowered;
@@ -1081,13 +1183,13 @@
         const refreshButton = event.currentTarget;
         const revision = stageRevision;
         refreshButton.disabled = true;
-        document.querySelector('[data-neighbor-status]').textContent = 'Mencari perangkat pada jaringan lokal...';
+        document.querySelector('[data-neighbor-status]').textContent = 'Discovering…';
         window.setTimeout(() => {
             refreshButton.disabled = false;
             if (revision !== stageRevision) return;
             neighborsLoaded = true;
             document.querySelector('[data-neighbor-row]').hidden = false;
-            document.querySelector('[data-neighbor-status]').textContent = '1 perangkat ditemukan';
+            renderLoaderList();
             setFeedback('Router ditemukan. Klik MAC Address pada baris perangkat.', 'success');
         }, reducedMotion.matches ? 150 : 1000);
     });
@@ -1103,7 +1205,8 @@
         document.querySelector('[data-connect-dialog]').hidden = true;
     });
     document.querySelector('[data-connect-winbox]').addEventListener('click', () => {
-        if (!macSelected) {
+        const address = document.querySelector('[data-connect-to]').value.trim();
+        if (!['48:A9:8A:1C:01:01', '192.168.88.1'].includes(address)) {
             setFeedback('Refresh Neighbors lalu pilih MAC Address router terlebih dahulu.', 'error');
             return;
         }
@@ -1111,9 +1214,50 @@
             setFeedback('Sesuai perangkat latihan pada modul: login admin, password kosong.', 'error');
             return;
         }
-        setFeedback('WinBox terhubung ke router melalui MAC Address.', 'success');
+        loginAccepted = true;
+        setFeedback('WinBox terhubung ke router melalui ' + (address.includes(':') ? 'MAC Address.' : 'IP Address.'), 'success');
         const revision = stageRevision;
         window.setTimeout(() => { if (revision === stageRevision) setStage('config'); }, reducedMotion.matches ? 100 : 550);
+    });
+
+    let loaderTab = 'neighbors';
+    let managedAddress = '';
+    try { managedAddress = JSON.parse(localStorage.getItem(progressStorageKey + '.managed') || 'null')?.address || ''; } catch {}
+    const renderLoaderList = () => {
+        const query = document.querySelector('[data-loader-find]').value.trim().toLowerCase();
+        document.querySelectorAll('[data-loader-tab]').forEach((button) => button.setAttribute('aria-selected', String(button.dataset.loaderTab === loaderTab)));
+        const neighbor = document.querySelector('[data-neighbor-row]');
+        const managed = document.querySelector('[data-managed-row]');
+        document.querySelector('[data-managed-address]').textContent = managedAddress;
+        neighbor.hidden = loaderTab !== 'neighbors' || !neighborsLoaded || !neighbor.textContent.toLowerCase().includes(query);
+        managed.hidden = loaderTab !== 'managed' || !managedAddress || !managed.textContent.toLowerCase().includes(query);
+        document.querySelector('[data-refresh-neighbors]').hidden = loaderTab !== 'neighbors';
+        document.querySelector('[data-loader-remove]').hidden = loaderTab !== 'managed';
+        document.querySelector('[data-loader-remove]').disabled = !managedAddress;
+        document.querySelector('[data-neighbor-status]').textContent = !neighbor.hidden || !managed.hidden ? '1 item' : '0 items';
+    };
+    document.querySelectorAll('[data-loader-tab]').forEach((button) => button.addEventListener('click', () => { loaderTab = button.dataset.loaderTab; renderLoaderList(); }));
+    document.querySelector('[data-loader-find]').addEventListener('input', renderLoaderList);
+    document.querySelector('[data-loader-add]').addEventListener('click', () => {
+        const address = document.querySelector('[data-connect-to]').value.trim();
+        if (!['48:A9:8A:1C:01:01', '192.168.88.1'].includes(address)) { setFeedback('Pilih alamat router dari Neighbors sebelum menyimpan koneksi.', 'error'); return; }
+        managedAddress = address;
+        try { localStorage.setItem(progressStorageKey + '.managed', JSON.stringify({ address })); } catch {}
+        loaderTab = 'managed'; renderLoaderList();
+    });
+    document.querySelector('[data-loader-remove]').addEventListener('click', () => {
+        managedAddress = '';
+        try { localStorage.removeItem(progressStorageKey + '.managed'); } catch {}
+        renderLoaderList();
+    });
+    document.querySelector('[data-managed-row]').addEventListener('click', (event) => {
+        document.querySelector('[data-connect-to]').value = managedAddress;
+        document.querySelector('[data-winbox-login]').value = 'admin';
+        macSelected = true; event.currentTarget.classList.add('is-selected');
+    });
+    document.querySelector('[data-neighbor-row]').addEventListener('click', (event) => {
+        const column = event.target.closest('span');
+        document.querySelector('[data-connect-to]').value = column === event.currentTarget.children[1] ? '192.168.88.1' : '48:A9:8A:1C:01:01';
     });
 
     let activeConfigPanel = 'home';
@@ -1127,7 +1271,7 @@
             button.type = 'button';
             button.textContent = windowTitles[name];
             button.setAttribute('aria-label', 'Pulihkan jendela ' + windowTitles[name]);
-            button.addEventListener('click', () => showConfigPanel(name));
+            button.addEventListener('click', () => showConfigPanel(name, true));
             return button;
         }));
     };
@@ -1141,8 +1285,53 @@
         renderWindowTaskbar();
         saveProgress();
     };
-    const showConfigPanel = (panel) => {
+    document.querySelectorAll('.winbox-child[data-config-panel]').forEach((node) => {
+        node.hidden = true; node.removeAttribute('data-user-open');
+    });
+    const configurationLearning = document.querySelector('[data-configuration-learning]');
+    let pendingConfigurationPanel = null;
+    const showConfigurationLearning = (panel) => {
+        pendingConfigurationPanel = panel;
+        const template = document.querySelector('[data-configuration-concept="' + panel + '"]');
+        document.querySelector('[data-configuration-learning-body]').replaceChildren(template.content.cloneNode(true));
+        document.querySelector('[data-start-configuration-practice]').textContent = panel === 'identity' ? 'Mulai mengatur Identity →' : 'Mulai menamai interface →';
+        if (!configurationLearning.open) configurationLearning.showModal();
+    };
+    document.querySelector('[data-close-configuration-learning]').addEventListener('click', () => configurationLearning.close());
+    document.querySelector('[data-start-configuration-practice]').addEventListener('click', () => {
+        const panel = pendingConfigurationPanel;
+        configurationLearning.close();
+        if (!panel) return;
+        explainedConfiguration.add('material-' + panel);
+        if (panel === 'identity') showConfigPanel('home');
+        setFeedback(panel === 'identity' ? 'Sekarang buka System → Identity sendiri, lalu ubah Name dari MikroTik menjadi Router.' : 'Sekarang klik Interfaces sendiri, lalu buka properti ether1, ether2, dan ether3 untuk mengganti namanya.');
+    });
+
+    const showConfigPanel = (panel, userInitiated = false) => {
+        if (windowTitles[panel] && !userInitiated) return;
+        if (userInitiated && ['identity', 'interfaces'].includes(panel) && !explainedConfiguration.has('material-' + panel)) {
+            showConfigurationLearning(panel);
+            return;
+        }
         document.querySelector('[data-config-panel="home"]').hidden = false;
+        if (panel === 'home') {
+            document.querySelectorAll('.winbox-child[data-config-panel]').forEach((node) => {
+                node.hidden = true; node.removeAttribute('data-user-open');
+            });
+            minimizedWindows.clear();
+        }
+        const ipMenu = document.querySelector('[data-ip-menu]');
+        const ipButton = document.querySelector('[data-config-nav="ip"]');
+        if (panel === 'ip') {
+            const wasOpen = !ipMenu.hidden;
+            document.querySelector('[data-system-menu]').hidden = true;
+            document.querySelector('[data-config-nav="system"]').setAttribute('aria-expanded', 'false');
+            ipMenu.hidden = wasOpen;
+            ipButton.setAttribute('aria-expanded', String(!wasOpen));
+            return;
+        }
+        ipMenu.hidden = true;
+        ipButton.setAttribute('aria-expanded', 'false');
         const systemMenu = document.querySelector('[data-system-menu]');
         const systemButton = document.querySelector('[data-config-nav="system"]');
         if (panel === 'system') {
@@ -1152,8 +1341,10 @@
         }
         systemMenu.hidden = true;
         systemButton.setAttribute('aria-expanded', 'false');
+        if (panel === 'identity') document.querySelector('[data-identity-input]').value = identitySaved ? 'Router' : 'MikroTik';
         if (windowTitles[panel]) {
             const target = document.querySelector('[data-config-panel="' + panel + '"]');
+            target.setAttribute('data-user-open', 'true');
             target.hidden = false;
             target.style.zIndex = String(++windowOrder);
             minimizedWindows.delete(panel);
@@ -1165,7 +1356,9 @@
     };
     document.querySelector('[data-config-nav="system"]').setAttribute('aria-expanded', 'false');
     document.addEventListener('pointerdown', (event) => {
-        if (event.target.closest('[data-system-menu], [data-config-nav="system"]')) return;
+        if (event.target.closest('[data-system-menu], [data-config-nav="system"], [data-ip-menu], [data-config-nav="ip"]')) return;
+        document.querySelector('[data-ip-menu]').hidden = true;
+        document.querySelector('[data-config-nav="ip"]').setAttribute('aria-expanded', 'false');
         document.querySelector('[data-system-menu]').hidden = true;
         document.querySelector('[data-config-nav="system"]').setAttribute('aria-expanded', 'false');
     });
@@ -1218,21 +1411,18 @@
             actions.insertBefore(cancel, actions.children[1] || null);
         }
     });
+    pcDesktop = window.NetGuardPcDesktop.create({
+        onOpenWinbox: () => {
+            if (stage === 'pc' && pcPowered) setStage('winbox');
+            else document.querySelectorAll('.routeros, .winbox-window').forEach((app) => { app.hidden = false; });
+        },
+        onError: (text) => teacherResponse(text),
+    });
     document.querySelectorAll('.routeros, .winbox-window').forEach((app) => {
         const titlebar = app.querySelector(':scope > header');
         const controls = titlebar.lastElementChild;
         controls.className = 'winbox-window-controls';
         controls.replaceChildren();
-        const launcher = document.createElement('button');
-        launcher.type = 'button';
-        launcher.className = 'winbox-reopen';
-        launcher.hidden = true;
-        const icon = document.createElement('img');
-        icon.src = document.querySelector('[data-open-winbox] img').src;
-        icon.alt = '';
-        launcher.append(icon, 'Buka WinBox');
-        app.before(launcher);
-        launcher.addEventListener('click', () => { app.hidden = false; launcher.hidden = true; });
         [['minimize', '−', 'Minimalkan WinBox'], ['maximize', '□', 'Pulihkan / maksimalkan WinBox'], ['close', '×', 'Tutup WinBox']].forEach(([action, symbol, label]) => {
             const button = document.createElement('button');
             button.type = 'button';
@@ -1240,13 +1430,13 @@
             button.setAttribute('aria-label', label);
             button.addEventListener('click', () => {
                 if (action === 'maximize') app.classList.toggle('is-app-restored');
-                else { app.hidden = true; launcher.hidden = false; }
+                else { app.hidden = true; pcDesktop.showDesktop(); }
             });
             controls.append(button);
         });
     });
     document.querySelectorAll('[data-config-nav]').forEach((button) => {
-        button.addEventListener('click', () => showConfigPanel(button.dataset.configNav));
+        button.addEventListener('click', () => showConfigPanel(button.dataset.configNav, true));
     });
     const teacherResponse = (text, onComplete = null) => openDialogue([{ speaker: 'teacher', text }], onComplete);
     const saveIdentity = (event) => {
@@ -1263,7 +1453,9 @@
         setFeedback('Identity Router tersimpan. Buka Interfaces untuk menamai port.', 'success');
         updateConfigCompletion();
         if (Object.values(interfaceSaved).every(Boolean) && !configCelebrated) celebrateConfiguration();
-        else teacherResponse('Bagus! Nama Router sudah tersimpan. Dengan nama ini, perangkat utama mudah dikenali. Selanjutnya buka Interfaces dan beri nama setiap port sesuai jalurnya.');
+        else teacherResponse('Bagus, Identity Router sudah tersimpan. Sebelum menamai port, baca materi berikutnya terlebih dahulu.', () => {
+            if (!explainedConfiguration.has('material-interfaces')) showConfigurationLearning('interfaces');
+        });
     };
     document.querySelectorAll('[data-save-identity]').forEach((button) => button.addEventListener('click', saveIdentity));
     document.querySelectorAll('[data-edit-interface]').forEach((button) => {
@@ -1272,7 +1464,7 @@
             document.querySelector('[data-edit-title]').textContent = 'Interface <' + editingInterface + '>';
             document.querySelector('[data-interface-input]').value = document.querySelector('[data-interface-name="' + editingInterface + '"]').textContent;
             document.querySelector('[data-interface-mac]').value = '48:A9:8A:1C:01:0' + editingInterface.slice(-1);
-            showConfigPanel('edit');
+            showConfigPanel('edit', true);
             document.querySelector('[data-interface-input]').focus();
             saveProgress();
         };
@@ -1322,6 +1514,7 @@
     document.querySelector('[data-identity-input]').addEventListener('input', saveProgress);
     document.querySelector('[data-interface-input]').addEventListener('input', saveProgress);
     function updateConfigCompletion() {
+        renderConfigurationChecklist();
         if (identitySaved && Object.values(interfaceSaved).every(Boolean)) {
             teacherText.textContent = 'Semua konfigurasi awal selesai. Kerja bagus!';
             showContinue('quiz', 'Kerjakan evaluasi →');
@@ -1383,7 +1576,6 @@
         }
 
         synopsisIndex = Math.max(0, Math.min(synopsisScenes.length, Number(savedProgress.synopsisIndex) || 0));
-        elapsed = Math.max(0, Number(savedProgress.elapsed) || 0);
         if (savedProgress.stage === 'story') {
             scene.classList.add('is-prologue');
             prologue.hidden = false;
@@ -1424,6 +1616,8 @@
         });
         terminateEnd = savedProgress.terminateEnd === 1 ? 1 : 0;
         terminateStep = Math.max(0, Math.min(3, Number(savedProgress.terminateStep) || 0));
+        wireVerified[0] = Boolean(savedProgress.wireVerified?.[0] || wireEnd === 1);
+        wireVerified[1] = Boolean(savedProgress.wireVerified?.[1]);
         testerMain = Boolean(savedProgress.testerMain);
         testerRemote = Boolean(savedProgress.testerRemote);
         testerPassed = Boolean(savedProgress.testerPassed);
@@ -1522,7 +1716,7 @@
         if (savedProgress.stage === 'winbox') {
             const neighborRow = document.querySelector('[data-neighbor-row]');
             neighborRow.hidden = !neighborsLoaded;
-            document.querySelector('[data-neighbor-status]').textContent = neighborsLoaded ? '1 perangkat ditemukan' : 'Tekan Refresh untuk mencari router hAP di jaringan lokal.';
+            document.querySelector('[data-neighbor-status]').textContent = neighborsLoaded ? '1 item' : '0 items';
             if (macSelected) {
                 neighborRow.classList.add('is-selected');
                 document.querySelector('[data-connect-to]').value = '48:A9:8A:1C:01:01';
@@ -1543,7 +1737,7 @@
                 document.querySelector('[data-edit-title]').textContent = 'Interface <' + editingInterface + '>';
                 document.querySelector('[data-interface-mac]').value = '48:A9:8A:1C:01:0' + editingInterface.slice(-1);
             }
-            showConfigPanel(savedProgress.configPanel || 'identity');
+            showConfigPanel('home');
             updateConfigCompletion();
         }
 
@@ -1551,14 +1745,72 @@
     };
 
     window.setInterval(() => {
-        if (document.visibilityState === 'hidden' || stage === 'finish') return;
-        elapsed++;
-        const minutes = String(Math.floor(elapsed / 60)).padStart(2, '0');
-        const seconds = String(elapsed % 60).padStart(2, '0');
-        document.querySelector('[data-time]').textContent = minutes + ':' + seconds;
-        if (elapsed % 10 === 0) saveProgress();
-    }, 1000);
+        if (document.visibilityState !== 'hidden') saveProgress();
+    }, 10000);
 
     evaluationResult = evaluation.showResult(savedProgress?.evaluationResult || (savedProgress?.stage === 'finish' ? { correctAnswers: 5, totalQuestions: 5 } : null));
     restoreProgress();
+    renderLoaderList();
+    const getChapterOneGuidePlan = () => {
+        const visible = (selector) => Boolean(document.querySelector(selector) && !document.querySelector(selector).hidden);
+        const field = (selector) => document.querySelector(selector)?.value.trim() || '';
+        if (stage === 'devices') return [...document.querySelectorAll('[data-device]')].map((card) => [
+            'Klik kartu ' + card.querySelector('b').textContent + ' di sebelah kiri. Perhatikan gambar dan baca kegunaannya pada panel detail.\n\nSetelah kartu dibuka, alat ditandai ✓ hijau. Jika panel tertutup chat Pak Amat, klik untuk menyelesaikan percakapannya terlebih dahulu.', visitedDevices.has(card.dataset.device),
+        ]);
+        if (stage === 'prep') return [
+            ['Klik Potong sesuai panjang di bawah gambar kabel. Tindakan ini memotong kabel UTP sesuai kebutuhan.\n\nSetelah kabel terpotong, petunjuk berubah hijau. Jangan memilih Kupas sebelum kabel dipotong.', prepStep >= 1],
+            ['Klik Kupas dengan bilah tang crimping. Kupas jaket luar secukupnya agar empat pasang inti terlihat.\n\nJangan melukai inti tembaganya. Pada gambar berikutnya, pasangan inti masih terpilin dan belum diluruskan.', prepStep >= 2],
+            ['Klik Urai & luruskan inti. Delapan inti kabel akan tampak lurus, tetapi belum berurutan.\n\nSetelah langkah ini hijau, klik Lanjut ke susun warna untuk menyusun kedua ujung kabel.', prepStep >= 3],
+        ];
+        if (stage === 'wiring') return [0, 1].flatMap((end) => {
+            const label = end === 0 ? 'A' : 'B';
+            return [
+                ['Susun delapan warna pada Ujung ' + label + ' dari pin 1 sampai 8. Klik satu warna untuk mengisi pin kosong berikutnya, atau seret warna ke pin tujuan.\n\nUrutannya: putih-oranye, oranye, putih-hijau, biru, putih-biru, hijau, putih-cokelat, cokelat. Jika keliru, klik pin yang terisi untuk melepasnya atau gunakan Batalkan terakhir.', wirePlacements[end].every((color, index) => color === colors[index].id)],
+                ['Klik Periksa urutan untuk Ujung ' + label + '. Kedua ujung kabel straight harus memakai susunan T568B yang sama.\n\nJika ada koreksi, perbaiki pin yang disebutkan lalu klik Periksa urutan lagi. Setelah Ujung B benar, lanjut ke pemasangan konektor.', wireVerified[end] || (end === 0 && wireEnd === 1)],
+            ];
+        });
+        if (stage === 'terminate') return [0, 1].flatMap((end) => terminateSteps.map((step, index) => [
+            'Ujung ' + (end === 0 ? 'A' : 'B') + ': ' + step.description + '\n\nPerhatikan gambar, lalu klik ' + step.action + '. Selesaikan tiga tindakan pada ujung ini sebelum beralih ke ujung berikutnya.', terminateEnd > end || (terminateEnd === end && terminateStep > index),
+        ]));
+        if (stage === 'tester') return [
+            ['Klik konektor Ujung A, lalu klik port MAIN pada LAN tester. Kamu juga bisa menyeret konektor ke port.\n\nPastikan ujung masuk ke port MAIN sebelum menyambungkan ujung satunya.', testerMain],
+            ['Klik konektor Ujung B, lalu klik port REMOTE pada LAN tester, atau seret ke port tersebut.\n\nTombol Tes kabel baru dapat digunakan setelah kedua konektor terpasang.', testerRemote],
+            ['Klik Tes kabel. Tunggu lampu MAIN dan REMOTE menyala berurutan dari 1 sampai 8.\n\nHasil yang benar menampilkan LULUS dengan urutan yang sama di kedua sisi. Setelah lulus, klik Susun topologi untuk menyambungkan perangkat.', testerPassed],
+        ];
+        if (stage === 'topology') return [
+            ...[['1', 'internet', 'Internet / ISP'], ['2', 'switch', 'Port 1 hEX'], ['3', 'pc', 'PC konfigurasi']].map(([port, cable, name]) => [
+                'Klik kabel ' + name + ' di sebelah kanan gambar router, lalu klik lubang ether' + port + ' pada hAP. Kamu juga bisa menyeret kabel ke lubang tersebut.\n\nJika salah port, klik port yang terisi untuk mencabut, lalu pasang kembali. Nama kabel harus muncul pada ether' + port + '.', field('[data-port="' + port + '"]') === cable,
+            ]),
+            ['Klik Periksa sambungan setelah tiga kabel terpasang. Internet harus di ether1, hEX di ether2, dan PC di ether3.\n\nJika Pak Amat memberi koreksi, pindahkan kabel yang salah lalu periksa kembali.', topologyChecked],
+        ];
+        if (stage === 'pc') return [
+            ['Klik Nyalakan PC di bawah monitor, lalu tunggu proses menyalakan komputer selesai.\n\nLangkah selesai setelah desktop muncul. Jangan klik berkali-kali saat tombol masih bertuliskan Menyalakan.', pcPowered],
+            ['Klik ikon WinBox pada desktop PC. Command Prompt juga tersedia untuk memeriksa komputer, tetapi tahap ini dimulai dari WinBox. Jendela koneksi router akan terbuka.\n\nSelanjutnya kita mencari router melalui tab Neighbors.', false],
+        ];
+        if (stage === 'winbox') return [
+            ['Pada jendela WinBox, pilih tab Neighbors lalu klik Refresh. Tunggu sampai baris router muncul dalam tabel.\n\nJika tabel masih kosong, klik Refresh lagi dan tunggu proses pencarian selesai.', neighborsLoaded],
+            ['Klik MAC Address 48:A9:8A:1C:01:01 pada baris router. Periksa kotak Connect To di bagian atas: alamat tersebut harus terisi.\n\nPilih alamat MAC agar koneksi dapat dilakukan sebelum pengaturan IP selesai.', macSelected],
+            ['Pastikan Login berisi admin dan Password kosong. Klik Connect di sebelah kotak Connect To.\n\nJika muncul koreksi, periksa alamat tujuan dan kedua kolom login, lalu klik Connect lagi.', loginAccepted],
+        ];
+        if (stage === 'config') return [
+            ['Klik System pada menu kiri WinBox, lalu pilih Identity. Jendela Identity akan terbuka.\n\nJika Pak Amat sedang memberi arahan, selesaikan percakapannya terlebih dahulu. Nama router diatur melalui menu ini.', identitySaved || visible('[data-config-panel="identity"]')],
+            ['Pada jendela Identity, ubah kolom Name dari MikroTik menjadi Router. Klik OK untuk menyimpan.\n\nJika salah ketik, perbaiki nama lalu simpan lagi. Target selesai setelah nama Router benar-benar tersimpan.', identitySaved],
+            ...['ether1', 'ether2', 'ether3'].flatMap((name) => {
+                const target = { ether1: 'ether1-internet', ether2: 'ether2-vlan', ether3: 'ether3-local' }[name];
+                return [
+                    ['Klik Interfaces di menu kiri. Pada tab Interface, klik dua kali baris ' + name + ' untuk membuka pengaturannya. Pada layar sentuh, ketuk baris sekali.\n\nPastikan jendela yang dibuka milik ' + name + ', agar nama tidak diberikan pada port yang salah.', interfaceSaved[name] || (editingInterface === name && visible('[data-config-panel="edit"]'))],
+                    ['Ubah kolom Name menjadi ' + target + ', lalu klik OK.\n\nJika Pak Amat memberi koreksi, perbaiki ejaan dan simpan kembali. Nomor port fisik tetap sama; nama ini menjelaskan fungsi jalurnya.', interfaceSaved[name]],
+                ];
+            }),
+        ];
+        const reading = {
+            story: 'Ikuti percakapan Pak Amat. Klik sekali untuk menampilkan teks lengkap, lalu klik lagi untuk melanjutkan cerita jaringan sekolah.',
+            topologyLesson: 'Amati diagram di sebelah kiri: ether1 hAP ke Internet, ether2 ke port 1 hEX, dan ether3 ke PC konfigurasi. Baca fungsi ketiga jalur.\n\nSetelah memahami pasangan portnya, klik Lanjut ke kabel straight di panel ini.',
+            lesson: 'Perhatikan urutan T568B pada Ujung A dan Ujung B di sebelah kiri. Kabel straight memakai susunan yang sama pada kedua ujung.\n\nSetelah mengenali delapan warna, klik Mulai praktik kabel di panel ini.',
+            quiz: 'Pilih satu jawaban untuk setiap soal, lalu klik Simpan hasil Chapter 1. Jika ada yang salah, periksa hasilnya dan perbaiki jawaban.',
+            finish: 'Chapter 1 selesai. Lihat hasil evaluasi, lalu kembali ke peta chapter untuk melanjutkan jaringan sekolah.',
+        };
+        return [[reading[stage] || stageInfo[stage].guide.join('\n\n'), stage === 'finish']];
+    };
+    progressiveGuide = window.NetGuardStepGuide.create({ list: guideList, getKey: () => stage + ':' + stageRevision, getPlan: getChapterOneGuidePlan, root: scene });
 })();

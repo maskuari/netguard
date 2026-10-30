@@ -1,0 +1,44 @@
+.chapter-one-scene .chapter-navbar.lab-header { display: flex; align-items: center; flex: none; gap: clamp(8px, 1vw, 16px); width: min(100%, 1820px); min-height: 84px; margin: 0 auto; padding: 10px clamp(12px, 1.2vw, 22px); border: 1px solid #b4dbff; border-radius: 22px; background: #f9fcfff2; color: #0d2b5c; box-shadow: 0 12px 35px #093f8840, inset 0 1px 0 #fff; }
+.chapter-one-scene .chapter-navbar .lab-back { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 46px; height: 46px; min-width: 46px; padding: 0; border: 1px solid #a9d7ff; border-radius: 13px; color: #006bed; background: #edf8ff; }
+.chapter-navbar svg { display: block; flex: none; width: 21px; height: 21px; }
+.chapter-one-scene .chapter-navbar .lab-logo { display: block; flex: none; width: 55px; height: 55px; object-fit: contain; }
+.chapter-one-scene .chapter-navbar .lab-heading { display: flex; flex: 1; flex-direction: column; min-width: 0; line-height: 1.15; }
+.chapter-one-scene .chapter-navbar .lab-heading > span { display: block; color: #0770cf; font-size: 10px; font-weight: 900; letter-spacing: .12em; }
+.chapter-one-scene .chapter-navbar .lab-heading strong { color: #07194a; font-size: clamp(20px, 1.7vw, 30px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chapter-one-scene .chapter-navbar .lab-heading small { display: block; margin-top: 2px; color: #506a93; font-size: clamp(11px, .85vw, 14px); }
+.chapter-one-scene .chapter-navbar .lab-hud { display: flex; flex: none; flex-direction: column; gap: 3px; min-width: 150px; padding: 8px 14px; border: 1px solid #d7eaff; border-radius: 14px; background: #eff8ff; }
+.chapter-one-scene .chapter-navbar .lab-hud > span { display: block; color: #0770cf; font-size: 10px; letter-spacing: .12em; }
+.chapter-one-scene .chapter-navbar .lab-hud strong { color: #0d2b5c; font-size: 19px; line-height: 1.1; }
+.chapter-one-scene .chapter-navbar .lab-hud progress { width: clamp(120px, 12vw, 210px); height: 8px; }
+.chapter-step-back, .chapter-one-scene .chapter-navbar .lab-save-progress { display: inline-flex; flex: none; align-items: center; justify-content: center; gap: 7px; min-height: 42px; width: auto; padding: 9px 12px; border: 1px solid #a9d7ff; border-radius: 11px; color: #075eb9; background: #edf8ff; font: inherit; font-size: 12px; font-weight: 800; line-height: 1.3; cursor: pointer; }
+.chapter-step-back svg { width: 20px; height: 20px; flex: none; }
+.chapter-step-back:hover:not(:disabled), .chapter-navbar .lab-save-progress:hover { background: #dff1ff; }
+.chapter-step-back:disabled { opacity: .45; cursor: default; }
+.chapter-one-scene .chapter-navbar .lab-save-progress__label { display: inline; font-size: 12px; }
+.chapter-one-scene .chapter-navbar .lab-settings { display: block; flex: none; }
+.chapter-one-scene .chapter-navbar .lab-settings summary { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; padding: 0; border: 1px solid #a9d7ff; border-radius: 11px; color: #006bed; background: #edf8ff; }
+.chapter-one-scene .chapter-navbar .lab-avatar { flex: none; width: 49px; height: 49px; }
+.chapter-step-back--overlay { position: absolute; z-index: 3000; top: 18px; right: 22px; box-shadow: 0 4px 16px #001a4533; }
+@media (max-width: 1100px) {
+    .chapter-one-scene .chapter-navbar.lab-header { gap: 8px; padding: 8px 12px; }
+    .chapter-navbar .chapter-step-back__label { display: none; }
+    .chapter-one-scene .chapter-navbar .lab-heading > span { font-size: 8px; }
+    .chapter-one-scene .chapter-navbar .lab-logo { width: 43px; height: 43px; }
+    .chapter-one-scene .chapter-navbar .lab-hud { min-width: 120px; padding: 7px 10px; }
+}
+@media (max-width: 760px) {
+    .chapter-one-scene .chapter-navbar.lab-header { min-height: 65px; gap: 6px; padding: 7px 9px; border-radius: 15px; }
+    .chapter-one-scene .chapter-navbar .lab-logo, .chapter-one-scene .chapter-navbar .lab-heading > span, .chapter-one-scene .chapter-navbar .lab-heading small { display: none; }
+    .chapter-one-scene .chapter-navbar .lab-heading strong { font-size: 17px; }
+    .chapter-one-scene .chapter-navbar .lab-save-progress__label { display: none; }
+    .chapter-one-scene .chapter-navbar .lab-hud { min-width: 88px; padding: 5px 7px; }
+    .chapter-one-scene .chapter-navbar .lab-hud progress { width: 85px; }
+    .chapter-one-scene .chapter-navbar .lab-hud > span { font-size: 8px; }
+    .chapter-one-scene .chapter-navbar .lab-hud strong { font-size: 15px; }
+    .chapter-one-scene .chapter-navbar .lab-back { width: 36px; min-width: 36px; height: 38px; border-radius: 9px; }
+    .chapter-step-back, .chapter-one-scene .chapter-navbar .lab-save-progress { min-height: 38px; padding: 7px 8px; }
+    .chapter-one-scene .chapter-navbar .lab-settings summary { width: 36px; height: 38px; }
+    .chapter-one-scene .chapter-navbar .lab-avatar { width: 36px; height: 36px; }
+    .chapter-step-back--overlay { top: 10px; right: 12px; }
+}
+@media (max-width: 420px) { .chapter-one-scene .chapter-navbar .lab-avatar { display: none; }.chapter-one-scene .chapter-navbar .lab-heading strong { font-size: 14px; } }

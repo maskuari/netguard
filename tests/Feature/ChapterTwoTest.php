@@ -41,6 +41,42 @@ class ChapterTwoTest extends TestCase
         $this->assertSame(1, $user->fresh()->completedAdventureChapters());
     }
 
+    public function test_chapter_two_follows_four_interface_dhcp_setup_without_a_required_leases_mission(): void
+    {
+        $user = User::factory()->create(['completed_adventure_chapters' => 1]);
+        $response = $this->actingAs($user)->get(route('chapter.two'))->assertOk();
+        $document = new \DOMDocument;
+        $previousErrorMode = libxml_use_internal_errors(true);
+        $document->loadHTML($response->getContent());
+        libxml_clear_errors();
+        libxml_use_internal_errors($previousErrorMode);
+        $xpath = new \DOMXPath($document);
+        $this->assertSame(4, $xpath->query('//*[@data-dhcp-task]')->length);
+        $this->assertSame(4, $xpath->query('//*[@data-pool-row]')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-request-ip or @data-client-checklist]')->length);
+        $this->assertSame(0, $xpath->query('//template[@data-concept="verify"]')->length);
+        $response->assertSeeText('Leases')->assertSeeText('ether3-local')->assertSeeText('wlan1');
+    }
+
+    public function test_dhcp_client_uses_a_list_and_native_style_settings_instead_of_a_custom_status_box(): void
+    {
+        $user = User::factory()->create(['completed_adventure_chapters' => 1]);
+        $response = $this->actingAs($user)->get(route('chapter.two'))->assertOk();
+        $document = new \DOMDocument;
+        $previousErrorMode = libxml_use_internal_errors(true);
+        $document->loadHTML($response->getContent());
+        libxml_clear_errors();
+        libxml_use_internal_errors($previousErrorMode);
+        $xpath = new \DOMXPath($document);
+
+        $this->assertSame(1, $xpath->query('//*[@data-window="wan"]//button[@data-new-wan]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-window="wan"]//*[@data-wan-row and @hidden]')->length);
+        $this->assertSame(3, $xpath->query('//*[@data-window="wan-edit"]//button[@data-wan-tab]')->length);
+        $this->assertSame(2, $xpath->query('//*[@data-window="wan-edit"]//input[@type="checkbox" and @checked]')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-window="wan"]//*[contains(@class, "ch2-window-status")]')->length);
+        $response->assertSeeText('Use Peer DNS')->assertSeeText('Use Peer NTP')->assertSeeText('Add Default Route')->assertSeeText('Default Route Distance');
+    }
+
     public function test_five_correct_answers_complete_chapter_two_without_regressing_later_progress(): void
     {
         $user = User::factory()->create(['completed_adventure_chapters' => 1]);

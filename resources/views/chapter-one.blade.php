@@ -21,11 +21,18 @@
         <script src="{{ asset('js/page-transitions.js') }}?v={{ filemtime(public_path('js/page-transitions.js')) }}"></script>
         <link rel="stylesheet" href="{{ asset('css/chapter-evaluation.css') }}?v={{ filemtime(public_path('css/chapter-evaluation.css')) }}">
         <script src="{{ asset('js/chapter-evaluation.js') }}?v={{ filemtime(public_path('js/chapter-evaluation.js')) }}" defer></script>
+        <link rel="stylesheet" href="{{ asset('css/chapter-navbar.css') }}?v={{ filemtime(public_path('css/chapter-navbar.css')) }}">
+        <script src="{{ asset('js/chapter-navbar.js') }}?v={{ filemtime(public_path('js/chapter-navbar.js')) }}" defer></script>
+        <link rel="stylesheet" href="{{ asset('css/chapter-step-guide.css') }}?v={{ filemtime(public_path('css/chapter-step-guide.css')) }}">
+        <script src="{{ asset('js/chapter-step-guide.js') }}?v={{ filemtime(public_path('js/chapter-step-guide.js')) }}" defer></script>
+        <link rel="stylesheet" href="{{ asset('css/lab-pc-desktop.css') }}?v={{ filemtime(public_path('css/lab-pc-desktop.css')) }}">
+        <script src="{{ asset('js/lab-pc-desktop.js') }}?v={{ filemtime(public_path('js/lab-pc-desktop.js')) }}" defer></script>
         <script src="{{ asset('js/chapter-one.js') }}?v={{ filemtime(public_path('js/chapter-one.js')) }}" defer></script>
     </head>
     <body>
         <div class="academy-scene chapter-one-scene is-prologue" data-user-id="{{ $student->id }}" data-complete-url="{{ route('chapter.one.complete') }}" data-teacher-base="{{ asset('images/asset/char/guru/bapak Amat') }}" data-student-base="{{ asset(rtrim($studentPath, '/')) }}" data-student-name="{{ $student->name }}">
             <div class="chapter-prologue" data-prologue>
+                @include('chapter-step-back')
                 <div class="prologue-network" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><i></i><i></i><i></i></div>
                 <div class="prologue-title" aria-hidden="true"><span>NETGUARD ACADEMY</span><b>CHAPTER 01 <i>·</i> MISI SEKOLAH</b></div>
                 <div class="chapter-prologue__synopsis" data-synopsis>
@@ -48,16 +55,7 @@
                 </div>
             </div>
             <div class="lab-scroll">
-                <header class="lab-header">
-                    <button class="lab-back" type="button" data-lab-back data-back-url="{{ route('adventure') }}#chapter-01" aria-label="Kembali ke materi sebelumnya">←</button>
-                    <img class="lab-logo" src="{{ asset('images/logo/logo.png') }}" alt="" decoding="async">
-                    <div class="lab-heading"><span>NETGUARD ACADEMY · ADVENTURE MODE</span><strong>Lab Chapter 01</strong><small>Perangkat & Konfigurasi Awal Router</small></div>
-                    <div class="lab-hud"><span>PROGRES MISI</span><strong data-mission-count>0 / 5</strong><progress data-progress value="0" max="5">0 dari 5 misi</progress></div>
-                    <div class="lab-time"><span>WAKTU BERMAIN</span><strong data-time>00:00</strong></div>
-                    <button class="lab-save-progress" type="button" data-save-progress aria-live="polite"><span aria-hidden="true">▣</span><span class="lab-save-progress__label">Simpan Progres</span></button>
-                    <details class="lab-settings"><summary aria-label="Pengaturan musik">♫</summary><div class="lab-settings__panel">@include('game-music-settings')</div></details>
-                    <img class="lab-avatar" src="{{ asset($student->profileAvatarPath()) }}" alt="{{ $student->name }}" title="{{ $student->name }}" decoding="async">
-                </header>
+                @include('chapter-navbar', ['chapterNumber' => 1, 'chapterSubtitle' => 'Perangkat & Konfigurasi Awal Router'])
 
                 <main class="lab-main" id="main-content">
                     <div class="lab-layout">
@@ -71,6 +69,7 @@
                         <section class="lab-board" aria-labelledby="lab-stage-title">
                             <header class="lab-board__header"><span class="lab-board__eyebrow" data-stage-label>MISI 01 / 05</span><h1 id="lab-stage-title" data-stage-title>Jaringan sekolah menunggu bantuanmu</h1><p data-stage-subtitle>Ikuti cerita dan siapkan perlengkapan sebelum konfigurasi.</p></header>
                             <div class="lab-board__body">
+                                @include('lab-pc-desktop')
                                 <section class="lab-stage" data-stage="story">
                                     <div class="story-scene">
                                         <img src="{{ asset('images/background/ruanglab.png') }}" alt="Ruang laboratorium TKJ dengan banyak komputer dan perangkat jaringan" decoding="async">
@@ -205,7 +204,7 @@
                                     <div class="topology-workbench">
                                         <div class="topology-hap"><img src="{{ asset('images/asset/alat/mkrotikhapport.png') }}" alt="Tampak depan MikroTik hAP dengan port Ethernet 1 sampai 4">
                                             @foreach ([1, 2, 3] as $port)
-                                                <button type="button" class="topology-socket topology-socket--{{ $port }}" data-topology-socket="{{ $port }}" aria-label="Pasang kabel di ether{{ $port }}"><img class="topology-socket__plug" src="{{ asset('images/asset/alat/rj45-connected-blue-cable.png') }}" alt="" aria-hidden="true"><span>ether{{ $port }}</span><b data-port-label="{{ $port }}">Kosong</b></button><input type="hidden" data-port="{{ $port }}" value="">
+                                                <button type="button" class="topology-socket topology-socket--{{ $port }}" data-topology-socket="{{ $port }}" aria-label="Pasang kabel di ether{{ $port }}"><i class="topology-socket__connector" aria-hidden="true"></i><span>ether{{ $port }}</span><b data-port-label="{{ $port }}">Kosong</b></button><input type="hidden" data-port="{{ $port }}" value="">
                                             @endforeach
                                         </div>
                                         <div class="topology-actions">
@@ -220,7 +219,7 @@
                                 </section>
 
                                 <section class="lab-stage" data-stage="pc" hidden>
-                                    <div class="pc-scene"><div class="pc-monitor"><div class="pc-screen" data-pc-screen><div class="pc-screen__off">LAYAR MATI</div><div class="pc-screen__boot" hidden><span class="pc-spinner"></span><b>Menyiapkan PC lab...</b></div><div class="pc-screen__desktop" hidden><div class="desktop-bar">Lab TKJ <span>● WiFi&nbsp; ▰ 09:15</span></div><button type="button" data-open-winbox><img src="{{ asset('images/logo/winbox.png') }}" alt=""> WinBox</button></div></div><span class="pc-monitor__stand"></span></div><button class="pc-power" type="button" data-power-pc>⏻ <span>Nyalakan PC</span></button></div>
+                                    <div class="pc-scene"><div class="pc-monitor"><div class="pc-screen" data-pc-screen><div class="pc-screen__off">LAYAR MATI</div><div class="pc-screen__boot" hidden><span class="pc-spinner"></span><b>Menyiapkan PC lab...</b></div><div class="pc-screen__desktop" hidden><div class="desktop-bar">Lab TKJ <span>● WiFi&nbsp; ▰ 09:15</span></div><div class="pc-desktop-apps"><button type="button" data-open-winbox><img src="{{ asset('images/logo/winbox.png') }}" alt=""> WinBox</button><button type="button" data-open-client-cmd="local"><span class="pc-cmd-icon" aria-hidden="true">C:\_</span>Command Prompt</button></div></div></div><span class="pc-monitor__stand"></span></div><button class="pc-power" type="button" data-power-pc>⏻ <span>Nyalakan PC</span></button></div>
                                 </section>
 
                                 <section class="lab-stage" data-stage="winbox" hidden>
@@ -228,10 +227,10 @@
                                         <header><span class="routeros__title"><img src="{{ asset('images/logo/winbox.png') }}" alt="WinBox">WinBox (64bit) v3.41</span><span>─ □ ×</span></header>
                                         <div class="routeros__menubar"><span>File</span><span>Tools</span></div>
                                         <div class="winbox-login">
-                                            <div class="winbox-connect wb-loader__connection" data-connect-dialog><header hidden>Connect To Router <button type="button" data-close-connect aria-label="Tutup dialog koneksi" hidden>×</button></header><div class="winbox-credentials"><label>Connect To: <input data-connect-to readonly placeholder="IP / MAC Address"></label><label>Login: <input data-winbox-login value="admin" autocomplete="off"></label><label>Password: <input data-winbox-password type="password" value="" autocomplete="off"></label><div class="wb-loader__options"><label><input type="checkbox" checked> Keep Password</label><label><input type="checkbox"> Open In New Window</label></div><button class="winbox-control" type="button" data-connect-winbox>Connect</button></div></div>
-                                            <div class="winbox-neighbors"><div class="winbox-neighbors__list"><div class="winbox-tabs"><span>Managed</span><strong>Neighbors</strong></div><div class="winbox-toolbar"><button type="button" data-refresh-neighbors>Refresh</button></div><div class="winbox-table"><div class="winbox-table__head"><span>MAC Address</span><span>IP Address</span><span>Identity</span><span>Version</span><span>Board</span></div><button type="button" data-neighbor-row hidden><span>48:A9:8A:1C:01:01</span><span>192.168.88.1</span><span>MikroTik</span><span>7.14.3</span><span>hAP lite</span></button></div></div></div>
+                                            <div class="winbox-connect wb-loader__connection" data-connect-dialog><header hidden>Connect To Router <button type="button" data-close-connect aria-label="Tutup dialog koneksi" hidden>×</button></header><div class="winbox-credentials"><label>Connect To: <input data-connect-to aria-label="Connect To"></label><label>Login: <input data-winbox-login value="admin" autocomplete="off"></label><label>Password: <input data-winbox-password type="password" value="" autocomplete="off"></label><div class="wb-loader__options"><label><input type="checkbox" data-loader-keep-password> Keep Password</label><label><input type="checkbox" data-loader-new-window> Open In New Window</label></div><div class="wb-loader__buttons"><button class="winbox-control" type="button" data-loader-add>Add/Set</button><button class="winbox-control" type="button" disabled title="RoMON tidak digunakan pada jaringan latihan ini">Connect To RoMON</button><button class="winbox-control" type="button" data-connect-winbox>Connect</button></div></div></div>
+                                            <div class="winbox-neighbors"><div class="winbox-neighbors__list"><div class="winbox-tabs" role="tablist" aria-label="Router list"><button type="button" role="tab" data-loader-tab="managed" aria-selected="false">Managed</button><button type="button" role="tab" data-loader-tab="neighbors" aria-selected="true">Neighbors</button></div><div class="winbox-toolbar"><button type="button" data-refresh-neighbors>Refresh</button><button type="button" data-loader-remove hidden>Remove</button><label class="wb-loader__find">Find <input data-loader-find aria-label="Find router" type="search"></label></div><div class="winbox-table"><div class="winbox-table__head"><span>MAC Address</span><span>IP Address</span><span>Identity</span><span>Version</span><span>Board</span><span>Uptime</span></div><button type="button" data-neighbor-row hidden><span>48:A9:8A:1C:01:01</span><span>192.168.88.1</span><span>MikroTik</span><span>7.14.3</span><span>hAP lite</span><span>00:04:32</span></button><button type="button" data-managed-row hidden><span data-managed-address></span><span>admin</span><span>MikroTik</span><span>7.14.3</span><span>hAP lite</span><span></span></button></div></div></div>
                                         </div>
-                                        <footer class="wb-loader__status" data-neighbor-status role="status" aria-live="polite">Tekan Refresh untuk mencari router hAP di jaringan lokal.</footer>
+                                        <footer class="wb-loader__status" data-neighbor-status role="status" aria-live="polite">0 items</footer>
                                     </div></div></div>
                                 </section>
 
@@ -247,7 +246,7 @@
 <span class="routeros__menu-item"><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#ppp"></use></svg><span>PPP</span></span>
 <span class="routeros__menu-item"><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#switch"></use></svg><span>Switch</span></span>
 <span class="routeros__menu-item"><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#mesh"></use></svg><span>Mesh</span></span>
-<span class="routeros__menu-item"><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#ip"></use></svg><span>IP</span><i class="wb-menu-arrow" aria-hidden="true">›</i></span>
+<button type="button" data-config-nav="ip" aria-expanded="false" class="routeros__menu-item"><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#ip"></use></svg><span>IP</span><i class="wb-menu-arrow" aria-hidden="true">›</i></button>
 <span class="routeros__menu-item"><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#ipv6"></use></svg><span>IPv6</span><i class="wb-menu-arrow" aria-hidden="true">›</i></span>
 <span class="routeros__menu-item"><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#mpls"></use></svg><span>MPLS</span></span>
 <span class="routeros__menu-item"><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#routing"></use></svg><span>Routing</span><i class="wb-menu-arrow" aria-hidden="true">›</i></span>
@@ -262,6 +261,7 @@
 <span class="routeros__menu-item"><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#supout"></use></svg><span>Make Supout.rif</span></span>
 <span class="routeros__menu-item"><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#winbox"></use></svg><span>New WinBox</span></span>
 <span class="routeros__menu-item"><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#exit"></use></svg><span>Exit</span></span>
+                                                @include('winbox-ip-menu', ['ipChapter' => 1, 'ipWindows' => []])
                                                 @include('winbox-system-menu', ['systemChapter' => 1])
                                             </nav>
                                             <div class="routeros__content">
@@ -269,13 +269,13 @@
                                                 <div data-config-panel="system" hidden></div>
                                                 <div data-config-panel="identity" class="winbox-child winbox-child--dialog" hidden>
                                                     <header>Identity <span>─ □ ×</span></header>
-                                                    <div class="winbox-child__body"><div class="winbox-child__fields"><label>Name: <input data-identity-input autocomplete="off" placeholder="Router"></label></div><div class="winbox-child__actions"><button type="button" data-save-identity>OK</button><button type="button" data-save-identity>Apply</button></div></div><footer>System / Identity</footer>
+                                                    <div class="winbox-child__body"><div class="winbox-child__fields"><label>Name: <input data-identity-input autocomplete="off" value="MikroTik"></label></div><div class="winbox-child__actions"><button type="button" data-save-identity>OK</button><button type="button" data-save-identity>Apply</button></div></div><footer>System / Identity</footer>
                                                 </div>
                                                 <div data-config-panel="interfaces" class="winbox-child winbox-child--list" hidden>
                                                     <header>Interface List <span>─ □ ×</span></header>
                                                     <div class="winbox-child__tabs"><strong>Interface</strong><span>Interface List</span><span>Ethernet</span><span>EoIP Tunnel</span><span>IP Tunnel</span><span>GRE Tunnel</span><span>VLAN</span><span>VXLAN</span><span>VRRP</span><span>Bonding</span><span>LTE</span></div>
                                                     <div class="winbox-child__tools"><span><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#add"></use></svg></span><span><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#remove"></use></svg></span><span><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#enable"></use></svg></span><span><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#disable"></use></svg></span><span><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#comment"></use></svg></span><span><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#filter"></use></svg></span><label class="wb-find"><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#find"></use></svg><input type="search" data-interface-find placeholder="Find" aria-label="Cari interface"></label></div>
-                                                    <div class="interface-list"><div class="interface-list__head"><span>#</span><span></span><span>Name</span><span>Type</span><span>MTU</span><span>Actual MTU</span><span>L2 MTU</span><span>Tx</span><span>Rx</span><span>FP Tx</span><span>FP Rx</span></div><button type="button" data-edit-interface="ether1" class="interface-list__row"><span>0</span><span>R</span><strong><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#interfaces"></use></svg><span data-interface-name="ether1">ether1</span></strong><span>Ethernet</span><span>1500</span><span>1500</span><span>1598</span><span>0 bps</span><span>0 bps</span><span>0 bps</span><span>0 bps</span></button><button type="button" data-edit-interface="ether2" class="interface-list__row"><span>1</span><span>R</span><strong><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#interfaces"></use></svg><span data-interface-name="ether2">ether2</span></strong><span>Ethernet</span><span>1500</span><span>1500</span><span>1598</span><span>0 bps</span><span>0 bps</span><span>0 bps</span><span>0 bps</span></button><button type="button" data-edit-interface="ether3" class="interface-list__row"><span>2</span><span>R</span><strong><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#interfaces"></use></svg><span data-interface-name="ether3">ether3</span></strong><span>Ethernet</span><span>1500</span><span>1500</span><span>1598</span><span>0 bps</span><span>0 bps</span><span>0 bps</span><span>0 bps</span></button><div class="interface-list__static"><span>3</span><span></span><span><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#interfaces"></use></svg>ether4</span><span>Ethernet</span><span>1500</span><span>1500</span><span>1598</span><span>0 bps</span><span>0 bps</span><span>0 bps</span><span>0 bps</span></div><div class="interface-list__static"><span>4</span><span></span><span><svg class="wb-icon" aria-hidden="true" focusable="false"><use href="{{ asset('images/logo/winbox-icons.svg') }}#wireless"></use></svg>wlan1</span><span>Wireless</span><span>1500</span><span>1500</span><span>1600</span><span>0 bps</span><span>0 bps</span><span>0 bps</span><span>0 bps</span></div></div><footer><span data-interface-count>5 items</span></footer>
+                                                    @include('winbox-interface-list', ['interfaceChapter' => 1])<footer><span data-interface-count>5 items</span></footer>
                                                 </div>
                                                 <div data-config-panel="edit" class="winbox-child winbox-child--dialog" hidden>
                                                     <header><span data-edit-title>Interface &lt;ether1&gt;</span><span>─ □ ×</span></header>
@@ -303,14 +303,14 @@
                         <aside class="lab-guide" aria-label="Petunjuk misi">
                             <div class="lab-guide__steps">
                                 <div class="lab-guide__header"><span>▤</span><div><small>PETUNJUK MISI</small><h2>Langkah-Langkah</h2></div></div>
-                                <ol data-guide-list><li>Dengarkan tugas sekolah.</li><li>Kenali alat di lab.</li><li>Siapkan router untuk konfigurasi.</li></ol>
+                                <ol data-guide-list tabindex="0" aria-label="Urutan langkah praktik"><li>Dengarkan tugas sekolah.</li><li>Kenali alat di lab.</li><li>Siapkan router untuk konfigurasi.</li></ol>
                                 <section class="device-recognition-checklist" data-device-checklist hidden aria-label="Target mengenali tujuh alat">
                                     <div class="device-recognition-checklist__heading"><b>Target pengenalan alat</b><span data-device-task-count role="status" aria-live="polite" aria-atomic="true">0 / 7 selesai</span></div>
                                     <p>Ketuk setiap kartu alat di kiri dan baca penjelasan Pak Amat.</p>
                                     <ul data-device-task-list></ul>
                                     <p class="device-recognition-checklist__complete" data-device-task-complete role="status" hidden>✓ Semua alat sudah dikenali. Lanjut ke topologi jaringan.</p>
                                 </section>
-                                <div class="lab-guide__note"><b>Materi modul</b><p data-module-section>Chapter 1 · §1.1–1.2</p></div>
+                                <div class="lab-guide__note"><b>Materi modul</b><p data-module-section>Bab 1 · Pengantar jaringan sekolah</p></div>
                                 <button class="lab-button lab-button--primary lab-guide__lesson-next" type="button" data-lesson-next hidden>Mulai praktik kabel →</button>
                                 <p class="lab-guide__feedback" data-feedback role="status" aria-live="polite">Ikuti arahan Pak Amat untuk memulai.</p>
                                 <button class="lab-button lab-button--primary lab-guide__continue" type="button" data-continue hidden>Lanjut →</button>
@@ -320,13 +320,40 @@
                                 <div class="device-detail"><div class="device-detail__visual"><img data-device-preview src="{{ asset('images/asset/alat/mikrotikhap.png') }}" alt="Contoh perangkat MikroTik hAP"><canvas data-hap-rotator data-sprite="{{ asset('images/asset/alat/hap16frame.png') }}" width="480" height="300" tabindex="0" role="img" aria-label="MikroTik hAP. Geser ke kiri atau kanan untuk memutar perangkat" hidden></canvas></div><div class="device-detail__copy"><b data-device-name>Pilih salah satu alat</b><p data-device-detail>Ketuk kartu alat di sebelah kiri untuk melihat fungsi dan kegunaannya di sini.</p><small data-device-tip>Pak Amat juga akan menjelaskan alat yang kamu pilih.</small></div></div>
                             </div>
 
-                            <img src="{{ asset($studentPath.'tugas.png') }}" alt="" aria-hidden="true" decoding="async">
                         </aside>
                     </div>
                 </main>
                 <p class="lab-watermark">NetGuard Academy · MikroTik Mission · © {{ date('Y') }}</p>
             </div>
         </div>
+        <dialog class="ch1-learning-dialog" data-configuration-learning aria-labelledby="configuration-learning-title">
+            <button class="ch1-learning-close" type="button" data-close-configuration-learning aria-label="Tutup materi">×</button>
+            <div data-configuration-learning-body></div>
+            <button class="lab-button lab-button--primary" type="button" data-start-configuration-practice>Mulai praktik di WinBox →</button>
+        </dialog>
+        <template data-configuration-concept="identity">
+            <span class="ch1-learning-kicker">PAK AMAT · MATERI SEBELUM PRAKTIK</span>
+            <h2 id="configuration-learning-title">Kita akan mengganti nama router</h2>
+            <p>Pada langkah ini, kita akan mengubah <b>Identity</b> router dari <b>MikroTik</b> menjadi <b>Router</b> melalui menu System → Identity. Sebelum mulai, pahami dulu fungsi nama perangkat ini.</p>
+            <h3>Apa itu Identity router?</h3>
+            <p><b>Identity adalah nama perangkat MikroTik.</b> Nama ini muncul pada daftar Neighbors dan judul sesi WinBox. Saat ada beberapa router, Identity membantu kita mengenali perangkat yang sedang dikonfigurasi.</p>
+            <div class="ch1-learning-example"><span>Nama bawaan</span><b>MikroTik</b><span aria-hidden="true">→</span><span>Nama sesuai rancangan</span><b>Router</b></div>
+            <h3>Mengapa kita mengubahnya?</h3>
+            <p>Tujuannya agar router utama mudah dikenali dan tidak tertukar dengan perangkat lain. Sesuai modul, gunakan nama <b>Router</b>. Mengubah Identity tidak mengganti alamat IP, nomor port, atau membuat koneksi internet aktif.</p>
+            <p class="ch1-learning-note"><b>Yang akan kamu lakukan:</b> buka System → Identity, isi Name dengan Router, lalu klik OK. Target selesai jika checklist Nama router sudah hijau.</p>
+        </template>
+        <template data-configuration-concept="interfaces">
+            <span class="ch1-learning-kicker">PAK AMAT · MATERI SEBELUM PRAKTIK</span>
+            <h2 id="configuration-learning-title">Kita akan mengganti nama port</h2>
+            <p>Identity router sudah kita atur. Berikutnya, kita akan mengganti nama <b>ether1, ether2, dan ether3</b> melalui menu Interfaces menjadi <b>ether1-internet, ether2-vlan, dan ether3-local</b>, sesuai jalur masing-masing pada topologi.</p>
+            <h3>Mengapa port perlu diberi nama?</h3>
+            <p><b>Interface adalah jalur koneksi pada router.</b> Nama bawaan seperti ether1 hanya menunjukkan nomor port. Kita tambahkan fungsi jalurnya agar lebih mudah memilih interface saat mengatur VLAN, alamat IP, DHCP, dan akses internet.</p>
+            <div class="ch1-learning-table"><table><thead><tr><th>Port fisik</th><th>Nama yang dibuat</th><th>Fungsi jalur</th></tr></thead><tbody><tr><td>ether1</td><td><b>ether1-internet</b></td><td>Terhubung ke Internet / ISP</td></tr><tr><td>ether2</td><td><b>ether2-vlan</b></td><td>Trunk menuju port 1 hEX</td></tr><tr><td>ether3</td><td><b>ether3-local</b></td><td>Terhubung ke PC konfigurasi</td></tr></tbody></table></div>
+            <h3>Apa tujuannya untuk langkah berikutnya?</h3>
+            <p>Di Chapter 2, DHCP Client dipasang pada ether1-internet, VLAN dibuat di atas ether2-vlan, dan gateway PC lokal dipasang pada ether3-local. Nama yang jelas mengurangi kesalahan memilih jalur. <b>Nomor dan fungsi fisik port tetap sama</b> setelah diganti namanya.</p>
+            <p>ether4 dan wlan1 tetap ditampilkan karena merupakan interface perangkat. Keduanya tidak perlu diubah pada tugas penamaan ini.</p>
+            <p class="ch1-learning-note"><b>Yang akan kamu lakukan:</b> buka Interfaces, klik dua kali setiap baris ether1–ether3, ubah Name sesuai tabel, lalu klik OK. Selesaikan ketiga checklist sebelum evaluasi.</p>
+        </template>
         @include('chapter-evaluation', ['chapterNumber' => 1, 'quizTitle' => 'Cek pemahaman perangkat dan konfigurasi router', 'finishTitle' => 'Hebat! Router siap untuk misi berikutnya.', 'finishDescription' => 'Kabel straight lulus LAN tester, topologi awal tersambung, dan WinBox sudah terhubung. Identity serta nama interface router sudah sesuai fungsinya. Ini bekal untuk menyiapkan VLAN, IP, dan DHCP pada chapter berikutnya.'])
         @include('game-music-player')
     </body>

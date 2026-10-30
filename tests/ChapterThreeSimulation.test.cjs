@@ -15,14 +15,24 @@ const readyState = () => ({
         teacher: { ready: true, pool: '192.168.60.10-192.168.60.50', address: '192.168.60.10', gateway: '192.168.60.1' },
     },
 });
+test('terminal accepts the Google domain shown in the instructions, including capital letters', () => {
+    const source = fs.readFileSync(path.join(__dirname, '../public/js/chapter-three-workbench.js'), 'utf8');
+    const expression = source.match(/const match = command\.match\((.+)\);/)[1];
+    const pattern = vm.runInNewContext(expression);
+    for (const command of ['ping google.com count=4', 'ping Google.com count=4', '/tool/ping address=google.com count=4']) {
+        const match = command.match(pattern);
+        assert.ok(match, command);
+        assert.equal(model.routerTest(readyState(), match[1].toLowerCase()).kind, 'domain');
+    }
+});
 test('router IP test does not depend on DNS or NAT', () => {
     const state = readyState(); state.dns.servers = []; state.nat = null;
     assert.equal(model.routerTest(state, '8.8.8.8').ok, true);
-    assert.equal(model.routerTest(state, 'example.com').reason, 'dns');
+    assert.equal(model.routerTest(state, 'google.com').reason, 'dns');
 });
 test('router DNS works without serving remote DNS, but client DNS does not', () => {
     const state = readyState(); state.dns.remote = false;
-    assert.equal(model.routerTest(state, 'example.com').ok, true);
+    assert.equal(model.routerTest(state, 'google.com').ok, true);
     assert.equal(model.clientTest(state, 'student').reason, 'remote');
 });
 test('WAN failures identify link, DHCP and default route in order', () => {
@@ -48,4 +58,28 @@ test('both clients succeed with correct configuration; changing NAT breaks them'
     for (const group of ['student', 'teacher']) assert.equal(model.clientTest(state, group).ok, true);
     state.nat.disabled = true;
     for (const group of ['student', 'teacher']) assert.equal(model.clientTest(state, group).ok, false);
+});
+test('PC commands inspect DHCP configuration and test IP separately from DNS', () => {
+    const state = readyState();
+    assert.equal(model.clientCommand(state, 'student', 'ipconfig /all').ok, true);
+    state.dns.servers = [];
+    assert.equal(model.clientCommand(state, 'student', 'ping 8.8.8.8').ok, true);
+    assert.equal(model.clientCommand(state, 'student', 'ping Google.com -n 4').reason, 'dns');
+    state.dns.servers = ['8.8.8.8', '8.8.4.4'];
+    assert.equal(model.clientCommand(state, 'student', 'ping google.com').kind, 'domain');
+    state.nat.disabled = true;
+    assert.equal(model.clientCommand(state, 'student', 'ping 8.8.8.8').reason, 'nat');
+    assert.equal(model.clientCommand(state, 'student', 'ipconfig').ok, true);
+    state.lan.student.ready = false;
+    assert.equal(model.clientCommand(state, 'student', 'ipconfig /all').ok, false);
+    assert.equal(model.clientCommand(state, 'student', 'ping google.com').reason, 'lan');
+    assert.equal(model.clientCommand(state, 'teacher', 'anything').reason, 'command');
+});
+test('the original configuration PC uses ether3-local subnet and the local DHCP range', () => {
+    const state = readyState();
+    state.lan.local = { ready: true, address: '192.168.100.2', gateway: '192.168.100.1', pool: '192.168.100.2-192.168.100.254' };
+    assert.equal(model.clientCommand(state, 'local', 'ipconfig /all').ok, true);
+    assert.equal(model.clientCommand(state, 'local', 'ping google.com').ok, true);
+    state.lan.local.address = '192.168.40.10';
+    assert.equal(model.clientCommand(state, 'local', 'ipconfig /all').ok, false);
 });

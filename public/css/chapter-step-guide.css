@@ -1,0 +1,7 @@
+.chapter-one-scene .lab-guide [data-guide-list].chapter-step-guide { display: grid; align-content: start; gap: 12px; margin: 0 0 16px; padding: 0; list-style: none; }
+.chapter-one-scene .lab-guide [data-guide-list] > .chapter-guide-step { display: grid; gap: 10px; margin: 0; padding: 15px; border: 1px solid #9acbff; border-radius: 14px; background: #eef7ff; color: #203e70; font-size: 15px; line-height: 1.6; }
+.chapter-one-scene .lab-guide .chapter-guide-step::marker { content: ''; }
+.chapter-one-scene .lab-guide .chapter-guide-step > b { color: #006cdc; font-size: 12px; line-height: 1.4; }
+.chapter-one-scene .lab-guide .chapter-guide-step > span { white-space: pre-line; overflow-wrap: anywhere; }
+.chapter-one-scene .lab-guide [data-guide-list] > .chapter-guide-step.is-done { border-color: #55d99c; background: #e0f8ed; color: #087451; }
+.chapter-one-scene .lab-guide .chapter-guide-step.is-done > b { color: #087451; }

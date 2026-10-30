@@ -21,5 +21,13 @@
         <label class="music-volume__label" for="music-volume">Volume <output for="music-volume" data-music-volume-output>70%</output></label>
         <input id="music-volume" class="music-volume__slider" type="range" min="0" max="100" step="1" value="70" aria-label="Volume musik latar" data-music-volume>
     </div>
+    <div class="sound-effects-settings">
+        <button class="music-setting" type="button" role="switch" aria-checked="true" aria-label="Efek suara" data-sfx-toggle>
+            <span class="music-setting__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5ZM15 8a6 6 0 0 1 0 8M18 5a10 10 0 0 1 0 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="music-setting__copy"><span>Efek suara</span><span class="music-setting__state" data-sfx-state>Nyala</span></span><span class="music-setting__switch" aria-hidden="true"></span>
+        </button>
+        <div class="music-volume"><label class="music-volume__label" for="sfx-volume">Volume efek <output data-sfx-volume-output for="sfx-volume">45%</output></label><input id="sfx-volume" class="music-volume__slider" data-sfx-volume type="range" min="0" max="100" step="1" value="45" aria-label="Volume efek suara"></div>
+        <button class="music-setting sound-typing-toggle" type="button" role="switch" aria-checked="true" aria-label="Suara teks bergulir" data-sfx-typing-toggle><span class="music-setting__copy"><span>Suara teks bergulir</span><span class="music-setting__state" data-sfx-typing-state>Nyala</span></span><span class="music-setting__switch" aria-hidden="true"></span></button>
+    </div>
     <p class="music-settings__feedback" role="status" aria-live="polite" data-music-feedback hidden></p>
 </div>

@@ -14,9 +14,11 @@
                 panel.querySelector('[data-evaluation-result-title]').textContent = correct === total ? 'Semua jawaban benar!' : 'Hasil percobaan ini';
                 panel.querySelector('[data-evaluation-result-note]').textContent = correct === total ? 'Evaluasi selesai. Progres chapter tersimpan di akun.' : 'Masih ada ' + summary.incorrectAnswers + ' jawaban salah. Periksa pilihanmu, lalu kirim jawaban lagi.';
             });
+            window.NetGuardAudio?.play(correct === total ? 'complete' : 'error');
             return summary;
         },
         showError(message) {
+            window.NetGuardAudio?.play('error');
             const feedback = document.querySelector('[data-evaluation-feedback]');
             feedback.textContent = message;
             feedback.hidden = false;
