@@ -44,10 +44,30 @@
             setView('winbox');
             return {
                 showDesktop, showCommand, showWinbox,
+                setNetwork(online) {
+                    const icon = document.querySelector('[data-pc-network]');
+                    const description = online ? 'Ethernet tersambung · Akses internet tersedia' : 'Ethernet tersambung · Tidak ada akses internet';
+                    icon.classList.toggle('is-online', Boolean(online));
+                    icon.setAttribute('aria-label', description);
+                    icon.setAttribute('title', description);
+                },
                 setAvailable(available) { toolbar.hidden = !available; host.dataset.pcAvailable = String(available); if (!available) setView('winbox'); },
                 hideDesktop() { setView('winbox'); },
                 showPreview() { setView('preview'); },
             };
+        },
+    };
+    window.NetGuardTerminal = {
+        stream({ text, append, isCurrent = () => true, onComplete = () => {}, interval = 700 }) {
+            const lines = text.match(/[^\n]*\n|[^\n]+$/g) || [];
+            let index = 0;
+            const next = () => {
+                if (!isCurrent()) return;
+                if (index === lines.length) { onComplete(); return; }
+                append(lines[index++]);
+                window.setTimeout(next, interval);
+            };
+            next();
         },
     };
 })();

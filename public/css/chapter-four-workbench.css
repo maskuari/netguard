@@ -1,0 +1,64 @@
+.ch4-scene [hidden] { display: none !important; }
+.ch4-scene .ch2-window--list { display: flex; flex-direction: column; }
+.ch4-scene .ch4-table { flex: 1; min-height: 0; overflow: auto; background: white; }
+.ch4-scene .ch4-table-head, .ch4-scene .ch4-data-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(110px, 1fr); min-width: 540px; width: 100%; min-height: 28px; align-items: center; text-align: left; font: 12px Tahoma, sans-serif; }
+.ch4-scene .ch4-table-head { color: #1c3d54; background: #e9f0f5; border-bottom: 1px solid #c4d2dc; }
+.ch4-table-head > *, .ch4-data-row > * { padding: 5px 8px; }
+.ch4-scene .ch4-data-row { padding: 0; border: 0; border-bottom: 1px solid #e4ecf2; background: white; color: #203b50; }
+.ch4-scene button.ch4-data-row { cursor: pointer; }
+.ch4-scene .ch4-data-row.is-selected { background: #baddf8; }
+.ch4-scene .ch4-data-row.is-disabled { color: #8b969f; }
+.ch4-scene [data-wireless-panel] { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: auto; }
+.ch4-scene .ch2-window-content label:has(input[type="checkbox"]) { display: flex; flex-direction: row-reverse; justify-content: start; gap: 12px; }
+.ch4-scene .ch2-window-content input[type="checkbox"] { width: 16px; min-width: 16px; }
+.ch4-scene .ch2-window-content fieldset { min-width: 0; padding: 10px; border: 1px solid #bdcbd5; }
+.ch4-scene [data-wireless-settings] { display: grid; gap: 10px; }
+.ch4-scene .ch2-window-tabs .is-active { border-bottom: 2px solid #0078d7; background: white; }
+.ch4-task-parameters { padding: 10px; border: 1px solid #b2d9fb; border-radius: 10px; background: #eef8ff; font-size: 13px; line-height: 1.6; white-space: pre-line; }
+.ch4-scene .ch4-hp-launcher { position: absolute; z-index: 31; right: 200px; bottom: 4px; height: 36px; padding: 0 10px; border: 1px solid #b7d9fa66; border-radius: 5px; background: #174078; color: white; font: 12px Tahoma, sans-serif; cursor: pointer; }
+.ch4-phone-area { position: absolute; inset: 0 0 44px; z-index: 40; overflow-y: auto; padding: 14px; background: #e4eff8; }
+.ch4-phone-back { padding: 8px 14px; border: 1px solid #94caff; border-radius: 8px; background: white; color: #0864bc; cursor: pointer; }
+.ch4-phone { position: relative; display: flex; flex-direction: column; width: min(340px, 100%); height: min(650px, calc(100% - 52px)); min-height: 420px; margin: 10px auto; padding: 8px; border: 8px solid #18283b; border-radius: 36px; background: #f5f9fc; box-shadow: 0 12px 25px #193d6f30; color: #1a3451; overflow: hidden; }
+.ch4-phone > header { display: flex; justify-content: space-between; padding: 5px 10px 12px; font-size: 11px; }
+.ch4-phone-content { flex: 1; min-height: 0; padding: 12px; overflow-y: auto; overscroll-behavior: contain; }
+.ch4-phone h2 { margin: 0 0 12px; }
+.ch4-phone label { display: grid; gap: 5px; margin: 12px 0; font-size: 13px; }
+.ch4-phone input { width: 100%; min-width: 0; padding: 10px; border: 1px solid #b3c9dd; border-radius: 6px; background: white; color: #102f4e; }
+.ch4-phone button { padding: 9px 12px; border: 1px solid #9dc7ef; border-radius: 8px; background: white; color: #075ea8; cursor: pointer; }
+.ch4-network { display: grid; grid-template-columns: 25px 1fr; width: 100%; gap: 6px; text-align: left; }
+.ch4-network small { grid-column: 2; }
+.ch4-phone p { font-size: 13px; line-height: 1.6; white-space: pre-line; }
+.ch4-phone-browser { margin-top: 20px; padding: 10px; border: 1px solid #c7d8e8; border-radius: 8px; background: white; }
+.ch4-address-bar { padding: 6px; background: #eaf1f7; font-size: 11px; overflow-wrap: anywhere; }
+.ch4-phone-browser h3 { font-size: 18px; line-height: 1.4; }
+.ch4-phone-camera { width: 9px; height: 9px; border-radius: 50%; background: #152b41; }
+.ch4-phone-home { min-height: 100%; display: flex; flex-direction: column; justify-content: space-between; gap: 30px; padding: 25px 12px; border-radius: 15px; background: linear-gradient(155deg, #d8f1ff, #a5bffa 60%, #87d4db); }
+.ch4-phone-clock { display: grid; gap: 8px; text-align: center; }
+.ch4-phone-clock b { font-size: 48px; font-weight: 400; }
+.ch4-phone-clock small { margin-top: 10px; font-size: 12px; }
+.ch4-phone-apps { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.ch4-phone-apps button { display: grid; justify-items: center; gap: 10px; padding: 12px 4px; border: 0; background: transparent; color: #213a60; font-size: 11px; }
+.ch4-phone-apps button > span { display: grid; place-items: center; width: 55px; height: 55px; border-radius: 16px; background: white; color: #286bc5; box-shadow: 0 4px 9px #274e8130; font-size: 30px; }
+.ch4-phone .ch4-wifi-toggle { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #cfdfec; }
+.ch4-phone .ch4-wifi-toggle input { width: 35px; height: 22px; accent-color: #0879ef; }
+.ch4-phone .ch4-open-portal { display: block; width: 100%; margin-top: 15px; border-color: #0879ef; color: #075eaf; background: #e7f2ff; }
+.ch4-phone .ch4-phone-navigation { display: flex; flex: none; justify-content: space-around; align-items: center; height: 40px; border-top: 1px solid #d8e4ed; }
+.ch4-phone-navigation button { min-width: 55px; padding: 5px; border: 0; background: transparent; font-size: 20px; }
+.ch4-phone-navigation [data-phone-wifi-shortcut] { font-size: 12px; }
+.ch4-phone-browser { margin-top: 0; }
+.ch4-phone-browser form button { width: 100%; background: #0879ef; color: white; }
+.ch4-portal-brand { display: block; margin-top: 20px; color: #0879ef; font-size: 10px; font-weight: 700; letter-spacing: .06em; }
+.ch4-upload { margin: 12px; padding: 18px; border: 2px dashed #7fadc9; color: #305a76; font-size: 13px; }
+.ch4-upload.is-dragging { background: #d4edff; }
+.ch4-scene .ch4-notepad { position: absolute; z-index: 60; inset: 55px 25px 65px; display: flex; flex-direction: column; border: 1px solid #92a9bf; background: white; box-shadow: 0 8px 25px #23426155; }
+.ch4-notepad > header, .ch4-notepad > footer { display: flex; justify-content: space-between; align-items: center; min-height: 36px; padding: 6px 12px; background: #edf4fa; font-size: 13px; }
+.ch4-notepad button { padding: 4px 8px; border: 1px solid #9bbbd5; background: white; color: #234563; cursor: pointer; }
+.ch4-notepad textarea { flex: 1; min-height: 0; width: 100%; padding: 12px; border: 0; outline: 0; resize: none; font: 13px/1.6 Consolas, monospace; }
+.ch4-desktop-file { margin: 15px; padding: 12px; border: 1px solid #ffffff70; background: #ffffff20; color: white; cursor: grab; }
+.ch4-file-menu { margin: 0 15px; padding: 8px; border: 1px solid #aac8df; background: white; color: #203e58; }
+.ch4-file-mode > .simulation-monitor { z-index: 25; margin-left: 28%; width: 72%; flex: 1; background: transparent; }
+.ch4-file-mode > .simulation-monitor .simulation-monitor__screen { background: transparent; }
+.ch4-file-mode .ch2-monitor .ch2-routeros.is-app-restored { width: calc(100% - 12px); height: calc(100% - 20px); margin: 10px 6px; }
+.ch4-file-mode .lab-pc-apps { flex-direction: column; }
+.ch4-file-mode .ch4-desktop-file { margin-left: 0; }
+@media (max-width: 1000px) { .ch4-scene .ch4-hp-launcher { right: 0; bottom: 44px; font-size: 11px; } .ch4-scene .ch4-notepad { inset: 20px 8px 50px; } }

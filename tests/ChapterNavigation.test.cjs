@@ -50,6 +50,7 @@ const loadClientDesktop = () => {
     };
     vm.createContext(context);
     vm.runInContext(fs.readFileSync(path.join(__dirname, '../public/js/chapter-three-simulation.js'), 'utf8'), context);
+    vm.runInContext(fs.readFileSync(path.join(__dirname, '../public/js/lab-pc-desktop.js'), 'utf8'), context);
     context.model = context.window.NetGuardChapterThree;
     const start = source.indexOf('    const appendClientTerminal =');
     const end = source.indexOf("    document.querySelector('[data-close-quiz]')", start);

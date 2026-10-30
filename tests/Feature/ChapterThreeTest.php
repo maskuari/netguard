@@ -30,7 +30,15 @@ class ChapterThreeTest extends TestCase
             }
             $this->assertSame($expected, $items, $route);
             $this->assertSame(1, $xpath->query('//*[@data-guide-list]')->length);
+            $this->assertSame(0, $xpath->query('//*[@data-device-checklist or @data-device-panel]')->length);
+            if ($route !== 'chapter.one') {
+                $this->assertSame(1, $xpath->query('//*[@data-guide-scroll]//*[@data-guide-list]')->length);
+                $this->assertSame(0, $xpath->query('//*[@data-guide-scroll]//*[@data-previous]')->length);
+            }
             $this->assertSame(1, $xpath->query('//*[@data-pc-home]')->length);
+            $this->assertSame(1, $xpath->query('//*[@data-pc-network]')->length);
+            $this->assertSame(1, $xpath->query('//script[contains(@src, "game-sound-data.js")][@defer]')->length);
+            $this->assertSame(0, $xpath->query('//*[@data-sound-base]')->length);
             $this->assertSame(1, $xpath->query('//*[@data-pc-task-winbox]')->length);
             $this->assertSame(1, $xpath->query('//*[@data-pc-task-cmd]')->length);
             $this->assertSame(0, $xpath->query('//*[@data-pc-desktop]//*[@data-pc-toolbar]')->length);

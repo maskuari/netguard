@@ -10,6 +10,13 @@
 .lab-pc-task-cmd-icon { width: 25px; height: 21px; border: 2px solid #dce4ee; background: #111; color: #fff; font: bold 12px/17px Consolas, monospace; }
 .lab-pc-tray { display: flex; align-items: center; gap: 15px; margin-left: auto; padding: 4px 8px; text-align: right; }
 .lab-pc-tray small { display: block; margin-top: 3px; font-size: 10px; color: #c8d9f1; }
+.lab-pc-network { display: inline-flex; width: 25px; height: 25px; flex: none; }
+.lab-pc-network svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.6; }
+.lab-pc-network__offline { stroke: #e5edf9; stroke-width: 1.4; }
+.lab-pc-network__slash { stroke: #ffd086; stroke-width: 2.8; paint-order: stroke; }
+.lab-pc-network__cable { display: none; }
+.lab-pc-network.is-online .lab-pc-network__offline { display: none; }
+.lab-pc-network.is-online .lab-pc-network__cable { display: block; }
 .lab-pc-desktop { position: absolute; z-index: 20; inset: 0 0 44px; isolation: isolate; min-height: 0; overflow: hidden; padding: 24px; background: linear-gradient(145deg, #5be8ff 0%, #0c69dc 58%, #063475); color: white; }
 .lab-pc-apps { display: flex; align-items: start; gap: 12px; }
 .lab-pc-shortcut { display: grid; justify-items: center; gap: 2px; width: 92px; padding: 7px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: white; font: inherit; font-size: 13px; cursor: pointer; }

@@ -238,6 +238,7 @@
     };
     const render = () => {
         updateBackAvailability();
+        pcDesktop.setNetwork(model.wanReady(state) && model.natValid(state));
         const count = stageNames.filter(done).length;
         document.querySelector('[data-progress-label]').textContent = count + ' / ' + stageNames.length; document.querySelector('[data-progress]').max = stageNames.length; document.querySelector('[data-progress]').value = count;
         const current = info[state.stage];
@@ -438,15 +439,17 @@
         const revision = resetRevision;
         window.setTimeout(() => {
             if (revision !== resetRevision) return;
-            pendingRouterTest = false;
             const result = model.routerTest(state, target);
             const lines = result.ok ? '  SEQ HOST                 SIZE TTL TIME\n' + Array.from({ length: 4 }, (_, i) => '    ' + i + ' ' + result.address.padEnd(20) + ' 56  57  ' + (12 + i) + 'ms').join('\n') + '\n  sent=4 received=4 packet-loss=0%\n' : result.reason === 'dns' ? '  invalid value for argument address: could not get answer from dns resolver\n' : '  sent=4 received=0 packet-loss=100%\n  request timed out\n';
-            if (terminal) appendTerminal(lines); else document.querySelector('[data-ping-output]').textContent = lines;
+            if (!terminal) document.querySelector('[data-ping-output]').textContent = '';
+            window.NetGuardTerminal.stream({ text: lines, append: (line) => { if (terminal) appendTerminal(line); else document.querySelector('[data-ping-output]').textContent += line; }, isCurrent: () => revision === resetRevision, onComplete: () => {
+            pendingRouterTest = false;
             if (!result.ok) { explainError(reasonText[result.reason]); return; }
             if (terminal) state.routerTests[result.kind] = true;
             else if (result.kind === 'ip') state.routerTests.ip = true;
             persist(); render(); message(result.kind === 'ip' ? 'Ping IP router berhasil. Berikutnya uji nama melalui New Terminal.' : 'Router berhasil menguji IP dan nama. Selanjutnya periksa akses klien.', 'success');
-        }, 650);
+            } });
+        }, 250);
     };
     document.querySelector('[data-terminal-form]').addEventListener('submit', (event) => {
         event.preventDefault(); if (pendingRouterTest) return;
@@ -483,19 +486,22 @@
         const clientRevision = clientTestRevision;
         window.setTimeout(() => {
             if (revision !== resetRevision || clientRevision !== clientTestRevision) return;
-            pendingClients.delete(group);
             const result = model.clientCommand(state, group, command);
             const lan = state.lan[group];
+            let terminalText = '';
+            const print = (text) => { terminalText += text; };
             if (result.kind === 'config') {
                 const address = lan.ready ? lan.address : '0.0.0.0';
                 const gateway = lan.ready ? lan.gateway : '0.0.0.0';
-                appendClientTerminal(group, 'Windows IP Configuration\n\nEthernet adapter Ethernet:\n   DHCP Enabled. . . . . . . . . . . : Yes\n   IPv4 Address. . . . . . . . . . . : ' + address + '\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Default Gateway . . . . . . . . . : ' + gateway + '\n   DNS Servers . . . . . . . . . . . : ' + gateway + '\n\n');
+                print('Windows IP Configuration\n\nEthernet adapter Ethernet:\n   DHCP Enabled. . . . . . . . . . . : Yes\n   IPv4 Address. . . . . . . . . . . : ' + address + '\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Default Gateway . . . . . . . . . : ' + gateway + '\n   DNS Servers . . . . . . . . . . . : ' + gateway + '\n\n');
             } else if (result.ok) {
-                appendClientTerminal(group, 'Pinging ' + (result.kind === 'domain' ? 'google.com [' + result.targetAddress + ']' : result.targetAddress) + ' with 32 bytes of data:\n' + Array.from({ length: 4 }, (_, index) => 'Reply from ' + result.targetAddress + ': bytes=32 time=' + (12 + index) + 'ms TTL=57').join('\n') + '\n\nPing statistics for ' + result.targetAddress + ':\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)\n\n');
+                print('Pinging ' + (result.kind === 'domain' ? 'google.com [' + result.targetAddress + ']' : result.targetAddress) + ' with 32 bytes of data:\n' + Array.from({ length: 4 }, (_, index) => 'Reply from ' + result.targetAddress + ': bytes=32 time=' + (12 + index) + 'ms TTL=57').join('\n') + '\n\nPing statistics for ' + result.targetAddress + ':\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)\n\n');
                 state.nat.packets = (state.nat.packets || 0) + 4;
             } else {
-                appendClientTerminal(group, ['dns', 'remote'].includes(result.reason) ? 'Ping request could not find host google.com. Please check the name and try again.\n' : 'Request timed out.\n    Packets: Sent = 4, Received = 0, Lost = 4 (100% loss)\n');
+                print(['dns', 'remote'].includes(result.reason) ? 'Ping request could not find host google.com. Please check the name and try again.\n' : 'Request timed out.\n    Packets: Sent = 4, Received = 0, Lost = 4 (100% loss)\n');
             }
+            window.NetGuardTerminal.stream({ text: terminalText, append: (line) => appendClientTerminal(group, line), interval: result.kind === 'config' ? 35 : 700, isCurrent: () => revision === resetRevision && clientRevision === clientTestRevision, onComplete: () => {
+            pendingClients.delete(group);
             state.clientChecks[group][result.kind] = result.ok;
             if (!result.ok) {
                 if (result.kind === 'config') state.clientChecks[group] = { config: false, ip: false, domain: false };
@@ -505,7 +511,8 @@
             persist(); render();
             if (!result.ok) explainError(reasonText[result.reason], () => input.focus());
             else { message(result.kind === 'config' ? 'IP PC sesuai. Berikutnya jalankan ping 8.8.8.8 pada Command Prompt ini.' : result.kind === 'ip' ? 'Empat balasan diterima. Berikutnya ketik ping google.com pada PC yang sama.' : 'Ping google.com berhasil dari PC lab.', 'success'); input.focus(); }
-        }, 650);
+            } });
+        }, 250);
     }));
     document.querySelector('[data-close-quiz]').addEventListener('click', () => quiz.close()); document.querySelector('[data-close-finish]').addEventListener('click', () => finish.close());
     document.querySelector('[data-quiz-form]').addEventListener('change', () => { evaluation.clear(); state.evaluationResult = null; persist(); });

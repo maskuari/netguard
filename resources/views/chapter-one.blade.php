@@ -82,7 +82,7 @@
                                 </section>
 
                                 <section class="lab-stage" data-stage="devices" hidden>
-                                    <p class="lab-callout">Ketuk setiap kartu alat. Nama, bentuk, dan kegunaannya akan tampil di panel detail sebelah kanan.</p>
+                                    <p class="lab-callout">Ketuk setiap kartu alat untuk mendengar penjelasan Pak Amat tentang fungsi dan kegunaannya.</p>
                                     <div class="device-grid">
                                         <button class="device-card" type="button" data-device="hap"><img src="{{ asset('images/asset/alat/mikrotikhap.png') }}" alt="" loading="lazy" fetchpriority="low" decoding="async"><b>MikroTik hAP</b><small>Router utama</small></button>
                                         <button class="device-card" type="button" data-device="hex"><img src="{{ asset('images/asset/alat/mikrotikhex.png') }}" alt="" loading="lazy" fetchpriority="low" decoding="async"><b>MikroTik hEX</b><small>Sisi switch</small></button>
@@ -304,21 +304,12 @@
                             <div class="lab-guide__steps">
                                 <div class="lab-guide__header"><span>▤</span><div><small>PETUNJUK MISI</small><h2>Langkah-Langkah</h2></div></div>
                                 <ol data-guide-list tabindex="0" aria-label="Urutan langkah praktik"><li>Dengarkan tugas sekolah.</li><li>Kenali alat di lab.</li><li>Siapkan router untuk konfigurasi.</li></ol>
-                                <section class="device-recognition-checklist" data-device-checklist hidden aria-label="Target mengenali tujuh alat">
-                                    <div class="device-recognition-checklist__heading"><b>Target pengenalan alat</b><span data-device-task-count role="status" aria-live="polite" aria-atomic="true">0 / 7 selesai</span></div>
-                                    <p>Ketuk setiap kartu alat di kiri dan baca penjelasan Pak Amat.</p>
-                                    <ul data-device-task-list></ul>
-                                    <p class="device-recognition-checklist__complete" data-device-task-complete role="status" hidden>✓ Semua alat sudah dikenali. Lanjut ke topologi jaringan.</p>
-                                </section>
                                 <div class="lab-guide__note"><b>Materi modul</b><p data-module-section>Bab 1 · Pengantar jaringan sekolah</p></div>
                                 <button class="lab-button lab-button--primary lab-guide__lesson-next" type="button" data-lesson-next hidden>Mulai praktik kabel →</button>
                                 <p class="lab-guide__feedback" data-feedback role="status" aria-live="polite">Ikuti arahan Pak Amat untuk memulai.</p>
                                 <button class="lab-button lab-button--primary lab-guide__continue" type="button" data-continue hidden>Lanjut →</button>
                             </div>
-                            <div class="lab-device-panel" data-device-panel hidden>
-                                <div class="lab-device-panel__heading"><small>DETAIL PERANGKAT</small><span>Ketuk alat di sebelah kiri</span></div>
-                                <div class="device-detail"><div class="device-detail__visual"><img data-device-preview src="{{ asset('images/asset/alat/mikrotikhap.png') }}" alt="Contoh perangkat MikroTik hAP"><canvas data-hap-rotator data-sprite="{{ asset('images/asset/alat/hap16frame.png') }}" width="480" height="300" tabindex="0" role="img" aria-label="MikroTik hAP. Geser ke kiri atau kanan untuk memutar perangkat" hidden></canvas></div><div class="device-detail__copy"><b data-device-name>Pilih salah satu alat</b><p data-device-detail>Ketuk kartu alat di sebelah kiri untuk melihat fungsi dan kegunaannya di sini.</p><small data-device-tip>Pak Amat juga akan menjelaskan alat yang kamu pilih.</small></div></div>
-                            </div>
+
 
                         </aside>
                     </div>

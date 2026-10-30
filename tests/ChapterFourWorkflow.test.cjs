@@ -1,0 +1,256 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
+
+const boot = (savedState = null) => {
+    const nodes = new Map(), timers = [], errors = [];
+    class Element {
+        constructor() { this.dataset = {}; this.hidden = true; this.open = false; this.value = ''; this.checked = false; this.textContent = ''; this.children = []; this.style = {}; this.listeners = {}; this.attributes = {}; this.classList = { contains: () => false, toggle() {}, add() {}, remove() {} }; }
+        addEventListener(name, callback) { (this.listeners[name] ||= []).push(callback); }
+        emit(name, patch = {}) { for (const callback of this.listeners[name] || []) callback({ preventDefault() {}, stopPropagation() {}, target: this, ...patch }); }
+        querySelector(selector) { return get(selector); }
+        querySelectorAll(selector) { return all(selector); }
+        setAttribute(name, value) { this.attributes[name] = value; }
+        hasAttribute(name) { return Object.hasOwn(this.attributes, name); }
+        append(...children) { this.children.push(...children); }
+        replaceChildren(...children) { this.children = children; }
+        remove() {}
+        focus() {}
+        closest() { return null; }
+        showModal() { this.open = true; }
+        close() { this.open = false; }
+    }
+    const get = (selector) => { if (!nodes.has(selector)) nodes.set(selector, new Element()); return nodes.get(selector); };
+    const make = (selector, key, values) => values.map((value) => { const node = get('[' + key + '="' + value + '"]'); node.dataset[key.replace(/^data-/, '').replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())] = value; return node; });
+    const windowNames = ['wireless', 'wireless-edit', 'security-edit', 'hotspot', 'hotspot-setup', 'profile-edit', 'user-edit', 'files', 'interfaces', 'identity', 'addresses', 'wan', 'dns', 'firewall', 'routes', 'terminal', 'ping'];
+    const sets = {
+        '[data-window]': make('', 'data-window', windowNames),
+        '[data-open-window]': make('', 'data-open-window', windowNames),
+        '[data-close]': make('', 'data-close', windowNames),
+        '[data-minimize]': make('', 'data-minimize', windowNames),
+        '[data-maximize]': make('', 'data-maximize', windowNames),
+        '[data-wireless-tab]': make('', 'data-wireless-tab', ['interfaces', 'security']),
+        '[data-wireless-panel]': make('', 'data-wireless-panel', ['interfaces', 'security']),
+        '[data-radio-tab]': make('', 'data-radio-tab', ['general', 'wireless']),
+        '[data-hotspot-tab]': make('', 'data-hotspot-tab', ['Servers', 'Server Profiles', 'Users', 'User Profiles', 'Active', 'Hosts', 'IP Bindings']),
+        '[data-save-form]': make('', 'data-save-form', ['wireless-edit', 'security-edit', 'profile-edit', 'user-edit']),
+        '[data-edit-form]': make('', 'data-edit-form', ['wireless-edit', 'security-edit', 'profile-edit', 'user-edit']),
+        '[data-ch2-menu]': make('', 'data-ch2-menu', ['ip', 'system', 'tools']),
+        '[data-phone-screen]': make('', 'data-phone-screen', ['home', 'wifi', 'browser']),
+    };
+    const all = (selector) => sets[selector] || [];
+    const scene = get('.ch4-scene'); scene.dataset = { userId: '42', completeUrl: '/complete' };
+    const storage = new Map();
+    const document = { querySelector: get, querySelectorAll: all, createElement: () => new Element(), addEventListener() {}, activeElement: null };
+    const context = {
+        document, localStorage: { getItem: () => savedState ? JSON.stringify(savedState) : null, setItem: (key, value) => storage.set(key, value) },
+        window: {
+            setTimeout(callback) { const timer = { callback, cancelled: false }; timers.push(timer); return timer; }, clearTimeout(timer) { if (timer) timer.cancelled = true; },
+            setInterval() { return 1; }, clearInterval() {}, matchMedia: () => ({ matches: true }),
+            NetGuardAudio: { play() {} }, NetGuardEvaluation: { showResult() {}, clear() {}, showError: (text) => errors.push(text) },
+            NetGuardChapterNavbar: { setBackEnabled() {}, bindPrevious(callback) { context.previous = callback; } },
+            NetGuardPcDesktop: { create: (options) => { context.pcOptions = options; return { setAvailable() {}, setNetwork() {}, showDesktop: () => options.onHome?.(), showWinbox: () => options.onOpenWinbox?.(), hideDesktop() {} }; } },
+            NetGuardStepGuide: { create(options) { context.plan = options.getPlan; options.getPlan(); return { refresh: () => options.getPlan() }; } },
+        },
+    };
+    vm.createContext(context);
+    for (const file of ['chapter-four-simulation.js', 'chapter-four-workbench.js']) vm.runInContext(fs.readFileSync(path.join(__dirname, '../public/js', file), 'utf8'), context);
+    const click = (selector) => get(selector).emit('click');
+    const dismiss = () => get('[data-ch2-dialogue]').emit('click');
+    const begin = () => { for (let count = 0; count < 3 && !get('[data-ch2-dialogue]').hidden; count++) dismiss(); click('[data-learning-continue]'); };
+    const flush = () => { while (timers.length) { const timer = timers.shift(); if (!timer.cancelled) timer.callback(); } };
+    const state = () => JSON.parse(storage.get('netguard.chapter-four.v1.42'));
+    const setField = (name, value) => { get('[data-field="' + name + '"]').value = value; };
+    return { get, click, begin, dismiss, flush, state, setField, context, submit: (selector) => get(selector).emit('submit') };
+};
+
+test('new Chapter 4 stays empty until manual navigation and requires actual wireless saves', () => {
+    const game = boot();
+    for (let index = 0; index < 5; index++) game.click('[data-ch2-prologue]');
+    game.begin();
+    assert.equal(game.state().stage, 'wireless');
+    assert.equal(game.get('[data-window="wireless"]').hidden, true);
+    game.click('[data-open-window="wireless"]');
+    game.click('[data-enable-wlan]');
+    assert.equal(game.state().wireless.enabled, false);
+    game.dismiss();
+    game.click('[data-wlan-row]'); game.click('[data-enable-wlan]');
+    game.get('[data-wlan-row]').emit('dblclick'); game.click('[data-radio-tab="wireless"]');
+    game.setField('mode', 'station'); game.setField('ssid', 'SMKN1-Amuntai');
+    game.click('[data-save-form="wireless-edit"]');
+    assert.equal(game.state().wireless.mode, 'station');
+    game.dismiss(); game.setField('mode', 'ap bridge');
+    assert.equal(game.state().wireless.mode, 'station');
+    game.setField('security', 'default'); game.setField('wlan-name', 'wlan1');
+    game.click('[data-save-form="wireless-edit"]'); game.flush();
+    assert.equal(game.state().wireless.mode, 'ap bridge');
+    assert.equal(game.state().stage, 'wireless');
+    game.begin();
+    assert.equal(game.state().stage, 'security');
+    assert.equal(game.get('[data-window="security-edit"]').hidden, true);
+});
+
+test('security requires saving both keys and explicitly applying user to wlan1', () => {
+    const game = boot();
+    for (let index = 0; index < 5; index++) game.click('[data-ch2-prologue]');
+    game.begin(); game.click('[data-wlan-row]'); game.click('[data-enable-wlan]'); game.get('[data-wlan-row]').emit('dblclick');
+    game.setField('mode', 'ap bridge'); game.setField('ssid', 'SMKN1-Amuntai'); game.setField('security', 'default'); game.setField('wlan-name', 'wlan1');
+    game.click('[data-save-form="wireless-edit"]'); game.flush(); game.begin();
+    game.click('[data-wireless-tab="security"]'); game.click('[data-add-security]');
+    for (const [key, value] of [['security-name', 'user'], ['security-mode', 'dynamic keys'], ['wpa-key', 'Sekolah123'], ['wpa2-key', 'Sekolah123']]) game.setField(key, value);
+    game.get('[data-field="wpa"]').checked = true;
+    game.click('[data-save-form="security-edit"]');
+    assert.equal(game.state().security, null);
+    game.dismiss(); game.get('[data-field="wpa2"]').checked = true; game.click('[data-save-form="security-edit"]');
+    assert.equal(game.state().wireless.security, 'default');
+    game.flush(); assert.equal(game.get('[data-ch2-dialogue]').hidden, true);
+    game.click('[data-wireless-tab="interfaces"]'); game.get('[data-wlan-row]').emit('dblclick'); game.click('[data-radio-tab="wireless"]');
+    game.setField('security', 'user'); game.click('[data-save-form="wireless-edit"]'); game.flush(); game.begin();
+    assert.equal(game.state().stage, 'hotspot');
+    game.click('[data-open-window="hotspot"]'); game.click('[data-hotspot-setup]');
+    game.get('[data-setup-select]').value = 'ether1-internet'; game.click('[data-setup-next]');
+    assert.equal(game.state().hotspot, null);
+    assert.match(game.get('[data-dialogue-text]').textContent, /wlan1/);
+});
+
+const wifiState = (stage) => ({ stage, prologueComplete: true,
+    wireless: { enabled: true, mode: 'ap bridge', ssid: 'SMKN1-Amuntai', security: 'user' },
+    security: { name: 'user', mode: 'dynamic keys', wpa: true, wpa2: true, key: 'Sekolah123', key2: 'Sekolah123' },
+});
+const hotspot = { interface: 'wlan1', dnsName: 'hotspot-tkj.com', user: 'admin', password: 'admin' };
+
+test('HotSpot wizard validates each screen and waits for OK before progressing to the HP', () => {
+    const game = boot(wifiState('hotspot'));
+    game.click('[data-open-window="hotspot"]'); game.click('[data-hotspot-setup]');
+    const defaults = ['wlan1', '192.168.20.1/24', '192.168.20.2-192.168.20.254', 'none', '0.0.0.0', '8.8.8.8,8.8.4.4', 'hotspot-tkj.com'];
+    for (const [index, value] of defaults.entries()) {
+        game.get(index === 0 || index === 3 ? '[data-setup-select]' : '[data-setup-input]').value = value;
+        game.click('[data-setup-next]');
+    }
+    game.get('[data-setup-credential="name"]').value = 'admin';
+    game.get('[data-setup-credential="password"]').value = 'wrong'; game.click('[data-setup-next]');
+    assert.equal(game.state().hotspot, null);
+    game.dismiss(); game.get('[data-setup-credential="password"]').value = 'admin'; game.click('[data-setup-next]');
+    assert.equal(game.state().hotspot.interface, 'wlan1');
+    assert.notEqual(game.state().hotspotConfirmed, true);
+    game.flush(); assert.equal(game.state().stage, 'hotspot');
+    game.click('[data-setup-next]'); game.flush(); game.begin();
+    assert.equal(game.state().hotspotConfirmed, true);
+    assert.equal(game.state().stage, 'connect');
+});
+
+test('HP requires the WiFi key then separate portal credentials; opening HP does not complete it', () => {
+    const game = boot({ ...wifiState('connect'), hotspot, hotspotConfirmed: true });
+    game.click('[data-open-phone]'); game.click('[data-phone-network]');
+    game.get('[data-wifi-password]').value = 'admin'; game.submit('[data-wifi-connect]');
+    assert.equal(game.state().phoneConnected, false);
+    game.dismiss(); game.get('[data-wifi-password]').value = 'Sekolah123'; game.submit('[data-wifi-connect]');
+    assert.equal(game.state().phoneConnected, true);
+    assert.equal(game.state().initialLogin, false);
+    game.get('[data-phone-user]').value = 'admin'; game.get('[data-phone-password]').value = 'Sekolah123'; game.submit('[data-phone-login]');
+    assert.equal(game.state().initialLogin, false);
+    game.dismiss(); game.get('[data-phone-password]').value = 'admin'; game.submit('[data-phone-login]');
+    assert.equal(game.state().initialLogin, true);
+    assert.match(game.get('[data-session-details]').textContent, /192\.168\.20\.10/);
+    game.flush(); game.begin(); assert.equal(game.state().stage, 'portal');
+});
+
+test('HP starts on its home screen, connects through WiFi settings and opens the portal browser', () => {
+    const game = boot({ ...wifiState('connect'), hotspot, hotspotConfirmed: true });
+    game.click('[data-open-phone]');
+    assert.equal(game.get('[data-phone-screen="home"]').hidden, false);
+    assert.equal(game.get('[data-phone-screen="wifi"]').hidden, true);
+    assert.equal(game.get('[data-phone-browser]').hidden, true);
+    game.click('[data-phone-open-browser]');
+    assert.equal(game.state().phoneConnected, false);
+    assert.match(game.get('[data-dialogue-text]').textContent, /HP belum terhubung/);
+    game.dismiss(); game.click('[data-phone-open-wifi]');
+    assert.equal(game.get('[data-phone-screen="wifi"]').hidden, false);
+    const toggle = game.get('[data-phone-wifi-toggle]'); toggle.checked = false;
+    toggle.emit('change', { currentTarget: toggle });
+    assert.equal(game.get('[data-phone-network]').hidden, true);
+    game.get('[data-wifi-password]').value = 'Sekolah123'; game.submit('[data-wifi-connect]');
+    assert.equal(game.state().phoneConnected, false);
+    game.dismiss(); toggle.checked = true; toggle.emit('change', { currentTarget: toggle });
+    game.click('[data-phone-network]'); game.submit('[data-wifi-connect]');
+    assert.equal(game.state().phoneConnected, true);
+    assert.equal(game.get('[data-phone-browser]').hidden, false);
+    assert.equal(game.get('[data-phone-screen="wifi"]').hidden, true);
+    game.click('[data-phone-home]');
+    assert.equal(game.get('[data-phone-screen="home"]').hidden, false);
+    game.click('[data-phone-open-browser]');
+    assert.equal(game.get('[data-phone-browser]').hidden, false);
+    game.click('[data-phone-back]');
+    assert.equal(game.get('[data-phone-screen="wifi"]').hidden, false);
+    game.click('[data-phone-forget]');
+    assert.equal(game.state().phoneConnected, false);
+    assert.equal(game.get('[data-phone-browser]').hidden, true);
+});
+
+test('profiles must save correct shared-user and rate values; each account must login and be inspected in Active', () => {
+    const profiles = { kepalasekolah: { shared: 1, rate: '512k/512k' }, guru: { shared: 10, rate: '256k/256k' }, siswa: { shared: 5, rate: '128k/128k' } };
+    const game = boot({ ...wifiState('profiles'), hotspot, hotspotConfirmed: true, initialLogin: true, phoneConnected: true });
+    game.click('[data-hotspot-tab="User Profiles"]');
+    for (const [name, target] of Object.entries(profiles)) {
+        game.click('[data-hotspot-add]'); game.setField('profile-name', name); game.setField('shared', target.shared.toString()); game.setField('rate', target.rate);
+        game.click('[data-save-form="profile-edit"]');
+        assert.equal(game.state().profiles[name].rate, target.rate);
+    }
+    game.flush(); game.begin(); assert.equal(game.state().stage, 'users');
+    game.click('[data-hotspot-tab="Users"]');
+    for (const [name, password] of [['kepalasekolah', '123'], ['guru', '456'], ['siswa', '789']]) {
+        game.click('[data-hotspot-add]'); game.setField('user-name', name); game.setField('user-password', password); game.setField('user-profile', name); game.click('[data-save-form="user-edit"]');
+        assert.notEqual(game.state().verified[name], true);
+        game.click('[data-phone-logout]'); game.get('[data-phone-user]').value = name; game.get('[data-phone-password]').value = password; game.submit('[data-phone-login]');
+        assert.equal(game.state().verified[name], true);
+        game.click('[data-hotspot-tab="Active"]');
+        game.get('[data-hotspot-table]').children[1].emit('click');
+        assert.equal(game.state().actions.users['active:' + name], true);
+        game.click('[data-hotspot-tab="Users"]');
+    }
+    game.flush(); game.dismiss();
+    assert.equal(game.state().stage, 'quiz');
+    assert.equal(game.get('[data-quiz-dialog]').open, true);
+});
+
+test('previous stage preserves wireless while clearing security and all downstream work', () => {
+    const game = boot({ ...wifiState('hotspot'), hotspot, hotspotConfirmed: true, initialLogin: true, profiles: { guru: { shared: 10, rate: '256k/256k' } } });
+    game.context.previous();
+    assert.equal(game.state().stage, 'security');
+    assert.equal(game.state().wireless.ssid, 'SMKN1-Amuntai');
+    assert.equal(game.state().wireless.security, 'default');
+    assert.equal(game.state().security, null);
+    assert.equal(game.state().hotspot, null);
+    assert.equal(game.state().initialLogin, false);
+    assert.deepEqual(game.state().profiles, {});
+});
+
+test('portal requires export, Notepad save, confirmed upload and reconnecting the HP', () => {
+    const game = boot({ ...wifiState('portal'), hotspot, hotspotConfirmed: true, initialLogin: true });
+    const transfer = (text) => ({ getData: () => text });
+    game.get('.ch2-workbench').emit('drop', { dataTransfer: transfer('router-login-html') });
+    assert.equal(game.state().exported, true);
+    const desktopFile = game.get('[data-pc-desktop]').children[0];
+    const menu = game.get('[data-pc-desktop]').children[1];
+    desktopFile.emit('contextmenu'); menu.emit('click');
+    game.get('[data-login-html]').value = '<div align="center"><h1>Wrong school</h1><form></form></div>';
+    game.click('[data-save-html]');
+    assert.equal(game.state().edited, false);
+    game.dismiss();
+    game.get('[data-login-html]').value = '<div align="center">\n<h1>Selamat Datang di Hotspot SMK Negeri 1 Amuntai</h1>\n<form name="login"></form>\n</div>';
+    game.click('[data-save-html]');
+    assert.equal(game.state().edited, true);
+    assert.equal(game.state().uploaded, false);
+    game.get('[data-upload-login]').emit('drop', { dataTransfer: transfer('desktop-login-html') });
+    assert.equal(game.state().uploaded, false);
+    game.dismiss();
+    assert.equal(game.state().uploaded, true);
+    assert.equal(game.state().portalVerified, false);
+    game.click('[data-phone-network]'); game.get('[data-wifi-password]').value = 'Sekolah123'; game.submit('[data-wifi-connect]');
+    assert.equal(game.state().portalVerified, true);
+    assert.match(game.get('[data-portal-heading]').textContent, /SMK Negeri 1 Amuntai/);
+    game.flush(); game.begin();
+    assert.equal(game.state().stage, 'profiles');
+});

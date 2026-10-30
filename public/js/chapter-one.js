@@ -159,29 +159,7 @@
     };
 
     const updateBackAvailability = () => navbar.setBackEnabled(stage !== 'story' || !dialogue.hidden || synopsisIndex > 0);
-    const renderDeviceChecklist = () => {
-        const checklist = document.querySelector('[data-device-checklist]');
-        checklist.hidden = stage !== 'devices';
-        const cards = [...document.querySelectorAll('[data-device]')];
-        let completed = 0;
-        document.querySelector('[data-device-task-list]').replaceChildren(...cards.map((card, index) => {
-            const isComplete = visitedDevices.has(card.dataset.device);
-            if (isComplete) completed++;
-            const row = document.createElement('li');
-            row.classList.toggle('is-done', isComplete);
-            const mark = document.createElement('span');
-            mark.className = 'device-recognition-checklist__mark';
-            mark.textContent = isComplete ? '✓' : String(index + 1);
-            mark.setAttribute('aria-hidden', 'true');
-            const name = document.createElement('span');
-            name.textContent = card.querySelector('b').textContent;
-            row.setAttribute('aria-label', name.textContent + (isComplete ? ': sudah dikenali' : ': belum dikenali'));
-            row.append(mark, name);
-            return row;
-        }));
-        document.querySelector('[data-device-task-count]').textContent = completed + ' / ' + cards.length + ' selesai';
-        document.querySelector('[data-device-task-complete]').hidden = completed !== cards.length;
-    };
+    const renderDeviceChecklist = () => { progressiveGuide?.refresh(); };
 
     const renderPreparationChecklist = () => { progressiveGuide?.refresh(); };
 
@@ -255,7 +233,6 @@
         const labLayout = document.querySelector('.lab-layout');
         labLayout.classList.toggle('is-simulator', isSimulatorStage);
         labLayout.classList.toggle('is-device-stage', stage === 'devices');
-        document.querySelector('[data-device-panel]').hidden = stage !== 'devices';
         document.querySelector('[data-lesson-next]').hidden = stage !== 'lesson';
         stageNodes.forEach((node) => { node.hidden = node.dataset.stage !== stage; });
         document.querySelector('[data-stage-label]').textContent = info.label;
@@ -684,20 +661,6 @@
                 device.classList.toggle('is-selected', device === button);
             });
             const explanation = deviceInfo[button.dataset.device];
-            document.querySelector('[data-device-detail]').textContent = explanation;
-            document.querySelector('[data-device-name]').textContent = button.querySelector('b').textContent;
-            const isHap = button.dataset.device === 'hap';
-            const devicePreview = document.querySelector('[data-device-preview]');
-            const hapRotator = document.querySelector('[data-hap-rotator]');
-            devicePreview.hidden = isHap;
-            hapRotator.hidden = !isHap;
-            if (isHap && !hapSprite.src) {
-                const loadHapSprite = () => { hapSprite.src = hapCanvas.dataset.sprite; };
-                if ('requestIdleCallback' in window) window.requestIdleCallback(loadHapSprite, { timeout: 900 });
-                else window.setTimeout(loadHapSprite, 0);
-            }
-            if (!isHap) devicePreview.src = button.querySelector('img').src;
-            document.querySelector('[data-device-tip]').textContent = isHap ? 'Geser hAP untuk melihat 16 sudut perangkat, atau tekan tombol panah kiri/kanan.' : 'Perhatikan bentuk dan fungsi alat sebelum melanjutkan misi.';
             teacherText.textContent = explanation;
             openDialogue([{ speaker: 'teacher', text: explanation }], null, {
                 image: button.querySelector('img').src,
@@ -706,50 +669,6 @@
             setFeedback(visitedDevices.size + ' dari 7 alat sudah dikenali.', 'success');
             if (visitedDevices.size === 7) showContinue('topologyLesson', 'Lihat topologi jaringan →');
         });
-    });
-
-    const hapCanvas = document.querySelector('[data-hap-rotator]');
-    const hapContext = hapCanvas.getContext('2d');
-    const hapSprite = new Image();
-    hapSprite.decoding = 'async';
-    hapSprite.fetchPriority = 'low';
-    let hapFrame = 0;
-    let hapPointerX = null;
-    let hapDragDistance = 0;
-    const drawHapFrame = () => {
-        if (!hapSprite.complete || !hapSprite.naturalWidth) return;
-        const cellWidth = hapSprite.naturalWidth / 4;
-        const cellHeight = hapSprite.naturalHeight / 4;
-        const sourceX = (hapFrame % 4) * cellWidth;
-        const sourceY = Math.floor(hapFrame / 4) * cellHeight;
-        hapContext.clearRect(0, 0, hapCanvas.width, hapCanvas.height);
-        hapContext.drawImage(hapSprite, sourceX, sourceY, cellWidth, cellHeight * .88, 25, 12, hapCanvas.width - 50, hapCanvas.height - 24);
-    };
-    hapSprite.onload = drawHapFrame;
-    hapCanvas.addEventListener('pointerdown', (event) => {
-        if (!hapSprite.src) hapSprite.src = hapCanvas.dataset.sprite;
-        hapPointerX = event.clientX;
-        hapDragDistance = 0;
-        hapCanvas.setPointerCapture(event.pointerId);
-    });
-    hapCanvas.addEventListener('pointermove', (event) => {
-        if (hapPointerX === null) return;
-        hapDragDistance += event.clientX - hapPointerX;
-        hapPointerX = event.clientX;
-        while (Math.abs(hapDragDistance) >= 20) {
-            hapFrame = (hapFrame + (hapDragDistance > 0 ? 15 : 1)) % 16;
-            hapDragDistance += hapDragDistance > 0 ? -20 : 20;
-            drawHapFrame();
-        }
-    });
-    hapCanvas.addEventListener('pointerup', () => { hapPointerX = null; });
-    hapCanvas.addEventListener('pointercancel', () => { hapPointerX = null; });
-    hapCanvas.addEventListener('keydown', (event) => {
-        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
-        event.preventDefault();
-        if (!hapSprite.src) hapSprite.src = hapCanvas.dataset.sprite;
-        hapFrame = (hapFrame + (event.key === 'ArrowLeft' ? 15 : 1)) % 16;
-        drawHapFrame();
     });
 
     const prepActions = ['cut', 'strip', 'straighten'];
@@ -1155,7 +1074,7 @@
 
     const renderPcState = () => {
         pcDesktop?.setAvailable(pcPowered && ['pc', 'winbox', 'config'].includes(stage));
-        if (pcPowered && stage === 'pc') pcDesktop?.showPreview();
+        if (pcPowered && stage === 'pc') pcDesktop?.showDesktop();
         document.querySelector('.pc-screen__off').hidden = pcPowered || pcBooting;
         document.querySelector('.pc-screen__boot').hidden = !pcBooting;
         document.querySelector('.pc-screen__desktop').hidden = !pcPowered;
@@ -1755,7 +1674,7 @@
         const visible = (selector) => Boolean(document.querySelector(selector) && !document.querySelector(selector).hidden);
         const field = (selector) => document.querySelector(selector)?.value.trim() || '';
         if (stage === 'devices') return [...document.querySelectorAll('[data-device]')].map((card) => [
-            'Klik kartu ' + card.querySelector('b').textContent + ' di sebelah kiri. Perhatikan gambar dan baca kegunaannya pada panel detail.\n\nSetelah kartu dibuka, alat ditandai ✓ hijau. Jika panel tertutup chat Pak Amat, klik untuk menyelesaikan percakapannya terlebih dahulu.', visitedDevices.has(card.dataset.device),
+            'Klik kartu ' + card.querySelector('b').textContent + ' di sebelah kiri. Perhatikan gambar dan dengarkan penjelasan Pak Amat.\n\nSetelah kartu dibuka, alat ditandai ✓ hijau. Klik percakapan Pak Amat untuk melanjutkan setelah penjelasannya selesai.', visitedDevices.has(card.dataset.device),
         ]);
         if (stage === 'prep') return [
             ['Klik Potong sesuai panjang di bawah gambar kabel. Tindakan ini memotong kabel UTP sesuai kebutuhan.\n\nSetelah kabel terpotong, petunjuk berubah hijau. Jangan memilih Kupas sebelum kabel dipotong.', prepStep >= 1],

@@ -7,7 +7,7 @@ const vm = require('node:vm');
 const setup = (options = {}) => {
     const nodes = new Map();
     const get = (selector) => {
-        if (!nodes.has(selector)) nodes.set(selector, { hidden: true, value: '', textContent: '', handlers: {}, attributes: {}, parentElement: { scrollHeight: 100 }, addEventListener(name, callback) { this.handlers[name] = callback; }, setAttribute(name, value) { this.attributes[name] = value; }, focus() { this.focused = true; } });
+        if (!nodes.has(selector)) nodes.set(selector, { hidden: true, value: '', textContent: '', handlers: {}, attributes: {}, classList: { toggle(name, value) { this[name] = value; } }, parentElement: { scrollHeight: 100 }, addEventListener(name, callback) { this.handlers[name] = callback; }, setAttribute(name, value) { this.attributes[name] = value; }, focus() { this.focused = true; } });
         return nodes.get(selector);
     };
     const desktop = get('[data-pc-desktop]');
@@ -87,4 +87,35 @@ test('early chapter CMD reads current local DHCP configuration and cannot grant 
 test('chapter three can own CMD validation without a second command handler', () => {
     const lab = setup({ handleCommands: false });
     assert.equal(lab.get('form').handlers.submit, undefined);
+});
+
+test('network icon updates both offline and connected states', () => {
+    const lab = setup();
+    lab.controller.setNetwork(false);
+    assert.equal(lab.get('[data-pc-network]').classList['is-online'], false);
+    assert.match(lab.get('[data-pc-network]').attributes['aria-label'], /Tidak ada akses internet/);
+    lab.controller.setNetwork(true);
+    assert.equal(lab.get('[data-pc-network]').classList['is-online'], true);
+});
+
+test('terminal prints one line at a time and cancels stale output before completion', () => {
+    const timers = [];
+    const context = { window: { setTimeout: (callback) => timers.push(callback) } };
+    vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../public/js/lab-pc-desktop.js'), 'utf8'), context);
+    const output = [];
+    let complete = false, current = true;
+    const stream = () => context.window.NetGuardTerminal.stream({ text: 'Reply 1\nReply 2\nReceived = 2\n', append: (line) => output.push(line), isCurrent: () => current, onComplete: () => { complete = true; } });
+    stream();
+    assert.deepEqual(output, ['Reply 1\n']);
+    assert.equal(complete, false);
+    timers.shift()();
+    assert.deepEqual(output, ['Reply 1\n', 'Reply 2\n']);
+    current = false;
+    timers.shift()();
+    assert.equal(complete, false);
+    output.length = 0; current = true;
+    stream();
+    while (timers.length) timers.shift()();
+    assert.equal(complete, true);
+    assert.equal(output.length, 3);
 });

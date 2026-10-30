@@ -5,6 +5,7 @@
     if (!config || window.NetGuardAudio) return;
 
     const preferenceKey = `netguard:sfx:${config.dataset.userId || 'user'}`;
+    const maximumGain = 2.5;
     const clips = {
         click: ['click_001', .35, 55],
         select: ['switch_001', .3, 80],
@@ -63,7 +64,7 @@
             input.style.setProperty('--music-volume', `${volume}%`);
         });
         document.querySelectorAll('[data-sfx-volume-output]').forEach((output) => { output.textContent = `${volume}%`; });
-        if (master) master.gain.setValueAtTime(enabled ? volume / 100 : 0, context.currentTime);
+        if (master) master.gain.setValueAtTime(enabled ? volume / 100 * maximumGain : 0, context.currentTime);
     };
     const stop = (onlyTyping = false) => {
         active.forEach((voice) => {
@@ -79,19 +80,27 @@
         try {
             context = new AudioContext();
             master = context.createGain();
-            master.gain.value = enabled ? volume / 100 : 0;
-            master.connect(context.destination);
+            master.gain.value = enabled ? volume / 100 * maximumGain : 0;
+            const limiter = context.createDynamicsCompressor();
+            limiter.threshold.value = -3;
+            limiter.knee.value = 6;
+            limiter.ratio.value = 20;
+            limiter.attack.value = .003;
+            limiter.release.value = .15;
+            master.connect(limiter);
+            limiter.connect(context.destination);
             return true;
         } catch { return false; }
     };
     const bufferFor = (file) => {
         if (!buffers.has(file)) {
-            const request = fetch(`${config.dataset.soundBase}/${file}.ogg`)
-                .then((response) => {
-                    if (!response.ok) throw new Error('Sound unavailable');
-                    return response.arrayBuffer();
+            const request = Promise.resolve().then(() => {
+                    const encoded = window.NetGuardSoundData?.[file];
+                    if (!encoded) return null;
+                    const binary = window.atob(encoded);
+                    const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+                    return context.decodeAudioData(bytes.buffer);
                 })
-                .then((bytes) => context.decodeAudioData(bytes))
                 .catch(() => null);
             buffers.set(file, request);
         }
@@ -244,6 +253,5 @@
     refreshControls();
     if (prepare()) {
         [...new Set(Object.values(clips).map((clip) => clip[0]))].forEach(bufferFor);
-        unlock();
     }
 })();
