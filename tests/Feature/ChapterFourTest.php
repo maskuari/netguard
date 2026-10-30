@@ -54,6 +54,33 @@ class ChapterFourTest extends TestCase
         $this->assertSame(1, $xpath->query('//*[@data-open-window="wireless"]')->length);
         $this->assertSame(1, $xpath->query('//*[@data-open-window="hotspot"]')->length);
         $this->assertSame(0, $xpath->query('//*[@data-main-action or @data-test-client]')->length);
+        $this->assertSame(8, $xpath->query('//*[@data-wireless-tab]')->length);
+        $this->assertSame(8, $xpath->query('//*[@data-wireless-panel]')->length);
+        $this->assertSame(8, $xpath->query('//*[@data-radio-tab]')->length);
+        $this->assertSame(8, $xpath->query('//*[@data-radio-panel]')->length);
+        $this->assertSame(4, $xpath->query('//*[@data-security-tab]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-radio-option="band"]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-radio-option="frequency"]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-security-option="unicastAes"]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-security-option="groupTkip"]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-wireless-find]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-field="security"]/option')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-field="security"]/option[text()="user"]')->length);
+        foreach (['interfaces', 'addresses', 'dhcp', 'pools', 'networks'] as $configuration) {
+            $this->assertSame(1, $xpath->query('//*[@data-inherited-'.$configuration.']')->length);
+            $this->assertSame(0, $xpath->query('//*[@data-inherited-'.$configuration.']/*')->length);
+        }
+        $this->assertSame(1, $xpath->query('//script[contains(@src, "router-configuration.js")]')->length);
+        $this->assertSame(11, $xpath->query('//*[@data-hotspot-tab]')->length);
+        $this->assertSame(11, $xpath->query('//*[@data-window="interfaces"]//*[@data-inherited-tab]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-native-interfaces][@data-inherited-interfaces]')->length);
+        $this->assertSame(3, $xpath->query('//*[@data-profile-tab]')->length);
+        $this->assertSame(3, $xpath->query('//*[@data-user-tab]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-profile-option="keepalive"]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-profile-option="autorefresh"]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-user-option="limitUptime"]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-window="files"]//*[@data-upload-login]//*[@data-login-file]')->length);
+        $this->assertSame(0, $xpath->query('//*[@class="ch4-upload"]')->length);
         $this->assertSame(3, $user->fresh()->completedAdventureChapters());
     }
 

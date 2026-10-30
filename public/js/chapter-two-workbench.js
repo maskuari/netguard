@@ -65,7 +65,7 @@
     const defaults = {
         stage: completionOnServer ? 'finish' : 'intro', highest: completionOnServer ? 7 : 0,
         prologueIndex: 0, prologueComplete: false,
-        identity: chapterOne.identitySaved ? 'Router' : (chapterOne.identityInput || 'Router'),
+        identity: chapterOne.identityInput || (chapterOne.identitySaved ? 'Router' : 'MikroTik'),
         interfaces: {
             ether1: chapterOne.interfaceNames?.ether1 || 'ether1-internet',
             ether2: chapterOne.interfaceNames?.ether2 || 'ether2-vlan',
@@ -110,9 +110,6 @@
     if (completionOnServer) state.highest = 7;
     if (!completionOnServer && state.stage === 'finish') state.stage = 'quiz';
     if (state.stage === 'verify' || (!completionOnServer && ['quiz', 'finish'].includes(state.stage) && dhcpGroups.some((group) => !state.pools[group] || state.dhcpDisabled[group]))) state.stage = 'dhcp';
-    state.clients = { student: false, teacher: false };
-    state.clientLeases = {};
-    state.clientStatic = {};
     if (!stages.includes(state.stage)) state.stage = 'intro';
     state.highest = Math.max(stages.indexOf(state.stage), Math.min(7, Math.max(0, Number(state.highest) || 0)));
 

@@ -140,19 +140,25 @@
             dots[tabIndex].classList.toggle('is-selected', selected);
             dots[tabIndex].setAttribute('aria-current', String(selected));
         });
-        learning.hidden = false;
         if (focusTab) tabs[activeIndex].focus();
+        syncLearningTriggers();
         window.history.replaceState(null, '', '#chapter-' + tabs[activeIndex].dataset.chapter);
     };
 
     document.querySelector('[data-carousel-previous]').addEventListener('click', () => selectChapter(activeIndex - 1));
     document.querySelector('[data-carousel-next]').addEventListener('click', () => selectChapter(activeIndex + 1));
-    document.querySelector('[data-close-learning]').addEventListener('click', () => { learning.hidden = true; });
+    const syncLearningTriggers = () => {
+        const expanded = !learning.hidden;
+        document.querySelector('.chapter-section').classList.toggle('is-learning-open', expanded);
+        document.querySelectorAll('[data-open-learning]').forEach((button, index) => button.setAttribute('aria-expanded', String(expanded && index === activeIndex)));
+    };
+    document.querySelector('[data-close-learning]').addEventListener('click', () => { learning.hidden = true; syncLearningTriggers(); });
     dots.forEach((dot, index) => dot.addEventListener('click', () => selectChapter(index)));
     document.querySelectorAll('[data-open-learning]').forEach((button, index) => {
         button.addEventListener('click', () => {
             selectChapter(index);
             learning.hidden = false;
+            syncLearningTriggers();
         });
     });
     document.querySelectorAll('[data-detail-chapter]').forEach((button, index) => {

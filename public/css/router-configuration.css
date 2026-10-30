@@ -1,0 +1,17 @@
+.ch2-scene .inherited-table { min-height: 0; overflow: auto; }
+.ch2-scene .inherited-table > .ch2-table__head,
+.ch2-scene .inherited-table > div:not(.ch2-table__head) { grid-template-columns: minmax(190px, 1.7fr) minmax(130px, 1.2fr) minmax(90px, .7fr) minmax(130px, 1fr); min-width: 600px; }
+.ch2-scene .inherited-table--addresses > .ch2-table__head,
+.ch2-scene .inherited-table--addresses > div:not(.ch2-table__head) { grid-template-columns: 35px minmax(170px, 1.3fr) minmax(150px, 1fr) minmax(190px, 1.3fr); }
+.ch2-scene .inherited-table--dhcp > .ch2-table__head,
+.ch2-scene .inherited-table--dhcp > div:not(.ch2-table__head) { grid-template-columns: 90px 180px minmax(260px, 2fr) 100px 150px; min-width: 780px; }
+.ch2-scene .inherited-table--pools > .ch2-table__head,
+.ch2-scene .inherited-table--pools > div:not(.ch2-table__head),
+.ch2-scene .inherited-table--networks > .ch2-table__head,
+.ch2-scene .inherited-table--networks > div:not(.ch2-table__head) { grid-template-columns: minmax(170px, 1fr) minmax(280px, 2fr) minmax(150px, 1fr); }
+.ch2-scene [data-inherited-connected-routes] { flex: 1; }
+.ch2-scene [data-window="wan"] .ch2-table > div { grid-template-columns: minmax(190px, 1.2fr) minmax(140px, 1fr) minmax(120px, 1fr) minmax(150px, 1fr); min-width: 600px; }
+.ch2-scene [data-window="routes"] .ch2-table { min-height: 0; flex: none; }
+.ch2-scene [data-window="routes"] .ch2-table > div { grid-template-columns: 60px minmax(170px, 1.4fr) minmax(230px, 2fr) 85px; min-width: 600px; }
+.ch2-scene [data-window="routes"] [data-inherited-connected-routes] { flex: 1; }
+.ch2-scene [data-inherited-tab].is-active { background: white; border-bottom: 2px solid #0078d7; }

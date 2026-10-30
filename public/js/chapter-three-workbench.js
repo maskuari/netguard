@@ -10,6 +10,8 @@
     const read = (storageKey) => { try { return JSON.parse(localStorage.getItem(storageKey) || 'null'); } catch { return null; } };
     const saved = read(key);
     const previous = read('netguard.chapter-two.v2.' + scene.dataset.userId);
+    const inherited = window.NetGuardRouterConfiguration?.read(scene.dataset.userId, 2);
+    window.NetGuardRouterConfiguration?.bind(scene);
     const completed = scene.dataset.completed === 'true';
     const groups = ['local'];
     const initialLan = Object.fromEntries(groups.map((group) => {
@@ -24,6 +26,7 @@
         routerTests: { ip: completed, domain: completed }, clientTests: { local: completed }, lan: initialLan,
         ...saved,
     };
+    if (inherited) state.wan = { link: inherited.wan.exists && !inherited.wan.disabled, bound: inherited.wan.bound, defaultRoute: inherited.wan.defaultRoute, ...saved?.wan };
     state.lan.local = initialLan.local;
     state.guideActions = { ...saved?.guideActions };
     state.wanInspected = { client: completed, route: completed, ...saved?.wanInspected };
@@ -265,6 +268,7 @@
             row.classList.toggle('is-selected', inspected);
             row.setAttribute('aria-pressed', String(inspected));
         });
+        if (inherited) window.NetGuardRouterConfiguration.render(scene, { ...inherited, wan: { ...inherited.wan, ...state.wan } });
         queueMissionCompletion();
     };
     const setStage = (name) => { if (name !== 'clients') pcDesktop.hideDesktop(); state.stage = name; state.highest = Math.max(state.highest, stageNames.indexOf(name)); persist(); render(); document.querySelector('.ch3-guide').scrollTo({ top: 0, behavior: 'auto' }); };

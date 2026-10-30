@@ -140,7 +140,7 @@
                                     <span class="chapter-card__badge">CHAPTER {{ $chapter['number'] }}</span>
                                     <span class="chapter-card__content"><strong>{{ $chapter['short'] }}</strong><span>{{ $chapter['summary'] }}</span><span class="chapter-card__progress" aria-hidden="true"><span></span></span></span>
                                 </button>
-                                <button class="chapter-card__info" type="button" data-open-learning aria-label="Lihat yang akan dipelajari di Chapter {{ $chapter['number'] }}"><svg class="icon" aria-hidden="true"><use href="#chapter-book"/></svg></button>
+                                <button class="chapter-card__info" type="button" data-open-learning aria-controls="chapter-learning" aria-expanded="false" aria-label="Klik untuk melihat yang akan dipelajari di Chapter {{ $chapter['number'] }}" title="Klik untuk melihat yang akan dipelajari"><svg class="icon" aria-hidden="true"><use href="#chapter-book"/></svg><span class="chapter-card__info-label" aria-hidden="true">Lihat yang dipelajari</span></button>
                                 <div class="chapter-card__action">
                                     @if ($loop->first)
                                         <a href="{{ route('chapter.one') }}" data-page-link="chapter-one"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg>{{ $user->completedAdventureChapters() >= 1 ? 'Main Lagi Chapter' : 'Mulai Chapter' }}</a>
@@ -166,7 +166,7 @@
                         @endforeach
                     </div>
                     <button class="chapter-arrow chapter-arrow--next" type="button" data-carousel-next aria-label="Chapter berikutnya"><svg class="icon" aria-hidden="true"><use href="#chapter-chevron"/></svg></button>
-                    <aside class="chapter-learning" id="chapter-learning" aria-label="Yang akan dipelajari">
+                    <aside class="chapter-learning" id="chapter-learning" aria-label="Yang akan dipelajari" hidden>
                         <div class="chapter-learning__heading"><span class="chapter-learning__symbol"><svg class="icon" aria-hidden="true"><use href="#chapter-book"/></svg></span><h2>Yang akan dipelajari</h2><button type="button" data-close-learning aria-label="Tutup yang akan dipelajari"><svg class="icon" aria-hidden="true"><use href="#chapter-close"/></svg></button></div>
                         @foreach ($chapters as $chapter)
                             <div class="chapter-panel" role="tabpanel" data-title="{{ $chapter['title'] }}" data-story="{{ $chapter['story'] }}" id="chapter-panel-{{ $chapter['number'] }}" aria-labelledby="chapter-tab-{{ $chapter['number'] }}" @if (! $loop->first) hidden @endif>

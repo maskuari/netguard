@@ -11,11 +11,13 @@
             const append = (text) => { output.textContent = (output.textContent + text).slice(-16000); output.parentElement.scrollTop = output.parentElement.scrollHeight; };
             const setView = (view) => {
                 host.dataset.pcView = view;
-                desktop.hidden = !['desktop', 'cmd'].includes(view);
+                const desktopVisible = ['desktop', 'cmd', 'preview'].includes(view);
+                const desktopOnly = ['desktop', 'cmd'].includes(view);
+                desktop.hidden = !desktopVisible;
                 cmd.hidden = view !== 'cmd';
-                for (const surface of host.querySelectorAll(':scope > .simulation-monitor, :scope > [data-stage="winbox"], :scope > [data-stage="config"], :scope > [data-stage="pc"]')) surface.inert = !desktop.hidden;
+                for (const surface of host.querySelectorAll(':scope > .simulation-monitor, :scope > [data-stage="winbox"], :scope > [data-stage="config"], :scope > [data-stage="pc"]')) surface.inert = desktopOnly;
                 document.querySelector('[data-pc-home]').setAttribute('aria-pressed', String(['desktop', 'preview'].includes(view)));
-                document.querySelector('[data-pc-task-winbox]').setAttribute('aria-pressed', String(view === 'winbox'));
+                document.querySelector('[data-pc-task-winbox]').setAttribute('aria-pressed', String(['winbox', 'preview'].includes(view)));
                 document.querySelector('[data-pc-task-cmd]').setAttribute('aria-pressed', String(view === 'cmd'));
             };
             const showDesktop = () => { setView('desktop'); onHome(); };

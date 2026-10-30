@@ -16,12 +16,29 @@ const ready = () => ({
 test('WiFi needs an enabled access point and applied security profile', () => {
     const state = ready();
     assert.equal(model.wifiReady(state), true);
-    for (const [field, incorrect] of [['enabled', false], ['mode', 'station'], ['ssid', 'MikroTik'], ['security', 'default']]) {
+    for (const [field, incorrect] of [['enabled', false], ['mode', 'station'], ['ssid', ''], ['security', 'default']]) {
         const wrong = { ...state, wireless: { ...state.wireless, [field]: incorrect } };
         assert.equal(model.wifiReady(wrong), false);
         assert.equal(model.authenticate(wrong, 'admin', 'admin').reason, 'wifi');
     }
     for (const field of ['wpa', 'wpa2']) assert.equal(model.securityValid({ security: { ...state.security, [field]: false } }), false);
+});
+test('SSID, profile name and both WiFi passwords may be chosen freely', () => {
+    const state = ready();
+    state.wireless.ssid = 'WiFi Perpustakaan';
+    state.wireless.security = 'keamanan-lab';
+    state.security = { name: 'keamanan-lab', mode: 'dynamic keys', wpa: true, wpa2: true, key: 'Password WPA1', key2: 'Password WPA2' };
+    assert.equal(model.wifiReady(state), true);
+    assert.equal(model.authenticate(state, 'admin', 'admin').ok, true);
+    state.wireless.security = 'user';
+    assert.equal(model.wifiReady(state), false);
+    for (const name of ['', 'default']) assert.equal(model.securityValid({ security: { ...state.security, name } }), false);
+    for (const key of ['', 'short', 'g'.repeat(64)]) assert.equal(model.securityValid({ security: { ...state.security, key } }), false);
+    assert.equal(model.passwordValid('a'.repeat(64)), true);
+    assert.equal(model.passwordValid('g'.repeat(64)), false);
+    assert.equal(model.ssidValid('x'.repeat(32)), true);
+    assert.equal(model.ssidValid('x'.repeat(33)), false);
+    assert.equal(model.ssidValid('界'.repeat(11)), false);
 });
 test('WiFi password cannot authenticate the portal and HotSpot must run on wlan1', () => {
     const state = ready();
@@ -31,6 +48,18 @@ test('WiFi password cannot authenticate the portal and HotSpot must run on wlan1
     assert.equal(model.authenticate(state, 'admin', 'admin').reason, 'wifi');
     state.phoneConnected = true; state.hotspot.interface = 'ether3-local';
     assert.equal(model.authenticate(state, 'admin', 'admin').reason, 'hotspot');
+});
+test('HotSpot DNS Name accepts a custom hostname while rejecting URLs and malformed names', () => {
+    const state = ready();
+    for (const name of ['portal.sekolah.sch.id', 'wifi-lab.local', 'hotspot-sekolah']) {
+        state.hotspot.dnsName = name;
+        assert.equal(model.hotspotValid(state), true);
+        assert.equal(model.authenticate(state, 'admin', 'admin').ok, true);
+    }
+    for (const name of ['', 'nama portal', 'http://portal.sekolah', 'portal.sekolah/login', '-portal.local', 'portal..local']) {
+        state.hotspot.dnsName = name;
+        assert.equal(model.hotspotValid(state), false);
+    }
 });
 test('source profiles and accounts enforce correct rate and concurrent sessions', () => {
     const state = ready();

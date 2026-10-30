@@ -56,9 +56,105 @@
 .ch4-notepad textarea { flex: 1; min-height: 0; width: 100%; padding: 12px; border: 0; outline: 0; resize: none; font: 13px/1.6 Consolas, monospace; }
 .ch4-desktop-file { margin: 15px; padding: 12px; border: 1px solid #ffffff70; background: #ffffff20; color: white; cursor: grab; }
 .ch4-file-menu { margin: 0 15px; padding: 8px; border: 1px solid #aac8df; background: white; color: #203e58; }
-.ch4-file-mode > .simulation-monitor { z-index: 25; margin-left: 28%; width: 72%; flex: 1; background: transparent; }
-.ch4-file-mode > .simulation-monitor .simulation-monitor__screen { background: transparent; }
-.ch4-file-mode .ch2-monitor .ch2-routeros.is-app-restored { width: calc(100% - 12px); height: calc(100% - 20px); margin: 10px 6px; }
+.ch4-scene .ch2-workbench.ch4-file-mode > .simulation-monitor { position: absolute; z-index: 25; top: 4%; right: 1%; bottom: 48px; left: 28%; width: auto; height: auto; margin: 0; padding: 0; overflow: visible; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.ch4-scene .ch2-workbench.ch4-file-mode > .simulation-monitor > .simulation-monitor__screen { width: 100%; height: 100%; min-height: 0; background: transparent; }
+.ch4-file-mode .ch2-monitor .ch2-routeros.is-app-restored { width: calc(100% - 28px); height: calc(100% - 28px); margin: 14px; }
 .ch4-file-mode .lab-pc-apps { flex-direction: column; }
 .ch4-file-mode .ch4-desktop-file { margin-left: 0; }
 @media (max-width: 1000px) { .ch4-scene .ch4-hp-launcher { right: 0; bottom: 44px; font-size: 11px; } .ch4-scene .ch4-notepad { inset: 20px 8px 50px; } }
+
+.ch4-scene .ch2-monitor .ch4-wireless-native { background: #eee; font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch2-monitor .ch4-wireless-native .ch2-window-tabs { gap: 0; padding: 3px 4px 0; background: #ddd; border-color: #aaa; }
+.ch4-scene .ch2-monitor .ch4-wireless-native .ch2-window-tabs > button { min-height: 23px; padding: 4px 7px; border: 1px solid #aaa; border-bottom: 0; background: #e6e6e6; color: #111; font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch2-monitor .ch4-wireless-native .ch2-window-tabs > .is-active { background: #f4f4f4; box-shadow: inset 0 2px #fff; }
+.ch4-scene .ch2-monitor .ch4-wireless-toolbar { gap: 3px; min-height: 28px; padding: 3px 4px; overflow-x: auto; background: #eee; border-color: #aaa; white-space: nowrap; }
+.ch4-scene .ch2-monitor .ch4-wireless-toolbar button { flex: none; min-width: 23px; min-height: 23px; padding: 2px 6px; border: 1px solid #999; border-radius: 0; background: linear-gradient(#fff, #e5e5e5); color: #111; font: 11px Tahoma, sans-serif; }
+.ch4-wireless-toolbar .wb-icon { width: 15px; height: 15px; }
+.ch4-wireless-toolbar input { flex: none; width: 110px; margin-left: auto; min-height: 23px; padding: 2px 5px; border: 1px solid #aaa; background: white; font: 11px Tahoma, sans-serif; }
+.ch4-wireless-toolbar > span { padding: 3px 5px; border: 1px solid #aaa; background: white; }
+.ch4-scene .ch4-wireless-native .ch4-table-head, .ch4-scene .ch4-wireless-native .ch4-data-row { min-height: 21px; font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch4-wireless-native .ch4-table-head { background: #eee; border-color: #aaa; color: #111; }
+.ch4-wireless-native .ch4-table-head > *, .ch4-wireless-native .ch4-data-row > * { overflow: hidden; padding: 3px 5px; border-right: 1px solid #ddd; white-space: nowrap; text-overflow: ellipsis; }
+.ch4-scene .ch4-wireless-table .ch4-table-head, .ch4-scene .ch4-wireless-table .ch4-data-row { grid-template-columns: 25px 25px 115px 175px 85px repeat(2, 95px) repeat(2, 110px) repeat(2, 90px); grid-auto-columns: auto; min-width: 1115px; }
+.ch4-scene .ch4-security-table .ch4-table-head, .ch4-scene .ch4-security-table .ch4-data-row { grid-template-columns: 100px 110px 165px 125px 125px 160px 160px; min-width: 1045px; }
+.ch4-scene .ch4-wireless-table .ch4-wlan-name { display: flex; align-items: center; gap: 3px; }
+.ch4-scene .ch4-wireless-native .ch4-data-row.is-selected { background: #9fc3e7; color: #111; }
+.ch4-scene .ch4-wireless-native .ch4-data-row.is-disabled { color: #888; }
+.ch4-scene .ch2-monitor .ch4-radio-editor, .ch4-scene .ch2-monitor .ch4-security-editor { top: 38px; left: clamp(8px, 12%, 160px); width: min(620px, calc(100% - 16px)); max-height: calc(100% - 48px); overflow: hidden; }
+.ch4-scene .ch4-wireless-native .ch2-vlan-edit-layout { flex: 1; min-height: 0; grid-template-columns: minmax(0, 1fr) 105px; gap: 8px; padding: 5px 7px 7px; overflow: auto; background: #eee; }
+.ch4-scene .ch4-wireless-native .ch2-vlan-edit-main { min-height: 0; border: 1px solid #aaa; background: #eee; }
+.ch4-scene .ch4-wireless-native .ch4-native-form { display: block; min-height: 0; padding: 8px 10px; background: #eee; }
+.ch4-scene .ch4-native-form > div { display: grid; align-content: start; gap: 5px; }
+.ch4-scene .ch4-wireless-native .ch4-native-form label { min-height: 21px; grid-template-columns: 125px minmax(0, 1fr); gap: 5px; color: #0000c0; font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch4-wireless-native .ch4-native-form input, .ch4-scene .ch4-wireless-native .ch4-native-form select { height: 22px; min-height: 22px; border: 1px solid #999; border-radius: 0; color: #111; background: white; font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch4-wireless-native .ch4-native-form input[readonly] { color: #777; background: #e7e7e7; }
+.ch4-native-form hr { width: 100%; margin: 3px 0; border: 0; border-top: 1px solid #bbb; }
+.ch4-field-unit { display: flex; align-items: center; gap: 5px; min-width: 0; }
+.ch4-field-unit input { flex: 1; width: 0; }
+.ch4-field-unit small { color: #111; font-size: 11px; }
+.ch4-scene .ch4-wireless-native .ch4-native-form .ch4-native-check { display: flex; flex-direction: row; justify-content: flex-start; gap: 5px; padding-left: 130px; color: #111; text-align: left; }
+.ch4-scene .ch4-wireless-native .ch4-native-form input[type="checkbox"] { flex: none; width: 12px; min-width: 12px; height: 12px; min-height: 12px; padding: 0; margin: 0; accent-color: #333; }
+.ch4-scene .ch4-wireless-native .ch2-vlan-edit-actions { padding: 1px 0 0; gap: 4px; }
+.ch4-scene .ch4-wireless-native .ch2-vlan-edit-actions button { min-height: 24px; padding: 3px 2px; border: 1px solid #888; border-radius: 0; background: linear-gradient(#fff, #e7e7e7); color: #111; font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch4-security-editor .ch4-native-form label { grid-template-columns: 135px minmax(0, 1fr); }
+.ch4-check-row { display: grid; grid-template-columns: 135px minmax(0, 1fr); gap: 5px; align-items: start; padding: 3px 0; }
+.ch4-check-row > span { padding-top: 2px; color: #0000c0; text-align: right; }
+.ch4-check-row > div { display: grid; grid-template-columns: auto auto; gap: 6px; }
+.ch4-scene .ch4-wireless-native .ch4-native-form .ch4-check-row label { display: flex; flex-direction: row; gap: 4px; min-height: 16px; white-space: nowrap; }
+.ch4-traffic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; }
+.ch4-traffic-grid svg { grid-column: 1 / -1; width: 100%; background: white; border: 1px solid #aaa; }
+.ch4-tool-content { min-height: 110px; padding: 12px; color: #111; font: 11px Tahoma, sans-serif; }
+.ch4-tool-content label { display: grid; grid-template-columns: 125px minmax(0, 1fr); align-items: center; gap: 7px; margin: 8px 0; color: #0000c0; }
+.ch4-tool-content input, .ch4-tool-content select, .ch4-tool-content textarea { min-width: 0; padding: 3px; border: 1px solid #999; background: white; color: #111; font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch4-tool-actions { display: flex; flex-direction: row; justify-content: flex-end; padding: 8px; }
+@media (max-width: 700px) { .ch4-scene .ch4-wireless-native .ch2-vlan-edit-layout { grid-template-columns: minmax(0, 1fr) 82px; } .ch4-scene .ch4-wireless-native .ch4-native-form label { grid-template-columns: 100px minmax(0, 1fr); } .ch4-check-row { grid-template-columns: 100px minmax(0, 1fr); } .ch4-check-row > div { grid-template-columns: 1fr; } .ch4-scene .ch4-wireless-native .ch4-native-form .ch4-native-check { padding-left: 105px; } }
+
+.ch4-scene .ch2-monitor .ch4-native-window { background: #eee; font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch2-monitor .ch4-native-window .ch2-window-tabs { gap: 0; padding: 3px 4px 0; border-color: #aaa; background: #ddd; }
+.ch4-scene .ch2-monitor .ch4-native-window .ch2-window-tabs > * { border: 1px solid #aaa; border-bottom: 0; padding: 4px 7px; min-height: 23px; color: #111; background: #e6e6e6; font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch2-monitor .ch4-native-window .ch2-window-tabs > .is-active { background: #f8f8f8; box-shadow: inset 0 2px #fff; }
+.ch4-scene .ch2-monitor .ch4-native-toolbar { min-height: 28px; gap: 3px; padding: 3px 4px; border-color: #aaa; overflow-x: auto; background: #eee; white-space: nowrap; }
+.ch4-scene .ch2-monitor .ch4-native-toolbar button { flex: none; min-height: 23px; min-width: 23px; padding: 2px 6px; border: 1px solid #999; border-radius: 0; color: #111; background: linear-gradient(#fff, #e5e5e5); font: 11px Tahoma, sans-serif; }
+.ch4-native-toolbar .wb-icon { width: 15px; height: 15px; }
+.ch4-native-toolbar input { flex: none; width: 125px; margin-left: auto; padding: 3px 5px; border: 1px solid #aaa; border-radius: 0; background: white; font: 11px Tahoma, sans-serif; }
+.ch4-native-toolbar > span { border: 1px solid #aaa; padding: 3px 5px; background: white; }
+.ch4-scene .ch4-native-window .ch4-table-head, .ch4-scene .ch4-native-window .ch4-data-row { min-height: 21px; font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch4-native-window .ch4-table-head { color: #111; background: #eee; border-color: #aaa; }
+.ch4-native-window .ch4-table-head > *, .ch4-native-window .ch4-data-row > * { padding: 3px 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-right: 1px solid #ddd; }
+.ch4-scene .ch4-hotspot-table .ch4-table-head, .ch4-scene .ch4-hotspot-table .ch4-data-row { grid-template-columns: var(--hotspot-columns); width: max-content; min-width: 100%; }
+.ch4-scene .ch4-files-table .ch4-table-head, .ch4-scene .ch4-files-table .ch4-data-row { grid-template-columns: minmax(260px, 2fr) 130px 100px 160px; min-width: 650px; }
+.ch4-scene .ch4-native-window .ch4-data-row.is-selected { background: #9fc3e7; color: #111; }
+.ch4-scene .ch4-native-window .ch2-vlan-edit-layout { grid-template-columns: minmax(0, 1fr) 105px; flex: 1; min-height: 0; overflow: auto; background: #eee; }
+.ch4-scene .ch4-native-window .ch2-vlan-edit-main { min-height: 0; border: 1px solid #aaa; background: #eee; }
+.ch4-scene .ch4-native-window .ch4-native-form { display: block; min-height: 0; padding: 8px 10px; background: #eee; }
+.ch4-scene .ch4-native-window .ch4-native-form label { grid-template-columns: 135px minmax(0, 1fr); gap: 5px; min-height: 21px; color: #0000c0; font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch4-native-window .ch4-native-form input, .ch4-scene .ch4-native-window .ch4-native-form select, .ch4-scene .ch4-native-window .ch4-native-form textarea { width: 100%; min-height: 22px; height: 22px; border: 1px solid #999; border-radius: 0; color: #111; background: white; font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch4-native-window .ch4-native-form textarea { min-height: 100px; height: 130px; padding: 5px; resize: vertical; }
+.ch4-scene .ch4-native-window .ch4-native-form input[readonly] { color: #777; background: #e7e7e7; }
+.ch4-scene .ch4-native-window .ch4-native-form .ch4-native-check { flex-direction: row; justify-content: start; gap: 5px; padding-left: 140px; color: #111; }
+.ch4-scene .ch4-native-window .ch4-native-form input[type="checkbox"] { width: 12px; min-width: 12px; height: 12px; min-height: 12px; }
+.ch4-scene .ch4-native-window .ch2-vlan-edit-actions { padding-top: 1px; gap: 4px; }
+.ch4-scene .ch4-native-window .ch2-vlan-edit-actions button { min-height: 24px; padding: 3px 2px; border: 1px solid #888; border-radius: 0; color: #111; background: linear-gradient(#fff, #e7e7e7); font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch2-monitor .ch4-profile-editor, .ch4-scene .ch2-monitor .ch4-user-editor { width: min(575px, calc(100% - 20px)); max-height: calc(100% - 40px); top: 30px; overflow: hidden; }
+.ch4-scene .ch2-monitor .ch4-setup-window { width: min(440px, calc(100% - 20px)); top: 60px; }
+.ch4-setup-description { margin: 5px 5px 0; padding: 3px 5px; background: #999; color: white; font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch4-setup-window .ch4-setup-fields { display: grid; grid-template-columns: 1fr; min-height: 92px; gap: 6px; padding: 15px 12px; background: #eee; }
+.ch4-scene .ch4-setup-window .ch4-setup-fields label { display: grid; grid-template-columns: 150px minmax(0, 1fr); min-height: 22px; gap: 5px; font: 11px Tahoma, sans-serif; color: #0000c0; }
+.ch4-setup-fields .is-empty { display: none !important; }
+.ch4-setup-fields [data-setup-user-fields] { display: grid; gap: 6px; }
+.ch4-scene .ch4-setup-window .ch4-setup-fields input, .ch4-scene .ch4-setup-window .ch4-setup-fields select { min-height: 22px; height: 22px; border-color: #999; font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch4-setup-window .ch4-setup-fields .ch4-native-check { display: flex; flex-direction: row; justify-content: start; padding-left: 155px; }
+.ch4-setup-actions { display: flex; justify-content: flex-end; gap: 4px; padding: 8px 10px 12px; }
+.ch4-setup-actions button { min-height: 24px; padding: 3px 9px; border: 1px solid #888; border-radius: 0; color: #111; background: linear-gradient(#fff, #e7e7e7); font: 11px Tahoma, sans-serif; }
+.ch4-scene .ch2-table.ch4-native-interface-table > div { grid-template-columns: 28px 28px 190px 180px 85px 80px 90px 90px 110px 110px 90px 90px; min-width: 1171px; }
+.ch4-scene .ch2-table.ch4-native-vlan-table > div { grid-template-columns: 28px 190px 85px 85px 85px 85px 85px 190px repeat(4, 90px); min-width: 1193px; }
+.ch4-scene .ch4-native-interface-table > div[role="button"] { cursor: default; }
+.ch4-scene .ch4-native-interface-table > .is-selected { background: #9fc3e7; }
+.ch4-notepad-menubar { padding: 4px 10px; font: 12px Tahoma, sans-serif; background: #f5f5f5; color: #111; }
+.ch4-upload-picker { display: grid; gap: 12px; padding: 15px; color: #111; background: #eee; font: 12px Tahoma, sans-serif; }
+.ch4-upload-picker > button { min-height: 100px; padding: 10px; border: 1px solid #aaa; background: white; color: #111; text-align: left; }
+.ch4-upload-picker label { display: grid; grid-template-columns: 85px 1fr; gap: 7px; align-items: center; }
+.ch4-upload-picker input, .ch4-upload-picker select { min-width: 0; padding: 5px; border: 1px solid #999; background: white; color: #111; }
+.ch4-upload-picker > div { display: flex; justify-content: flex-end; gap: 6px; }
+.ch4-upload-picker > div button { min-width: 75px; padding: 4px 10px; color: #111; border: 1px solid #999; border-radius: 0; background: linear-gradient(#fff, #ddd); }
+@media (max-width: 700px) { .ch4-scene .ch4-native-window .ch2-vlan-edit-layout { grid-template-columns: minmax(0, 1fr) 85px; gap: 5px; } .ch4-scene .ch4-native-window .ch4-native-form label { grid-template-columns: 105px minmax(0, 1fr); } }
