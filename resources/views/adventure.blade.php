@@ -158,6 +158,12 @@
                                         @else
                                             <button type="button" disabled aria-label="Selesaikan Chapter 3 untuk membuka Chapter 4"><svg class="icon" aria-hidden="true"><use href="#chapter-lock"/></svg>Selesaikan Chapter 3</button>
                                         @endif
+                                    @elseif ($loop->iteration === 5)
+                                        @if ($user->completedAdventureChapters() >= 4)
+                                            <a href="{{ route('chapter.five') }}" data-page-link="chapter-five"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg>{{ $user->completedAdventureChapters() >= 5 ? 'Main Lagi Chapter' : 'Mulai Chapter' }}</a>
+                                        @else
+                                            <button type="button" disabled aria-label="Selesaikan Chapter 4 untuk membuka Chapter 5"><svg class="icon" aria-hidden="true"><use href="#chapter-lock"/></svg>Selesaikan Chapter 4</button>
+                                        @endif
                                     @else
                                         <button type="button" data-start-chapter="{{ $chapter['number'] }}"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg>Mulai Chapter</button>
                                     @endif
