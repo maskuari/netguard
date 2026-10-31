@@ -84,6 +84,26 @@ class AdventureProgressTest extends TestCase
         $this->assertSame(0, $user->fresh()->completedAdventureChapters());
     }
 
+    public function test_adventure_map_marks_completed_chapter_cards_and_progress_bars(): void
+    {
+        $user = User::factory()->create(['completed_adventure_chapters' => 2]);
+
+        $response = $this->actingAs($user)->get(route('adventure'))->assertOk();
+        $document = new DOMDocument;
+        $document->loadHTML($response->getContent(), LIBXML_NOERROR | LIBXML_NOWARNING);
+        $xpath = new DOMXPath($document);
+
+        foreach (['01', '02'] as $chapterNumber) {
+            $chapterCard = $xpath->query('//article[@data-chapter-card="'.$chapterNumber.'"]')->item(0);
+
+            $this->assertSame('true', $chapterCard->getAttribute('data-completed'));
+            $this->assertStringContainsString('is-completed', $chapterCard->getAttribute('class'));
+            $this->assertSame('Selesai', trim($xpath->query('.//span[@class="chapter-card__completion"]', $chapterCard)->item(0)->textContent));
+        }
+
+        $this->assertSame('false', $xpath->query('//article[@data-chapter-card="03"]')->item(0)->getAttribute('data-completed'));
+    }
+
     public function test_progress_is_not_mass_assignable(): void
     {
         $user = User::factory()->create();

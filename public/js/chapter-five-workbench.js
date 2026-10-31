@@ -438,13 +438,13 @@
         if (state.stage === 'bridge') return [
             ['Klik Bridge pada menu kiri WinBox.', !bridgeWindow.hidden],
             ['Pada tab Bridge, klik tombol + untuk menambahkan bridge.', activeEditor === 'bridge'],
-            ['Di jendela New Bridge, isi Name: bridge1 dan Protocol Mode: rstp. Biarkan VLAN Filtering tidak dicentang, lalu klik OK.', bridgeCreatedWithoutFiltering()],
+            ['Di jendela New Bridge, isi Name: bridge1 dan Protocol Mode: rstp. Biarkan VLAN Filtering tidak dicentang, lalu klik OK.', bridgeCreatedWithoutFiltering(), [{ selector: '[data-bridge-name]', expected: 'bridge1' },{ selector: '[data-bridge-protocol]', expected: 'rstp' },"[data-save-bridge]"]],
         ];
         if (state.stage === 'ports') {
             const plan = [['Di jendela Bridge, klik tab Ports.', bridgeTab === 'Ports']];
             for (const port of expectedPorts) {
                 plan.push(['Klik + untuk menambahkan ' + port.role + '.', activeEditor === 'port' && portDraftRole === port.key || Boolean(state.ports[port.key])]);
-                plan.push(['Pada New Bridge Port, atur Interface ' + port.interface + ', Bridge bridge1, PVID ' + port.pvid + ', Ingress Filtering aktif, dan Frame Types ' + port.frame + '. Klik OK.', portValid(port.key)]);
+                plan.push(['Pada New Bridge Port, isi pengaturan berikut:\nInterface: ' + port.interface + '\nBridge: bridge1\nPVID: ' + port.pvid + '\nIngress Filtering: aktif\nFrame Types: ' + port.frame + '\nKlik OK.', portValid(port.key), [{ selector: '[data-port-interface]', expected: port.interface },{ selector: '[data-port-bridge]', expected: 'bridge1' },{ selector: '[data-port-pvid]', expected: port.pvid },{ selector: '[data-port-ingress]', expected: true },{ selector: '[data-port-frame]', expected: port.frame },"[data-save-port]"]]);
             }
             return plan;
         }
@@ -452,14 +452,14 @@
             const plan = [['Klik tab VLANs pada jendela Bridge.', bridgeTab === 'VLANs']];
             for (const vlan of expectedVlans) {
                 plan.push(['Klik + untuk membuat entri ' + vlan.label + '.', activeEditor === 'vlan' && vlanDraftKey === vlan.key || Boolean(state.vlans[vlan.key])]);
-                plan.push(['Isi Bridge bridge1, Tagged ether1, Untagged ' + vlan.port + ', VLAN IDs ' + vlan.id + ', lalu klik OK.', vlanValid(vlan.key)]);
+                plan.push(['Isi pengaturan VLAN:\nBridge: bridge1\nTagged: ether1\nUntagged: ' + vlan.port + '\nVLAN IDs: ' + vlan.id + '\nKlik OK.', vlanValid(vlan.key), [{ selector: '[data-vlan-bridge]', expected: 'bridge1' },{ selector: '[data-vlan-tagged]', expected: 'ether1' },{ selector: '[data-vlan-untagged]', expected: vlan.port },{ selector: '[data-vlan-id]', expected: vlan.id },"[data-save-vlan]"]]);
             }
             return plan;
         }
         if (state.stage === 'filtering') return [
             ['Pilih tab Bridge dan pastikan baris bridge1 terlihat.', bridgeTab === 'Bridges'],
-            ['Klik dua kali baris bridge1 untuk membuka propertinya.', activeEditor === 'bridge' && bridgeEditMode === 'filtering'],
-            ['Centang VLAN Filtering, pertahankan Protocol Mode rstp, lalu klik OK. Port manajemen ether5 tetap di luar bridge agar sesi WinBox tidak terputus.', filteringValid()],
+            ['Klik dua kali baris bridge1 untuk membuka propertinya.', activeEditor === 'bridge' && bridgeEditMode === 'filtering', "[data-bridge-row]"],
+            ['Centang VLAN Filtering, pertahankan Protocol Mode rstp, lalu klik OK. Port manajemen ether5 tetap di luar bridge agar sesi WinBox tidak terputus.', filteringValid(), [{ selector: '[data-bridge-filtering]', expected: true },"[data-save-bridge]"]],
         ];
         if (state.stage === 'test') {
             const plan = [];

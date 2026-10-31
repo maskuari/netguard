@@ -1374,7 +1374,7 @@
                 const editing = editingVlan === group && open('vlan-edit');
                 return [
                     ['Klik tombol + di atas tabel VLAN untuk membuat ' + name + '. Jendela New Interface VLAN akan muncul.\n\nJika jendela lain masih terbuka, tutup atau selesaikan terlebih dahulu. Jangan mengubah VLAN yang sudah benar.', saved || editing],
-                    ['Isi Name: ' + name + ', VLAN ID: ' + id + ', lalu pilih Interface: ether2-vlan.\n\nInterface induk ini adalah jalur trunk ke hEX. Jika langkah belum hijau, periksa ejaan, angka ID, dan pilihan interface.', saved || (editing && value('[data-vlan-name]') === name && value('[data-vlan-id]') === id && value('[data-vlan-parent]') === 'ether2-vlan')],
+                    ['Isi kolom pada jendela VLAN:\nName: ' + name + '\nVLAN ID: ' + id + '\nInterface: ether2-vlan\n\nInterface induk ini adalah jalur trunk ke hEX. Jika langkah belum hijau, periksa ejaan, angka ID, dan pilihan interface.', saved || (editing && value('[data-vlan-name]') === name && value('[data-vlan-id]') === id && value('[data-vlan-parent]') === 'ether2-vlan'), [{ selector: '[data-vlan-name]', expected: name },{ selector: '[data-vlan-id]', expected: id },{ selector: '[data-vlan-parent]', expected: 'ether2-vlan' }]],
                     ['Klik OK untuk menyimpan ' + name + '. Baris VLAN akan muncul di tabel dan targetnya berubah hijau.\n\nJika Pak Amat memberi koreksi, perbaiki kolom yang disebutkan lalu klik OK lagi. Ulangi proses untuk VLAN berikutnya.', saved],
                 ];
             }),
@@ -1382,7 +1382,7 @@
         if (state.stage === 'wan') return [
             ['Klik IP pada menu kiri WinBox, lalu pilih DHCP Client. Jendela daftar DHCP Client akan terbuka.\n\nKita akan menambahkan client agar router meminta konfigurasi IP dari penyedia internet.', open('wan') || Boolean(state.wanClient)],
             ['Klik tombol + di atas tabel DHCP Client. Jendela New DHCP Client akan terbuka.\n\nJika sudah ada baris ether1-internet, klik dua kali baris itu untuk memeriksa pengaturannya; tidak perlu membuat client kedua.', open('wan-edit') || Boolean(state.wanClient)],
-            ['Pada tab DHCP, pilih Interface: ether1-internet. Biarkan Use Peer DNS dan Use Peer NTP tercentang, serta Add Default Route: yes.\n\nPort ini menuju penyedia internet. Jangan pilih ether2-vlan atau ether3-local.', Boolean(state.wan) || (open('wan-edit') && value('[data-wan-interface]') === 'ether1-internet' && document.querySelector('[data-wan-peer-dns]').checked && document.querySelector('[data-wan-peer-ntp]').checked && value('[data-wan-default-route]') === 'yes')],
+            ['Pada tab DHCP, pilih Interface: ether1-internet. Biarkan Use Peer DNS dan Use Peer NTP tercentang, serta Add Default Route: yes.\n\nPort ini menuju penyedia internet. Jangan pilih ether2-vlan atau ether3-local.', Boolean(state.wan) || (open('wan-edit') && value('[data-wan-interface]') === 'ether1-internet' && document.querySelector('[data-wan-peer-dns]').checked && document.querySelector('[data-wan-peer-ntp]').checked && value('[data-wan-default-route]') === 'yes'), [{ selector: '[data-wan-interface]', expected: 'ether1-internet' },{ selector: '[data-wan-peer-dns]', expected: true },{ selector: '[data-wan-peer-ntp]', expected: true },{ selector: '[data-wan-default-route]', expected: 'yes' }]],
             ['Klik OK atau Apply untuk menyimpan. Tunggu kolom Status pada daftar DHCP Client berubah menjadi bound; artinya router sudah menerima konfigurasi IP.\n\nJika masih searching, klik baris ether1-internet lalu klik Renew di atas tabel. Target hijau muncul otomatis setelah konfigurasi berhasil.', Boolean(state.wan)],
         ];
         if (state.stage === 'addresses') return [
@@ -1393,7 +1393,7 @@
                 const saved = Boolean(state.addresses[group] && !state.addressDisabled[group]);
                 return [
                     ['Pada daftar Addresses, klik tombol + untuk menambahkan gateway ' + dhcpNames[group] + '. Jendela New Address akan muncul.\n\nJika alamat ini sudah ada, klik dua kali barisnya untuk mengedit.', saved || open('address-edit')],
-                    ['Isi Address: ' + address + ', lalu pilih Interface: ' + iface + '. Biarkan Network kosong agar dihitung otomatis.\n\nJangan hilangkan /24. Untuk siswa dan guru, pilih nama VLAN yang tepat, bukan ether2-vlan.', saved || (open('address-edit') && value('[data-address-input]') === address && value('[data-address-interface]') === iface)],
+                    ['Isi Address: ' + address + ', lalu pilih Interface: ' + iface + '. Biarkan Network kosong agar dihitung otomatis.\n\nJangan hilangkan /24. Untuk siswa dan guru, pilih nama VLAN yang tepat, bukan ether2-vlan.', saved || (open('address-edit') && value('[data-address-input]') === address && value('[data-address-interface]') === iface), [{ selector: '[data-address-input]', expected: address },{ selector: '[data-address-interface]', expected: iface }]],
                     ['Klik OK untuk menyimpan gateway ' + dhcpNames[group] + '. Jika memakai Apply, periksa Network terisi otomatis, lalu klik OK untuk menutup jendela sebelum menambah alamat lain.\n\nTarget ' + iface + ' akan hijau setelah alamat yang benar tersimpan. Jika ada koreksi, perbaiki alamat atau interface lalu simpan kembali.', saved],
                 ];
             }),
@@ -1410,12 +1410,15 @@
                     const instructions = Array.from({ length: 6 }, (_, step) => {
                         const instruction = dhcpStepInstruction(group, step);
                         const values = instruction.values.map(([label, text]) => label + ': ' + text).join('\n');
-                        return [instruction.title + '. ' + instruction.text + '\n\n' + values + '\n\n' + instruction.action + ' Jika Pak Amat memberi koreksi, perbaiki kolom pada layar ini, lalu klik Next lagi.', saved || (active && dhcpStep > step)];
+                        const fieldSelector = ['[data-pool-interface]', '[data-dhcp-space]', '[data-dhcp-gateway]', '[data-pool-range]', '[data-dhcp-dns]', '[data-dhcp-lease]'][step];
+                        const expected = step === 3 ? instruction.values.at(-1)[1] : instruction.values[0][1];
+                        const fieldReady = step === 4 || value(fieldSelector) === normal(expected);
+                        return [instruction.title + '. ' + instruction.text + '\n\n' + values + '\n\n' + instruction.action + ' Jika Pak Amat memberi koreksi, perbaiki kolom pada layar ini, lalu klik Next lagi.', saved || (active && dhcpStep > step), fieldReady ? '[data-dhcp-next]' : fieldSelector];
                     });
                     return [
-                        ['Pada jendela DHCP Server, klik DHCP Setup untuk menyiapkan ' + addressInterfaces[group] + ' (' + dhcpNames[group] + ').\n\nWizard dimulai dari pilihan DHCP Server Interface. Server yang sudah selesai tidak perlu dibuat lagi.', saved || active],
+                        ['Klik DHCP Setup untuk menyiapkan ' + addressInterfaces[group] + ' (' + dhcpNames[group] + ').', saved || active, '[data-start-dhcp]'],
                         ...instructions,
-                        ['Pastikan tulisan Setup has completed successfully muncul, lalu klik OK. Ini menutup wizard DHCP ' + dhcpNames[group] + '.\n\nTargetnya harus hijau. Berikutnya buka DHCP Setup lagi untuk interface yang belum selesai.', saved && !(setupOpen && selected === group)],
+                        ['Setelah muncul Setup has completed successfully, klik OK.', saved && !(setupOpen && selected === group), '[data-dhcp-next]'],
                     ];
                 }),
             ];

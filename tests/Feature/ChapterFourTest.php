@@ -87,7 +87,8 @@ class ChapterFourTest extends TestCase
     public function test_evaluation_rejects_incorrect_or_invalid_answers_without_progress(): void
     {
         $user = User::factory()->create(['completed_adventure_chapters' => 3]);
-        $this->actingAs($user)->postJson(route('chapter.four.complete'), ['answers' => [1, 0, 0, 1, 0]])->assertUnprocessable()->assertJsonPath('correctAnswers', 3);
+        $this->actingAs($user)->postJson(route('chapter.four.complete'), ['answers' => [1, 0, 0, 1, 0]])->assertUnprocessable()
+            ->assertJsonPath('correctAnswers', 3)->assertJsonPath('correctOptionIndexes', [0, 0, 0, 0, 0]);
         $this->postJson(route('chapter.four.complete'), ['answers' => [0, 0]])->assertUnprocessable()->assertJsonValidationErrors('answers');
         $this->postJson(route('chapter.four.complete'), ['answers' => [0, 0, 0, 0, 4]])->assertUnprocessable()->assertJsonValidationErrors('answers.4');
         $this->assertSame(3, $user->fresh()->completedAdventureChapters());

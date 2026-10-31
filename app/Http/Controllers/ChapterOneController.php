@@ -112,6 +112,7 @@ class ChapterOneController extends Controller
         if ($score !== count(self::QUESTIONS)) {
             return response()->json([
                 'message' => 'Masih ada jawaban yang belum tepat. Pelajari petunjuknya lalu coba lagi.',
+                'correctOptionIndexes' => array_column(self::QUESTIONS, 'answer'),
                 ...$evaluationResult,
             ], 422);
         }

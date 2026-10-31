@@ -15,6 +15,7 @@
         terminate: { mission: 1, label: 'MISI 02 / 05', title: 'Pasang RJ45 dan crimp kedua ujung', subtitle: 'Potong rata, masukkan semua inti, lalu tekan tang crimping.', teacher: 'Ratakan inti memakai bilah bagian dalam tang. Masukkan inti dan jaket kabel ke RJ45. Setelah itu, masukkan konektor ke lubang 8P di kepala tang lalu tekan kedua gagangnya.', pose: 'memberitahu', section: 'Memasang RJ45 dan crimping', guide: ['Ratakan delapan inti dengan pemotong pada tang. Pertahankan urutan T568B dari pin 1–8: putih-oranye, oranye, putih-hijau, biru, putih-biru, hijau, putih-cokelat, cokelat.', 'Masukkan inti ke jalur RJ45 seperti pada gambar. Pastikan tiap inti masuk ke jalurnya sendiri, tidak bersilang, dan mencapai ujung konektor.', 'Dorong jaket luar kabel ikut masuk ke RJ45 agar terjepit pengunci. Periksa kembali urutan warna sebelum crimping.', 'Masukkan RJ45 penuh ke lubang 8P pada tang, lalu tekan gagang sampai pin menjepit inti. Ulangi pada Ujung B dengan urutan T568B yang sama.', 'Setelah kedua ujung selesai, uji dengan LAN tester. Lampu MAIN dan REMOTE harus menyala berurutan 1–8 dengan urutan yang sama.'] },
         tester: { mission: 1, label: 'MISI 02 / 05', title: 'Uji hasil dengan LAN tester', subtitle: 'MAIN dan REMOTE harus menyala 1–8 dengan urutan sama.', teacher: 'Jangan gunakan kabel sebelum lulus uji. Jika ada lampu mati, periksa atau crimp ulang konektornya.', pose: 'ngasih_arahan', section: 'Menguji kabel dengan LAN tester', guide: ['Hubungkan kedua ujung ke tester.', 'Nyalakan tester.', 'Bandingkan urutan lampu 1–8.'] },
         topology: { mission: 2, label: 'MISI 03 / 05', title: 'Pasang topologi awal sekolah', subtitle: 'Tentukan jalur internet, hEX, dan PC pada port hAP.', teacher: 'Modul menetapkan Internet di port 1, hEX di port 2 sebagai jalur trunk, dan PC konfigurasi di port 3.', pose: 'ngasih_arahan', section: 'Menghubungkan perangkat ke port router', guide: ['Misi: sambungkan tiga jalur ke port hAP yang tepat.', 'Seret kabel Internet / ISP ke ether1, Port 1 hEX ke ether2, dan PC konfigurasi ke ether3.', 'Bisa juga klik nama kabel, lalu klik port tujuannya. Klik port yang terisi untuk melepas kabel jika salah.', 'Setelah ketiganya terpasang, klik Periksa sambungan.'] },
+        pcLan: { mission: 2, label: 'MISI 03 / 05', title: 'Sambungkan kabel ke port LAN komputer', subtitle: 'Pasang ujung kabel dari ether3 router ke soket LAN PC.', teacher: 'Satu ujung kabel sudah terpasang di ether3 router. Pasang ujung satunya ke port LAN komputer sebelum komputer dinyalakan.', pose: 'memberitahu', section: 'Menyambungkan kabel ke port LAN PC', guide: ['Pilih konektor RJ45 dari ether3 router.', 'Seret ke port LAN komputer, atau klik konektor lalu klik port LAN.'] },
         pc: { mission: 3, label: 'MISI 04 / 05', title: 'Masuk ke PC lab', subtitle: 'Nyalakan komputer, tunggu desktop, lalu buka WinBox.', teacher: 'Koneksi fisik sudah siap. Sekarang nyalakan PC dan buka WinBox seperti saat praktik di lab.', pose: 'bicara_santai', section: 'Menyalakan PC dan membuka WinBox', guide: ['Misi: buka WinBox melalui PC lab.', 'Klik tombol Nyalakan PC di bawah monitor. Tunggu sampai desktop muncul.', 'Klik ikon WinBox pada layar PC untuk mulai mencari router.'] },
         winbox: { mission: 3, label: 'MISI 04 / 05', title: 'Temukan router di WinBox', subtitle: 'Refresh Neighbors, pilih MAC Address, lalu Connect.', teacher: 'Pilih MAC Address router yang muncul. Pada perangkat latihan ini login admin dan password kosong, sesuai modul.', pose: 'ngasih_arahan', section: 'Menghubungkan WinBox ke router', guide: ['Misi: temukan router hAP dan masuk ke WinBox.', 'Klik Refresh pada tab Neighbors, lalu tunggu router muncul.', 'Klik satu kali baris MAC Address router. Alamatnya akan terisi pada kotak koneksi.', 'Pastikan User berisi admin dan Password kosong untuk latihan ini, lalu klik Connect.'] },
         config: { mission: 4, label: 'MISI 05 / 05', title: 'Atur Identity dan Interfaces', subtitle: 'Nama router dan tiga interface harus sesuai perannya.', teacher: 'Ubah identity menjadi Router. Lalu beri nama ether1-internet, ether2-vlan, dan ether3-local.', pose: 'ngasih_arahan', section: 'Menamai router dan interface', guide: ['Misi: beri nama router dan tiga port sesuai fungsinya.', 'Di menu kiri klik System, lalu Identity. Isi Name dengan Router dan klik OK.', 'Klik Interfaces, lalu klik dua kali baris ether1 (layar sentuh: ketuk sekali). Isi Name dengan ether1-internet dan klik OK.', 'Ulangi untuk ether2 menjadi ether2-vlan dan ether3 menjadi ether3-local.', 'Pastikan empat tugas bertanda selesai, lalu lanjut ke evaluasi.'] },
@@ -115,6 +116,8 @@
     let testerRemote = false;
     let testerPassed = false;
     let pcPowered = false;
+    let pcLanConnected = false;
+    let pcLanSelected = false;
     let pcBooting = false;
     let stageRevision = 0;
     let testerInterval = null;
@@ -166,7 +169,7 @@
     const renderConfigurationChecklist = () => { progressiveGuide?.refresh(); };
 
     const resetFromStage = (destination) => {
-        const order = ['story', 'devices', 'topologyLesson', 'lesson', 'prep', 'wiring', 'terminate', 'tester', 'topology', 'pc', 'winbox', 'config', 'quiz', 'finish'];
+        const order = ['story', 'devices', 'topologyLesson', 'lesson', 'prep', 'wiring', 'terminate', 'tester', 'topology', 'pcLan', 'pc', 'winbox', 'config', 'quiz', 'finish'];
         const index = order.indexOf(destination);
         const resets = (name) => order.indexOf(name) >= index;
         if (resets('devices')) {
@@ -188,6 +191,7 @@
             document.querySelectorAll('[data-port]').forEach((node) => { node.value = ''; });
         }
         if (resets('pc')) { pcPowered = false; pcBooting = false; }
+        if (resets('pcLan')) { pcLanConnected = false; pcLanSelected = false; }
         if (resets('winbox')) {
             neighborsLoaded = false; macSelected = false;
             document.querySelector('[data-connect-to]').value = '';
@@ -214,6 +218,7 @@
     };
 
     const setStage = (nextStage) => {
+        if (nextStage === 'pc' && !pcLanConnected) nextStage = 'pcLan';
         stageRevision++;
         window.clearInterval(testerInterval);
         testerInterval = null;
@@ -273,6 +278,10 @@
         if (stage === 'terminate') renderTerminate();
         if (stage === 'tester') renderTesterState();
         if (stage === 'topology') renderTopology();
+        if (stage === 'pcLan') {
+            renderPcLan();
+            if (pcLanConnected) showContinue('pc', 'Nyalakan komputer →');
+        }
         if (stage === 'pc') renderPcState();
         if (stage === 'config') {
             showConfigPanel('home');
@@ -296,7 +305,7 @@
         saveProgress();
     };
 
-    const previousStage = { topologyLesson: 'devices', lesson: 'topologyLesson', prep: 'lesson', wiring: 'prep', terminate: 'wiring', tester: 'terminate', topology: 'tester', pc: 'topology', winbox: 'pc', config: 'winbox', quiz: 'config', finish: 'quiz' };
+    const previousStage = { topologyLesson: 'devices', lesson: 'topologyLesson', prep: 'lesson', wiring: 'prep', terminate: 'wiring', tester: 'terminate', topology: 'tester', pcLan: 'topology', pc: 'pcLan', winbox: 'pc', config: 'winbox', quiz: 'config', finish: 'quiz' };
     const goToPreviousStep = () => {
         if (configurationLearning.open) { configurationLearning.close(); return; }
         if (quizDialog.open) quizDialog.close();
@@ -430,7 +439,7 @@
         quizNext.hidden = true;
         dialogueQuizAnswered = !line.options;
         dialogue.classList.toggle('is-quiz', Boolean(line.options));
-        dialogueCount.textContent = (dialogueIndex + 1) + ' / ' + dialogueLines.length + (line.options ? ' · PILIH JAWABAN' : ' · KLIK UNTUK LANJUT');
+        dialogueCount.textContent = (dialogueIndex + 1) + ' / ' + dialogueLines.length + (line.options ? ' · PILIH JAWABAN' : ' · KLIK DI MANA SAJA UNTUK LANJUT');
         line.options?.forEach((option, index) => {
             const button = document.createElement('button');
             button.type = 'button';
@@ -457,7 +466,7 @@
                 answerFeedback.dataset.kind = 'success';
                 answerFeedback.textContent = line.correctFeedback;
                 quizNext.hidden = false;
-                dialogueCount.textContent = (dialogueIndex + 1) + ' / ' + dialogueLines.length + ' · KLIK UNTUK LANJUT';
+                dialogueCount.textContent = (dialogueIndex + 1) + ' / ' + dialogueLines.length + ' · KLIK DI MANA SAJA UNTUK LANJUT';
             });
             answerOptions.append(button);
         });
@@ -623,6 +632,7 @@
             testerPassed,
             portSelections: Object.fromEntries([...document.querySelectorAll('[data-port]')].map((port) => [port.dataset.port, port.value])),
             pcPowered,
+            pcLanConnected,
             configCelebrated,
             neighborsLoaded,
             macSelected,
@@ -807,7 +817,9 @@
         const firstWrong = current.findIndex((color, index) => color !== colors[index].id);
         if (firstWrong >= 0) {
             document.querySelectorAll('.wire-slot')[firstWrong].classList.add('is-wrong');
-            setFeedback('Urutan belum tepat. Periksa kembali pin ' + (firstWrong + 1) + ' dengan petunjuk T568B.', 'error');
+            setFeedback('Urutan belum tepat. Perhatikan koreksi Pak Amat.', 'error');
+            const actualColor = colors.find((color) => color.id === current[firstWrong]);
+            teacherResponse('Warna pada pin ' + (firstWrong + 1) + ' di Ujung ' + (wireEnd === 0 ? 'A' : 'B') + ' masih tertukar. Kamu memasang ' + actualColor.label + ', sedangkan pin ini seharusnya ' + colors[firstWrong].label + '. Klik pin tersebut untuk melepas warnanya, pasang warna yang tepat, lalu klik Periksa urutan lagi.');
             return;
         }
         wireVerified[wireEnd] = true;
@@ -1069,8 +1081,78 @@
             return;
         }
         topologyChecked = true;
-        openDialogue([{ speaker: 'teacher', text: 'Bagus! Internet, hEX, dan PC sudah terhubung ke port yang sesuai. Kita siap masuk ke PC. Tekan tombol daya, tunggu desktop muncul, lalu buka WinBox.' }], () => setStage('pc'));
+        openDialogue([{ speaker: 'teacher', text: 'Bagus! Ketiga kabel sudah terpasang pada port router yang sesuai. Ujung kabel dari ether3 masih perlu dipasang ke port LAN komputer. Kita sambungkan ujung itu sebelum menyalakan PC.' }], () => setStage('pcLan'));
     });
+
+    const renderPcLan = () => {
+        const workbench = document.querySelector('[data-pc-lan-workbench]');
+        workbench.classList.toggle('is-connected', pcLanConnected);
+        workbench.classList.toggle('is-cable-selected', pcLanSelected);
+        const cable = document.querySelector('[data-pc-lan-cable]');
+        cable.disabled = pcLanConnected;
+        cable.draggable = !pcLanConnected;
+        cable.setAttribute('aria-pressed', String(pcLanSelected || pcLanConnected));
+        document.querySelector('[data-pc-lan-cable-status]').textContent = pcLanConnected ? 'Kedua ujung kabel sudah terpasang' : pcLanSelected ? 'Konektor dipilih. Klik port LAN pada komputer' : 'Seret ke port LAN, atau klik untuk memilih';
+        document.querySelector('[data-pc-lan-status]').textContent = pcLanConnected ? '✓ ether3 router terhubung ke port LAN PC' : 'Belum terhubung ke PC';
+    };
+    const connectPcLan = () => {
+        if (stage !== 'pcLan' || pcLanConnected) return;
+        if (!pcLanSelected) {
+            teacherResponse('Pilih dulu ujung kabel dari ether3 di sebelah kanan. Setelah itu klik port LAN komputer, atau seret konektornya langsung ke port LAN.');
+            return;
+        }
+        pcLanConnected = true;
+        pcLanSelected = false;
+        renderPcLan();
+        setFeedback('Konektor RJ45 terpasang. Kedua ujung kabel sekarang menghubungkan router dan PC.', 'success');
+        progressiveGuide?.refresh();
+        const revision = stageRevision;
+        window.setTimeout(() => {
+            if (revision !== stageRevision) return;
+            teacherResponse('Konektor sudah masuk ke port LAN komputer. Sekarang kabel menghubungkan ether3 router dengan PC lab. Berikutnya nyalakan komputer, tunggu desktop muncul, lalu buka WinBox.', () => {
+                if (revision === stageRevision) setStage('pc');
+            });
+        }, reducedMotion.matches ? 100 : 700);
+    };
+    const pcLanCable = document.querySelector('[data-pc-lan-cable]');
+    const pcLanSocket = document.querySelector('[data-pc-lan-socket]');
+    pcLanCable.addEventListener('click', () => {
+        if (pcLanConnected) return;
+        pcLanSelected = true;
+        renderPcLan();
+        saveProgress();
+        progressiveGuide?.refresh();
+    });
+    pcLanCable.addEventListener('dragstart', (event) => {
+        pcLanSelected = true;
+        event.dataTransfer.setData('application/x-netguard-pc-lan', 'ether3');
+        event.dataTransfer.effectAllowed = 'move';
+        renderPcLan();
+        progressiveGuide?.refresh();
+    });
+    pcLanCable.addEventListener('dragend', () => pcLanSocket.classList.remove('is-drop-target'));
+    pcLanSocket.addEventListener('click', connectPcLan);
+    pcLanSocket.addEventListener('dragover', (event) => {
+        if (!pcLanSelected || pcLanConnected) return;
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+        pcLanSocket.classList.add('is-drop-target');
+    });
+    pcLanSocket.addEventListener('dragleave', () => pcLanSocket.classList.remove('is-drop-target'));
+    pcLanSocket.addEventListener('drop', (event) => {
+        event.preventDefault();
+        pcLanSocket.classList.remove('is-drop-target');
+        if (event.dataTransfer.getData('application/x-netguard-pc-lan') !== 'ether3') return;
+        connectPcLan();
+    });
+    const rejectPcUsb = () => {
+        if (stage !== 'pcLan' || pcLanConnected) return;
+        teacherResponse('Itu port USB, bukan port jaringan. Konektor RJ45 dipasang pada soket LAN berbentuk kotak yang ada di sebelah kanan port USB. Pilih kabel lalu pasang pada soket bertanda LAN · RJ45.');
+    };
+    const pcLanUsb = document.querySelector('[data-pc-lan-wrong-port]');
+    pcLanUsb.addEventListener('click', rejectPcUsb);
+    pcLanUsb.addEventListener('dragover', (event) => { if (pcLanSelected) event.preventDefault(); });
+    pcLanUsb.addEventListener('drop', (event) => { event.preventDefault(); if (pcLanSelected) rejectPcUsb(); });
 
     const renderPcState = () => {
         pcDesktop?.setAvailable(pcPowered && ['pc', 'winbox', 'config'].includes(stage));
@@ -1083,6 +1165,7 @@
         powerButton.querySelector('span').textContent = pcBooting ? 'Menyalakan…' : pcPowered ? 'PC menyala' : 'Nyalakan PC';
     };
     document.querySelector('[data-power-pc]').addEventListener('click', async () => {
+        if (!pcLanConnected) { setStage('pcLan'); return; }
         if (pcBooting) return;
         if (pcPowered) { renderPcState(); return; }
         const revision = stageRevision;
@@ -1541,6 +1624,7 @@
         testerRemote = Boolean(savedProgress.testerRemote);
         testerPassed = Boolean(savedProgress.testerPassed);
         pcPowered = Boolean(savedProgress.pcPowered);
+        pcLanConnected = typeof savedProgress.pcLanConnected === 'boolean' ? savedProgress.pcLanConnected : ['pc', 'winbox', 'config', 'quiz', 'finish'].includes(savedProgress.stage);
         configCelebrated = Boolean(savedProgress.configCelebrated);
         neighborsLoaded = Boolean(savedProgress.neighborsLoaded);
         macSelected = Boolean(savedProgress.macSelected);
@@ -1674,7 +1758,7 @@
         const visible = (selector) => Boolean(document.querySelector(selector) && !document.querySelector(selector).hidden);
         const field = (selector) => document.querySelector(selector)?.value.trim() || '';
         if (stage === 'devices') return [...document.querySelectorAll('[data-device]')].map((card) => [
-            'Klik kartu ' + card.querySelector('b').textContent + ' di sebelah kiri. Perhatikan gambar dan dengarkan penjelasan Pak Amat.\n\nSetelah kartu dibuka, alat ditandai ✓ hijau. Klik percakapan Pak Amat untuk melanjutkan setelah penjelasannya selesai.', visitedDevices.has(card.dataset.device),
+            'Klik kartu ' + card.querySelector('b').textContent + ' di sebelah kiri. Perhatikan gambar dan dengarkan penjelasan Pak Amat.\n\nSetelah kartu dibuka, alat ditandai ✓ hijau.', visitedDevices.has(card.dataset.device),
         ]);
         if (stage === 'prep') return [
             ['Klik Potong sesuai panjang di bawah gambar kabel. Tindakan ini memotong kabel UTP sesuai kebutuhan.\n\nSetelah kabel terpotong, petunjuk berubah hijau. Jangan memilih Kupas sebelum kabel dipotong.', prepStep >= 1],
@@ -1684,7 +1768,7 @@
         if (stage === 'wiring') return [0, 1].flatMap((end) => {
             const label = end === 0 ? 'A' : 'B';
             return [
-                ['Susun delapan warna pada Ujung ' + label + ' dari pin 1 sampai 8. Klik satu warna untuk mengisi pin kosong berikutnya, atau seret warna ke pin tujuan.\n\nUrutannya: putih-oranye, oranye, putih-hijau, biru, putih-biru, hijau, putih-cokelat, cokelat. Jika keliru, klik pin yang terisi untuk melepasnya atau gunakan Batalkan terakhir.', wirePlacements[end].every((color, index) => color === colors[index].id)],
+                ['Susun delapan warna pada Ujung ' + label + ' dari pin 1 sampai 8. Klik satu warna untuk mengisi pin kosong berikutnya, atau seret warna ke pin tujuan.', wirePlacements[end].every((color, index) => color === colors[index].id)],
                 ['Klik Periksa urutan untuk Ujung ' + label + '. Kedua ujung kabel straight harus memakai susunan T568B yang sama.\n\nJika ada koreksi, perbaiki pin yang disebutkan lalu klik Periksa urutan lagi. Setelah Ujung B benar, lanjut ke pemasangan konektor.', wireVerified[end] || (end === 0 && wireEnd === 1)],
             ];
         });
@@ -1702,23 +1786,27 @@
             ]),
             ['Klik Periksa sambungan setelah tiga kabel terpasang. Internet harus di ether1, hEX di ether2, dan PC di ether3.\n\nJika Pak Amat memberi koreksi, pindahkan kabel yang salah lalu periksa kembali.', topologyChecked],
         ];
+        if (stage === 'pcLan') return [
+            ['Klik ujung kabel dari ether3 di sebelah kanan untuk memilih konektor RJ45. Kamu juga bisa langsung menyeretnya ke komputer.', pcLanSelected || pcLanConnected],
+            ['Cari soket LAN bertanda LAN · RJ45 pada bagian belakang komputer. Klik soket itu untuk memasang konektor yang dipilih, atau lepaskan kabel yang diseret di atasnya. Tunggu konektor terlihat terpasang.', pcLanConnected],
+        ];
         if (stage === 'pc') return [
             ['Klik Nyalakan PC di bawah monitor, lalu tunggu proses menyalakan komputer selesai.\n\nLangkah selesai setelah desktop muncul. Jangan klik berkali-kali saat tombol masih bertuliskan Menyalakan.', pcPowered],
             ['Klik ikon WinBox pada desktop PC. Command Prompt juga tersedia untuk memeriksa komputer, tetapi tahap ini dimulai dari WinBox. Jendela koneksi router akan terbuka.\n\nSelanjutnya kita mencari router melalui tab Neighbors.', false],
         ];
         if (stage === 'winbox') return [
             ['Pada jendela WinBox, pilih tab Neighbors lalu klik Refresh. Tunggu sampai baris router muncul dalam tabel.\n\nJika tabel masih kosong, klik Refresh lagi dan tunggu proses pencarian selesai.', neighborsLoaded],
-            ['Klik MAC Address 48:A9:8A:1C:01:01 pada baris router. Periksa kotak Connect To di bagian atas: alamat tersebut harus terisi.\n\nPilih alamat MAC agar koneksi dapat dilakukan sebelum pengaturan IP selesai.', macSelected],
-            ['Pastikan Login berisi admin dan Password kosong. Klik Connect di sebelah kotak Connect To.\n\nJika muncul koreksi, periksa alamat tujuan dan kedua kolom login, lalu klik Connect lagi.', loginAccepted],
+            ['Klik MAC Address 48:A9:8A:1C:01:01 pada baris router. Periksa kotak Connect To di bagian atas: alamat tersebut harus terisi.\n\nPilih alamat MAC agar koneksi dapat dilakukan sebelum pengaturan IP selesai.', macSelected, "[data-neighbor-row]"],
+            ['Pastikan Login berisi admin dan Password kosong. Klik Connect di sebelah kotak Connect To.\n\nJika muncul koreksi, periksa alamat tujuan dan kedua kolom login, lalu klik Connect lagi.', loginAccepted, "[data-connect-winbox]"],
         ];
         if (stage === 'config') return [
-            ['Klik System pada menu kiri WinBox, lalu pilih Identity. Jendela Identity akan terbuka.\n\nJika Pak Amat sedang memberi arahan, selesaikan percakapannya terlebih dahulu. Nama router diatur melalui menu ini.', identitySaved || visible('[data-config-panel="identity"]')],
-            ['Pada jendela Identity, ubah kolom Name dari MikroTik menjadi Router. Klik OK untuk menyimpan.\n\nJika salah ketik, perbaiki nama lalu simpan lagi. Target selesai setelah nama Router benar-benar tersimpan.', identitySaved],
+            ['Klik System pada menu kiri WinBox, lalu pilih Identity. Jendela Identity akan terbuka.\n\nNama router diatur melalui menu ini.', identitySaved || visible('[data-config-panel="identity"]')],
+            ['Pada jendela Identity, ubah kolom Name dari MikroTik menjadi Router. Klik OK untuk menyimpan.\n\nJika salah ketik, perbaiki nama lalu simpan lagi. Target selesai setelah nama Router benar-benar tersimpan.', identitySaved, [{ selector: '[data-identity-input]', expected: 'Router' },"[data-save-identity]"]],
             ...['ether1', 'ether2', 'ether3'].flatMap((name) => {
                 const target = { ether1: 'ether1-internet', ether2: 'ether2-vlan', ether3: 'ether3-local' }[name];
                 return [
                     ['Klik Interfaces di menu kiri. Pada tab Interface, klik dua kali baris ' + name + ' untuk membuka pengaturannya. Pada layar sentuh, ketuk baris sekali.\n\nPastikan jendela yang dibuka milik ' + name + ', agar nama tidak diberikan pada port yang salah.', interfaceSaved[name] || (editingInterface === name && visible('[data-config-panel="edit"]'))],
-                    ['Ubah kolom Name menjadi ' + target + ', lalu klik OK.\n\nJika Pak Amat memberi koreksi, perbaiki ejaan dan simpan kembali. Nomor port fisik tetap sama; nama ini menjelaskan fungsi jalurnya.', interfaceSaved[name]],
+                    ['Ubah kolom Name menjadi ' + target + ', lalu klik OK.\n\nJika Pak Amat memberi koreksi, perbaiki ejaan dan simpan kembali. Nomor port fisik tetap sama; nama ini menjelaskan fungsi jalurnya.', interfaceSaved[name], [{ selector: '[data-interface-input]', expected: target },"[data-save-interface]"]],
                 ];
             }),
         ];

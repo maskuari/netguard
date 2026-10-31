@@ -116,7 +116,7 @@
     </div>
 </div>
 
-<dialog class="ch2-learning-dialog" data-learning-dialog aria-labelledby="ch3-learning-title"><button type="button" class="ch2-dialog-close" data-close-learning aria-label="Tutup materi">×</button><span class="ch2-modal-kicker">PAK AMAT · MATERI CHAPTER 03</span><h2 id="ch3-learning-title" data-learning-title></h2><div data-learning-body></div><button type="button" class="ch2-task-button" data-learning-continue>Mulai praktik →</button></dialog>
+<dialog class="ch2-learning-dialog" data-learning-dialog aria-labelledby="ch3-learning-title"><button type="button" class="ch2-dialog-close" data-close-learning aria-label="Tutup materi">×</button><h2 id="ch3-learning-title" data-learning-title></h2><div data-learning-body></div><button type="button" class="ch2-task-button" data-learning-continue>Mulai praktik →</button></dialog>
 @include('chapter-evaluation', ['chapterNumber' => 3, 'quizTitle' => 'Cek pemahaman DNS, routing dan NAT', 'finishTitle' => 'Hebat! Jaringan sekolah sudah terhubung ke internet.', 'finishDescription' => 'Jalur WAN dan default route sudah diperiksa, DNS berfungsi, NAT masquerade aktif, serta koneksi dari router dan Command Prompt PC lab telah diuji. Berikutnya siapkan WiFi dan HotSpot.'])
 @include('game-music-player')
 </body>

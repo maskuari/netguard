@@ -219,6 +219,7 @@ class ChapterOneTest extends TestCase
             ->assertJsonPath('score', 1)
             ->assertJsonPath('correctAnswers', 1)
             ->assertJsonPath('incorrectAnswers', 4)
+            ->assertJsonPath('correctOptionIndexes', [1, 2, 0, 3, 2])
             ->assertJsonPath('totalQuestions', 5);
 
         $this->postJson(route('chapter.one.complete'), ['answers' => [1, 2, 0, 0, 0]])

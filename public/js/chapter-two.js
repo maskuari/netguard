@@ -83,7 +83,7 @@
         const index = stages.indexOf(state.stage);
         panels.forEach((panel, name) => { panel.hidden = name !== state.stage; });
         document.querySelector('[data-dialogue-text]').textContent = dialogueLines[state.dialogue];
-        document.querySelector('[data-dialogue-count]').textContent = `${state.dialogue + 1} / ${dialogueLines.length} · KLIK UNTUK LANJUT`;
+        document.querySelector('[data-dialogue-count]').textContent = `${state.dialogue + 1} / ${dialogueLines.length} · KLIK DI MANA SAJA UNTUK LANJUT`;
         const progress = progressFor(state.highest);
         if (state.highest >= stages.indexOf('addresses')) {
             document.querySelector('[data-wan-status]').textContent = 'DHCP Client · bound';

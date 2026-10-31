@@ -1,4 +1,18 @@
 .chapter-one-scene .chapter-navbar.lab-header { display: flex; align-items: center; flex: none; gap: clamp(8px, 1vw, 16px); width: min(100%, 1820px); min-height: 84px; margin: 0 auto; padding: 10px clamp(12px, 1.2vw, 22px); border: 1px solid #b4dbff; border-radius: 22px; background: #f9fcfff2; color: #0d2b5c; box-shadow: 0 12px 35px #093f8840, inset 0 1px 0 #fff; }
+.chapter-home-confirm[hidden] { display: none; }
+.chapter-home-confirm { position: fixed; z-index: 1000; inset: 0; display: grid; place-items: center; padding: 24px; }
+.chapter-home-confirm__backdrop { position: absolute; inset: 0; background: #061b3dcc; backdrop-filter: blur(5px); }
+.chapter-home-confirm__dialog { position: relative; width: min(100%, 470px); padding: 30px; border: 1px solid #b6ddff; border-radius: 26px; background: linear-gradient(145deg, #ffffff, #edf8ff); color: #0d2b5c; box-shadow: 0 24px 70px #03184166, inset 0 1px 0 #fff; animation: chapter-home-confirm-in .18s ease-out; }
+.chapter-home-confirm__icon { display: grid; place-items: center; width: 52px; height: 52px; margin-bottom: 16px; border-radius: 16px; color: #fff; background: linear-gradient(135deg, #087cf0, #0752be); font-size: 28px; font-weight: 900; box-shadow: 0 8px 18px #087cf044; }
+.chapter-home-confirm__eyebrow { color: #0874d8; font-size: 11px; font-weight: 900; letter-spacing: .14em; }
+.chapter-home-confirm__dialog h2 { margin: 7px 0 10px; color: #07194a; font-size: clamp(23px, 3vw, 30px); line-height: 1.1; }
+.chapter-home-confirm__dialog p { margin: 0; color: #486487; font-size: 15px; line-height: 1.6; }
+.chapter-home-confirm__actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+.chapter-home-confirm__actions button { min-height: 43px; padding: 10px 16px; border-radius: 12px; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
+.chapter-home-confirm__cancel { border: 1px solid #abd8ff; color: #075eb9; background: #f3faff; }
+.chapter-home-confirm__leave { border: 1px solid #0759c8; color: #fff; background: linear-gradient(135deg, #087ff4, #075bc9); box-shadow: 0 6px 14px #087cf044; }
+.chapter-home-confirm__actions button:focus-visible { outline: 3px solid #66baff; outline-offset: 2px; }
+@keyframes chapter-home-confirm-in { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .chapter-one-scene .chapter-navbar .lab-back { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 46px; height: 46px; min-width: 46px; padding: 0; border: 1px solid #a9d7ff; border-radius: 13px; color: #006bed; background: #edf8ff; }
 .chapter-navbar svg { display: block; flex: none; width: 21px; height: 21px; }
 .chapter-one-scene .chapter-navbar .lab-logo { display: block; flex: none; width: 55px; height: 55px; object-fit: contain; }

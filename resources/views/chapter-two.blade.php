@@ -44,7 +44,7 @@
                     <div class="ch2-intro-art"><img src="{{ asset('images/asset/chapter-two-topology.svg') }}" alt="Diagram router hAP membagi jaringan sekolah ke VLAN siswa, VLAN guru, dan WiFi" width="1100" height="560"></div>
                     <div class="ch2-dialogue" data-dialogue tabindex="0" role="button" aria-label="Klik untuk melanjutkan dialog Pak Amat">
                         <img class="ch2-dialogue__teacher" src="{{ asset($teacherPath.'ngasih_arahan.png') }}" alt="Pak Amat, guru TKJ">
-                        <div class="ch2-dialogue__card"><b>PAK AMAT · GURU TKJ</b><p data-dialogue-text>Kerja bagus! Router dan kabel dari misi pertama sudah siap. Sekarang kita perlu memisahkan jaringan siswa dan guru.</p><small data-dialogue-count>1 / 4 · KLIK UNTUK LANJUT</small></div>
+                        <div class="ch2-dialogue__card"><b>PAK AMAT · GURU TKJ</b><p data-dialogue-text>Kerja bagus! Router dan kabel dari misi pertama sudah siap. Sekarang kita perlu memisahkan jaringan siswa dan guru.</p><small data-dialogue-count>1 / 4 · KLIK DI MANA SAJA UNTUK LANJUT</small></div>
                     </div>
                 </div>
 

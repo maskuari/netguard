@@ -103,6 +103,7 @@ class ChapterTwoTest extends TestCase
             ->assertUnprocessable()->assertJsonPath('score', 1)
             ->assertJsonPath('correctAnswers', 1)
             ->assertJsonPath('incorrectAnswers', 4)
+            ->assertJsonPath('correctOptionIndexes', [1, 2, 3, 0, 2])
             ->assertJsonPath('totalQuestions', 5);
         $this->postJson(route('chapter.two.complete'), ['answers' => [1, 2, 3, 1, 0]])
             ->assertUnprocessable()

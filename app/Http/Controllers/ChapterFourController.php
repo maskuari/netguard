@@ -42,7 +42,7 @@ class ChapterFourController extends Controller
         }
         $result = ['score' => $score, 'correctAnswers' => $score, 'incorrectAnswers' => count(self::QUESTIONS) - $score, 'totalQuestions' => count(self::QUESTIONS)];
         if ($score !== count(self::QUESTIONS)) {
-            return response()->json(['message' => 'Masih ada jawaban yang belum tepat. Periksa hasil evaluasi dan coba lagi.', ...$result], 422);
+            return response()->json(['message' => 'Masih ada jawaban yang belum tepat. Periksa hasil evaluasi dan coba lagi.', 'correctOptionIndexes' => array_column(self::QUESTIONS, 'answer'), ...$result], 422);
         }
 
         $user = $request->user();

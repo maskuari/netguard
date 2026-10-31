@@ -1,5 +1,6 @@
 @php
     $user = auth()->user();
+    $completedChapters = $user->completedAdventureChapters();
     $chapters = [
         [
             'number' => '01',
@@ -134,10 +135,12 @@
                     <button class="chapter-arrow chapter-arrow--previous" type="button" data-carousel-previous aria-label="Chapter sebelumnya"><svg class="icon" aria-hidden="true"><use href="#chapter-chevron"/></svg></button>
                     <div class="chapter-track" role="tablist" aria-label="Lima chapter Adventure Mode">
                         @foreach ($chapters as $chapter)
-                            <article class="chapter-card{{ $loop->first ? ' is-selected' : '' }}" data-chapter-card="{{ $chapter['number'] }}">
-                                <button class="chapter-card__select" type="button" role="tab" id="chapter-tab-{{ $chapter['number'] }}" aria-controls="chapter-panel-{{ $chapter['number'] }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}" tabindex="{{ $loop->first ? '0' : '-1' }}" data-chapter="{{ $chapter['number'] }}" aria-label="Pilih Chapter {{ $chapter['number'] }}: {{ $chapter['short'] }}">
+                            @php($isChapterCompleted = $completedChapters >= (int) $chapter['number'])
+                            <article class="chapter-card{{ $loop->first ? ' is-selected' : '' }}{{ $isChapterCompleted ? ' is-completed' : '' }}" data-chapter-card="{{ $chapter['number'] }}" data-completed="{{ $isChapterCompleted ? 'true' : 'false' }}">
+                                <button class="chapter-card__select" type="button" role="tab" id="chapter-tab-{{ $chapter['number'] }}" aria-controls="chapter-panel-{{ $chapter['number'] }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}" tabindex="{{ $loop->first ? '0' : '-1' }}" data-chapter="{{ $chapter['number'] }}" aria-label="Pilih Chapter {{ $chapter['number'] }}: {{ $chapter['short'] }}{{ $isChapterCompleted ? ' · Selesai' : '' }}">
                                     <span class="chapter-card__visual"><img src="{{ asset('images/asset/'.$chapter['detail_image']) }}" alt="" width="1254" height="1254" decoding="async" draggable="false"></span>
                                     <span class="chapter-card__badge">CHAPTER {{ $chapter['number'] }}</span>
+                                    @if ($isChapterCompleted)<span class="chapter-card__completion" aria-hidden="true"><svg class="icon"><use href="#chapter-check"/></svg>Selesai</span>@endif
                                     <span class="chapter-card__content"><strong>{{ $chapter['short'] }}</strong><span>{{ $chapter['summary'] }}</span><span class="chapter-card__progress" aria-hidden="true"><span></span></span></span>
                                 </button>
                                 <button class="chapter-card__info" type="button" data-open-learning aria-controls="chapter-learning" aria-expanded="false" aria-label="Klik untuk melihat yang akan dipelajari di Chapter {{ $chapter['number'] }}" title="Klik untuk melihat yang akan dipelajari"><svg class="icon" aria-hidden="true"><use href="#chapter-book"/></svg><span class="chapter-card__info-label" aria-hidden="true">Lihat yang dipelajari</span></button>

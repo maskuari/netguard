@@ -1,7 +1,7 @@
 .ch5-scene [hidden] { display: none !important; }
 .ch5-scene .lab-scroll { height: 100%; min-height: 0; overflow: hidden; }
 .ch5-scene .lab-main { display: flex; flex: 1; min-height: 0; overflow: hidden; padding-bottom: 0; }
-.ch5-scene .ch5-workspace { display: grid; flex: 1; min-height: 0; grid-template-columns: minmax(0, 1fr) clamp(260px, 20vw, 330px); grid-template-rows: minmax(0, 1fr); align-items: stretch; gap: 14px; }
+.ch5-scene .ch5-workspace { display: grid; flex: 1; min-height: 0; grid-template-columns: minmax(0, 1fr) clamp(300px, 22vw, 360px); grid-template-rows: minmax(0, 1fr); align-items: stretch; gap: 14px; }
 .ch5-scene .ch5-workbench { display: grid; min-width: 0; min-height: 0; height: 100%; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; border: 1px solid #aabecf; border-radius: 7px; background: #d7e5ee; }
 .ch5-inherited-bar { z-index: 5; display: flex; min-height: 48px; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 12px; border-bottom: 1px solid #a9c1d2; background: #f0f6fa; color: #193957; font: 12px/1.35 Tahoma, sans-serif; }
 .ch5-inherited-bar > span:first-child { display: grid; gap: 2px; }

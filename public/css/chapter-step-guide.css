@@ -22,9 +22,88 @@
 .chapter-one-scene .chapter-guide-scroll [data-guide-list].chapter-step-guide { overflow: visible; padding-right: 0; }
 .chapter-one-scene .lab-guide__note { margin-top: 8px; padding: 10px; }
 .chapter-one-scene .lab-guide__feedback:empty, .chapter-one-scene .ch2-guide__feedback:empty { display: none; }
+
+/* Keep mission instructions readable and let only the step content scroll. */
+.chapter-one-scene .lab-guide__header { gap: 13px; padding-bottom: 14px; }
+.chapter-one-scene .lab-guide__header > span { width: 44px; height: 44px; font-size: 28px; }
+.chapter-one-scene .lab-guide__header small { font-size: 12px; }
+.chapter-one-scene .lab-guide__header h2 { font-size: clamp(22px, 1.55vw, 26px); }
+.chapter-one-scene .lab-guide [data-guide-list] > li,
+.chapter-one-scene .lab-guide__steps > ol { font-size: clamp(16px, 1.1vw, 18px); line-height: 1.55; }
+.chapter-one-scene .lab-guide [data-guide-list] > .chapter-guide-step,
+.chapter-one-scene .lab-guide [data-guide-list] > .ch3-guide-step { gap: 11px; padding: 17px; line-height: 1.55; }
+.chapter-one-scene .lab-guide .chapter-guide-step > b,
+.chapter-one-scene .lab-guide .ch3-guide-step > b { font-size: 14px; line-height: 1.45; }
+.chapter-one-scene .lab-guide__note { font-size: 14px; line-height: 1.45; }
+.chapter-one-scene .lab-guide__feedback { font-size: 14px; line-height: 1.5; }
+
+.chapter-one-scene .lab-guide .chapter-guide-instructions { display: grid; gap: 16px; white-space: normal; }
+.chapter-one-scene .lab-guide .chapter-guide-branches { display: grid; gap: 10px; margin: 0; padding: 0 0 0 19px; list-style: disc; }
+.chapter-one-scene .lab-guide .chapter-guide-branches > li { margin: 0; padding: 0 0 0 3px; font-size: inherit; line-height: 1.5; overflow-wrap: anywhere; }
+.chapter-one-scene .lab-guide .chapter-guide-branches > li::marker { color: #0879dc; }
+.chapter-one-scene .lab-guide .chapter-guide-branches--help { padding-top: 13px; border-top: 1px solid #d1e4f5; font-size: .92em; font-weight: 500; }
+.chapter-one-scene .lab-guide .is-done .chapter-guide-branches > li::marker { color: #087451; }
+
+/* The step cards provide progress; keep supplementary panels out of the guide. */
+.chapter-one-scene .lab-guide .lab-guide__note,
+.chapter-one-scene .lab-guide .ch2-vlan-checklist,
+.chapter-one-scene .lab-guide > img,
+.chapter-one-scene .lab-guide [data-previous],
+.chapter-one-scene .lab-guide [data-review-material],
+.chapter-one-scene .lab-guide [data-reread-learning],
+.chapter-one-scene .lab-guide [data-replay-prologue] { display: none !important; }
+
+@media (min-width: 1201px) {
+    .chapter-one-scene:not(.ch2-scene) .lab-layout { grid-template-columns: minmax(0, 1fr) clamp(310px, 23vw, 360px); }
+}
+
+/* Learning dialogs sit outside the chapter scene in Chapters 2–5. */
+dialog:is(.ch1-learning-dialog, .ch2-learning-dialog):not([open]) { display: none; }
+dialog:is(.ch1-learning-dialog, .ch2-learning-dialog)[open] { display: flex; flex-direction: column; box-sizing: border-box; width: min(920px, calc(100vw - 40px)); max-height: min(86dvh, 820px); margin: auto; padding: 34px 38px 28px; overflow: hidden; border: 2px solid #a8ddff; border-radius: 28px; background: linear-gradient(135deg, #fff 35%, #edf8ff); color: #17385f; box-shadow: 0 0 0 6px #d9f1ff25, 0 28px 90px #00173980; font-family: 'Trebuchet MS', 'Segoe UI', Arial, sans-serif; }
+dialog:is(.ch1-learning-dialog, .ch2-learning-dialog)::backdrop { background: #071e4599; backdrop-filter: blur(6px); }
+dialog:is(.ch1-learning-dialog, .ch2-learning-dialog) :is(.ch1-learning-close, .ch2-dialog-close) { position: absolute; top: 16px; right: 16px; display: grid; place-items: center; flex: none; width: 34px; height: 34px; margin: 0; padding: 0; border: 1px solid #c6e2f5; border-radius: 11px; background: #eff8ff; color: #387499; font: 24px/1 'Segoe UI', sans-serif; cursor: pointer; }
+dialog:is(.ch1-learning-dialog, .ch2-learning-dialog) :is(.ch1-learning-close, .ch2-dialog-close):hover { background: #dcefff; color: #065fba; }
+dialog:is(.ch1-learning-dialog, .ch2-learning-dialog) :is(.ch1-learning-kicker, .ch2-modal-kicker) { display: none; }
+dialog:is(.ch1-learning-dialog, .ch2-learning-dialog) h2 { flex: none; margin: 0 28px 20px 0; color: #102c59; font-size: clamp(25px, 2.5vw, 36px); font-weight: 800; line-height: 1.2; letter-spacing: -.025em; }
+dialog:is(.ch1-learning-dialog, .ch2-learning-dialog) > :is([data-learning-body], [data-configuration-learning-body]) { flex: 1 1 auto; min-width: 0; min-height: 0; padding: 0 4px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-gutter: stable both-edges; scrollbar-width: thin; scrollbar-color: #a6cee8 transparent; }
+dialog:is(.ch1-learning-dialog, .ch2-learning-dialog) .ch2-topology { display: block; box-sizing: border-box; width: 100%; max-width: 100%; height: auto; max-height: min(32dvh, 280px); margin: 20px auto; object-fit: contain; object-position: center; border: 1px solid #d1e9f7; border-radius: 16px; background: #eefaff; }
+dialog:is(.ch1-learning-dialog, .ch2-learning-dialog) p { margin: 0 0 16px; color: #42607e; font-size: clamp(15px, 1.1vw, 17px); line-height: 1.65; }
+dialog:is(.ch1-learning-dialog, .ch2-learning-dialog) h3 { margin: 20px 0 9px; color: #194672; font-size: 19px; }
+dialog:is(.ch1-learning-dialog, .ch2-learning-dialog) :is(.ch1-learning-note, .ch2-modal-note) { margin-top: 16px; padding: 14px 18px; border: 1px solid #cce4f5; border-left: 4px solid #25a3ef; border-radius: 14px; background: #eaf6ff; font-weight: 500; }
+dialog:is(.ch1-learning-dialog, .ch2-learning-dialog) > :is(.lab-button, .ch2-task-button) { align-self: center; flex: none; width: auto; min-width: 210px; max-width: 100%; min-height: 48px; margin: 22px auto 6px; padding: 12px 24px; border: 1px solid #1695ff; border-radius: 14px; background: linear-gradient(#11a3ff, #0873ea); color: #fff; box-shadow: 0 4px 0 #0755b0, 0 8px 18px #087cf02b; font: 800 15px/1.3 'Trebuchet MS', 'Segoe UI', sans-serif; cursor: pointer; }
+dialog:is(.ch1-learning-dialog, .ch2-learning-dialog) button:focus-visible { outline: 3px solid #63bfff; outline-offset: 3px; }
+@media (max-width: 620px) { dialog:is(.ch1-learning-dialog, .ch2-learning-dialog)[open] { width: calc(100vw - 24px); max-height: 90dvh; padding: 26px 22px 20px; border-radius: 22px; } }
+
+/* Legacy scene-scoped rules retained for embedded chapter dialogs. */
+.chapter-one-scene dialog.ch1-learning-dialog,
+.chapter-one-scene dialog.ch2-learning-dialog { box-sizing: border-box; border: 2px solid #9bd6ff; border-radius: 24px; background: linear-gradient(145deg, #ffffff, #f3faff); color: #0d2b5c; box-shadow: 0 25px 75px #0018428a, inset 0 1px 0 #fff; font-family: 'Trebuchet MS', 'Segoe UI', Arial, sans-serif; }
+.chapter-one-scene dialog.ch1-learning-dialog::backdrop,
+.chapter-one-scene dialog.ch2-learning-dialog::backdrop { background: #061b46b0; backdrop-filter: blur(5px); }
+.chapter-one-scene dialog .ch1-learning-close,
+.chapter-one-scene dialog .ch2-dialog-close { position: absolute; z-index: 3; top: 14px; right: 14px; display: grid; place-items: center; width: 36px; height: 36px; margin: 0; padding: 0; border: 1px solid #add7f4; border-radius: 11px; color: #1267ad; background: #edf8ff; font: inherit; font-size: 24px; line-height: 1; cursor: pointer; transition: transform .18s ease, background .18s ease, color .18s ease; }
+.chapter-one-scene dialog .ch1-learning-close:hover,
+.chapter-one-scene dialog .ch2-dialog-close:hover { transform: translateY(-1px); color: #fff; background: #087cf0; }
+.chapter-one-scene dialog .ch1-learning-kicker,
+.chapter-one-scene dialog .ch2-modal-kicker { display: block; margin-right: 52px; color: #0874d8; font-size: 11px; font-weight: 900; letter-spacing: .13em; }
+.chapter-one-scene dialog.ch1-learning-dialog h2,
+.chapter-one-scene dialog.ch2-learning-dialog h2 { color: #081e50; font-size: clamp(25px, 3vw, 38px); line-height: 1.14; }
+.chapter-one-scene dialog.ch1-learning-dialog p,
+.chapter-one-scene dialog.ch2-learning-dialog p { color: #34547b; font-size: 15px; line-height: 1.5; }
+.chapter-one-scene dialog.ch1-learning-dialog > .lab-button,
+.chapter-one-scene dialog.ch2-learning-dialog > .ch2-task-button { border-radius: 13px; box-shadow: 0 5px 0 #0756b8, 0 10px 22px #087cf033; font-weight: 900; }
+
+@media (min-width: 1101px) {
+    .ch2-scene .ch2-guide { display: flex; height: 100%; min-height: 0; flex-direction: column; overflow: hidden; }
+    .ch2-scene .ch2-guide .chapter-guide-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+    .ch2-scene .ch2-guide > :not(.chapter-guide-scroll) { flex-shrink: 0; }
+}
+
 @media (max-width: 1100px) {
     .chapter-one-scene .lab-layout, .chapter-one-scene .ch2-workspace { grid-template-columns: minmax(0, 1fr) minmax(225px, 32%); grid-template-rows: minmax(0, 1fr); }
     .chapter-one-scene .lab-character { display: none; }
     .chapter-one-scene .lab-guide { position: relative; top: auto; padding: 10px; }
     .chapter-one-scene .ch2-workbench { height: auto; }
 }
+.chapter-one-scene :is(.routeros, .winbox-window) .chapter-guide-target { position: relative; outline: 3px solid #ffbf36 !important; outline-offset: 2px; background-color: #fff0bd !important; color: #193555 !important; box-shadow: 0 0 0 5px #ffc34330, 0 0 18px #ffc34366 !important; animation: chapter-guide-target-glow 1.6s ease-in-out infinite; }
+@keyframes chapter-guide-target-glow { 50% { outline-color: #f39812; box-shadow: 0 0 0 7px #ffc34322, 0 0 22px #ffc34388; } }
+@media (prefers-reduced-motion: reduce) { .chapter-one-scene :is(.routeros, .winbox-window) .chapter-guide-target { animation: none; } }

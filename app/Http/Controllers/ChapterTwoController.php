@@ -72,7 +72,16 @@ class ChapterTwoController extends Controller
         ];
 
         if ($score !== count(self::QUESTIONS)) {
-            return response()->json(['message' => 'Masih ada jawaban yang perlu diperbaiki. Baca kembali rekap dan coba lagi.', ...$evaluationResult], 422);
+            $correctOptionIndexes = array_map(
+                static fn (array $question): int => $question['answer'],
+                self::QUESTIONS,
+            );
+
+            return response()->json([
+                'message' => 'Masih ada jawaban yang perlu diperbaiki. Periksa tanda jawaban benar, lalu coba lagi.',
+                'correctOptionIndexes' => $correctOptionIndexes,
+                ...$evaluationResult,
+            ], 422);
         }
 
         $user = $request->user();

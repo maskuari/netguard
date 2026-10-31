@@ -37,3 +37,9 @@
 .ch3-scene .ch3-dns-server-field { display: flex; min-width: 0; gap: 4px; align-items: center; }
 .ch3-scene .ch3-dns-server-field input { flex: 1; min-width: 0; width: 100%; }
 .ch3-scene .ch3-dns-server-field button { flex: none; width: 20px; padding: 0; border: 0; background: transparent; color: #111; font-size: 16px; }
+
+/* Keep the learning modal controls consistent with the game shell. */
+.ch3-scene .ch2-learning-dialog { box-sizing: border-box; border: 2px solid #9bd6ff; border-radius: 21px; background: #f9fdff; color: #0d2b5c; box-shadow: 0 24px 75px #0018428a; font-family: 'Trebuchet MS', 'Segoe UI', Arial, sans-serif; }
+.ch3-scene .ch2-dialog-close { position: absolute; z-index: 2; top: 13px; right: 14px; display: grid; place-items: center; width: 34px; height: 34px; margin: 0; padding: 0; border: 1px solid #add7f4; border-radius: 9px; color: #1863aa; background: #edf8ff; font: inherit; font-size: 25px; line-height: 1; cursor: pointer; }
+.ch3-scene .ch2-modal-kicker { display: block; }
+.ch3-scene .ch2-learning-dialog h2 { margin-top: 9px; }

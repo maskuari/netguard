@@ -137,7 +137,8 @@ class ChapterThreeTest extends TestCase
     {
         $user = User::factory()->create(['completed_adventure_chapters' => 2]);
         $this->actingAs($user)->postJson(route('chapter.three.complete'), ['answers' => [0, 1, 0, 1, 0]])
-            ->assertUnprocessable()->assertJsonPath('correctAnswers', 3)->assertJsonPath('incorrectAnswers', 2);
+            ->assertUnprocessable()->assertJsonPath('correctAnswers', 3)->assertJsonPath('incorrectAnswers', 2)
+            ->assertJsonPath('correctOptionIndexes', [0, 0, 0, 0, 0]);
         $this->postJson(route('chapter.three.complete'), ['answers' => [1, 1, 1, 1, 1]])
             ->assertUnprocessable()->assertJsonPath('correctAnswers', 0)->assertJsonPath('incorrectAnswers', 5);
         foreach ([[0, 0], [0, 0, 0, 0, 4]] as $answers) {

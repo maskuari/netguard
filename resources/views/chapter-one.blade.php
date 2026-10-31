@@ -42,7 +42,7 @@
                         <h1 data-synopsis-title>Lab TKJ membutuhkan jaringan</h1>
                         <p data-synopsis-text>Pagi ini, lab TKJ sudah dipenuhi komputer yang siap digunakan. Namun semuanya masih berdiri sendiri—belum ada jaringan yang menghubungkan ruang praktik.</p>
                         <div class="chapter-prologue__progress"><span data-synopsis-progress></span></div>
-                        <div class="chapter-prologue__controls"><small data-synopsis-count>ADEGAN 01 / 05</small><small class="chapter-prologue__click-hint">KLIK UNTUK LANJUT</small></div>
+                        <div class="chapter-prologue__controls"><small data-synopsis-count>ADEGAN 01 / 05</small><small class="chapter-prologue__click-hint">KLIK DI MANA SAJA UNTUK LANJUT</small></div>
                     </div>
                 </div>
                 <div class="chapter-dialogue" data-dialogue hidden role="dialog" aria-modal="true" aria-labelledby="dialogue-speaker">
@@ -50,7 +50,7 @@
                     <div class="chapter-dialogue__portrait chapter-dialogue__portrait--student" data-dialogue-student><img src="{{ asset($studentPath.'bicara_santai.png') }}" alt="{{ $student->name }}" decoding="async"></div>
                     <div class="chapter-dialogue__equipment" data-dialogue-equipment hidden><img data-dialogue-equipment-image src="" alt="" decoding="async"></div>
                     <div class="chapter-dialogue__card" data-dialogue-card>
-                        <div class="chapter-dialogue__content"><span id="dialogue-speaker" data-dialogue-speaker>PAK AMAT · GURU TKJ</span><p data-dialogue-text></p><div class="chapter-dialogue__options" data-dialogue-options role="group" aria-label="Pilihan jawaban" hidden></div><p class="chapter-dialogue__answer-feedback" data-dialogue-answer-feedback role="status" aria-live="polite" hidden></p><button class="chapter-dialogue__quiz-next" type="button" data-dialogue-quiz-next hidden>Lanjut →</button><small data-dialogue-count>1 / 6 · KLIK UNTUK LANJUT</small></div>
+<div class="chapter-dialogue__content"><span id="dialogue-speaker" data-dialogue-speaker>PAK AMAT · GURU TKJ</span><p data-dialogue-text></p><div class="chapter-dialogue__options" data-dialogue-options role="group" aria-label="Pilihan jawaban" hidden></div><p class="chapter-dialogue__answer-feedback" data-dialogue-answer-feedback role="status" aria-live="polite" hidden></p><button class="chapter-dialogue__quiz-next" type="button" data-dialogue-quiz-next hidden>Lanjut →</button><small data-dialogue-count>1 / 6 · KLIK DI MANA SAJA UNTUK LANJUT</small></div>
                     </div>
                 </div>
             </div>
@@ -214,6 +214,27 @@
                                                 @endforeach
                                             </div>
                                             <button class="lab-button lab-button--primary" type="button" data-check-topology>Periksa sambungan</button>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="lab-stage" data-stage="pcLan" hidden>
+                                    <div class="pc-lan-workbench" data-pc-lan-workbench>
+                                        <div class="pc-lan-computer">
+                                            <span class="pc-lan-computer__label">BAGIAN BELAKANG PC</span>
+                                            <div class="pc-lan-computer__image">
+                                                <img src="{{ asset('images/asset/alat/pc-rear-lan.png') }}" alt="Bagian belakang komputer dengan soket LAN RJ45 kosong di samping port USB" width="1024" height="1536" draggable="false">
+                                                <button type="button" class="pc-lan-socket" data-pc-lan-socket aria-label="Pasang konektor RJ45 ke port LAN komputer"><span class="pc-lan-inserted" aria-hidden="true"></span><span class="pc-lan-socket__label">LAN · RJ45</span></button>
+                                                <button type="button" class="pc-lan-usb" data-pc-lan-wrong-port aria-label="Port USB komputer"></button>
+                                            </div>
+                                        </div>
+                                        <div class="pc-lan-actions">
+                                            <span class="pc-lan-eyebrow">SAMBUNGKAN UJUNG SATUNYA</span>
+                                            <h3>Dari router ke komputer</h3>
+                                            <p>Ujung pertama kabel sudah terpasang pada <b>ether3 hAP</b>. Sekarang hubungkan ujung satunya ke <b>port LAN komputer</b>.</p>
+                                            <button type="button" class="pc-lan-cable" draggable="true" data-pc-lan-cable aria-pressed="false"><img src="{{ asset('images/asset/alat/rj45-single-hd.webp') }}" alt="Ujung kabel dengan konektor RJ45"><span><b>Ujung kabel dari ether3</b><small data-pc-lan-cable-status>Seret ke port LAN, atau klik untuk memilih</small></span></button>
+                                            <p class="pc-lan-status" data-pc-lan-status role="status" aria-live="polite">Belum terhubung ke PC</p>
+                                            <p class="pc-lan-power-note">Komputer masih mati. Kita nyalakan setelah kabel terpasang.</p>
                                         </div>
                                     </div>
                                 </section>

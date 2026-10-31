@@ -1605,6 +1605,13 @@
 .ch1-learning-table th, .ch1-learning-table td { padding: 13px; border-bottom: 1px solid #d4e9fa; }
 .ch1-learning-table th { color: #075eb9; background: #e8f8ff; }
 .ch1-learning-dialog > .lab-button { display: flex; margin: 19px auto 0; }
+.ch1-learning-dialog { display: flex; flex-direction: column; max-height: min(84dvh, 780px); overflow: hidden; padding: 24px 28px 22px; }
+.ch1-learning-dialog > [data-configuration-learning-body] { min-height: 0; overflow-y: auto; padding: 0 8px 2px 0; scrollbar-gutter: stable; }
+.ch1-learning-dialog > .lab-button { flex: none; margin-top: 14px; }
+.ch1-learning-dialog h3 { margin-top: 16px; }
+.ch1-learning-dialog p { margin: 9px 0; line-height: 1.45; }
+.ch1-learning-example { margin: 14px 0; padding: 18px 12px; }
+.ch1-learning-note { padding: 10px 12px; }
 @media (max-width: 620px) { .ch1-learning-dialog { padding: 20px 17px; }.ch1-learning-dialog p { font-size: 13px; } }
 
 /* Configuration windows are visible only after a player opens them from the menu. */
@@ -1617,3 +1624,37 @@
 
 .simulation-monitor--classic .routeros nav .winbox-ip-menu, .ch2-scene .ch2-monitor .ch2-nav .winbox-ip-menu { top: 6px; width: 210px; max-height: calc(100% - 12px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 .simulation-monitor--classic .routeros nav .winbox-ip-menu > *, .ch2-scene .ch2-monitor .ch2-nav .winbox-ip-menu > * { display: flex; align-items: center; gap: 7px; height: 22px; min-height: 22px; padding: 2px 8px; color: #273d4b; font: 12px Tahoma, sans-serif; }
+/* Complete the PC end of the router cable before powering on. */
+.pc-lan-workbench { display: grid; grid-template-columns: minmax(240px, .9fr) minmax(260px, 1fr); align-items: center; gap: clamp(24px, 4vw, 64px); width: min(920px, 100%); margin: 0 auto; padding: 8px 20px 24px; }
+.pc-lan-computer { display: grid; justify-items: center; gap: 10px; }
+.pc-lan-computer__label { color: #5e7697; font-size: 11px; font-weight: 800; letter-spacing: .13em; }
+.pc-lan-computer__image { position: relative; width: min(100%, 350px, calc(66dvh - 180px)); }
+.pc-lan-computer__image > img { display: block; width: 100%; height: auto; border-radius: 18px; }
+.pc-lan-socket { position: absolute; left: 33.8%; top: 54.6%; display: block; width: 8.6%; height: 6%; min-height: 30px; margin: 0; padding: 0; border: 2px solid #53c4ff; border-radius: 5px; background: transparent; box-shadow: 0 0 0 3px #27aaff25; cursor: pointer; }
+.pc-lan-socket__label { position: absolute; top: 10%; left: calc(100% + 12px); width: max-content; padding: 6px 10px; border: 1px solid #98d9ff; border-radius: 8px; background: #effaff; color: #0860a4; font-size: 11px; font-weight: 900; pointer-events: none; }
+.pc-lan-socket__label::before { position: absolute; top: 50%; right: 100%; width: 13px; height: 2px; background: #53c4ff; content: ''; }
+.pc-lan-usb { position: absolute; left: 24%; top: 54.5%; width: 7.5%; height: 10.8%; padding: 0; border: 0; border-radius: 4px; background: transparent; cursor: pointer; }
+.pc-lan-usb:hover { outline: 2px solid #f6b340; }
+.pc-lan-socket:focus-visible, .pc-lan-cable:focus-visible, .pc-lan-usb:focus-visible { outline: 3px solid #007cf0; outline-offset: 4px; }
+.is-cable-selected .pc-lan-socket, .pc-lan-socket.is-drop-target { border-color: #ffbf36; box-shadow: 0 0 0 5px #ffbf3633, 0 0 22px #ffbf3666; }
+.pc-lan-inserted { position: absolute; inset: 8% 10%; display: none; border: 2px solid #84c5ee; border-radius: 4px; background: linear-gradient(90deg, #0878b5, #31baff 45%, #0878b5); box-shadow: inset 0 3px 0 #c1e9ff; pointer-events: none; }
+.pc-lan-inserted::after { position: absolute; top: 90%; left: 29%; width: 42%; height: 90px; border-radius: 0 0 8px 8px; background: linear-gradient(90deg, #0878b5, #31baff 45%, #0878b5); box-shadow: 2px 3px 4px #0004; content: ''; }
+.is-connected .pc-lan-inserted { display: block; animation: pc-lan-insert .35s ease-out; }
+.is-connected .pc-lan-socket { border-color: #27b67c; }
+.is-connected .pc-lan-socket__label { border-color: #70d3aa; color: #08764e; background: #e6fbef; }
+.pc-lan-eyebrow { color: #087bd8; font-size: 11px; font-weight: 900; letter-spacing: .1em; }
+.pc-lan-actions h3 { margin: 10px 0 14px; color: #102c59; font-size: clamp(22px, 2vw, 30px); }
+.pc-lan-actions > p { color: #496587; font-size: 16px; line-height: 1.6; }
+.pc-lan-cable { display: flex; width: 100%; align-items: center; gap: 18px; margin: 22px 0 16px; padding: 18px; border: 2px solid #b7dfff; border-radius: 18px; background: #fff; color: #153d69; text-align: left; cursor: grab; box-shadow: 0 8px 24px #134b8812; }
+.pc-lan-cable img { width: 80px; height: 70px; object-fit: contain; }
+.pc-lan-cable span { display: grid; gap: 7px; }
+.pc-lan-cable b { font-size: 16px; }
+.pc-lan-cable small { color: #6284a4; font-size: 13px; line-height: 1.4; }
+.pc-lan-cable[aria-pressed="true"] { border-color: #ffbf36; background: #fff9e8; }
+.is-connected .pc-lan-cable { border-color: #6cd2a5; background: #edfcf4; cursor: default; opacity: 1; }
+.pc-lan-status { padding: 12px 16px; border: 1px solid #d7e6f3; border-radius: 12px; background: #edf5fc; }
+.is-connected .pc-lan-status { border-color: #8ddbb8; background: #e5faef; color: #08764e; }
+.pc-lan-actions .pc-lan-power-note { color: #7890a6; font-size: 13px; }
+@keyframes pc-lan-insert { from { opacity: .3; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 800px) { .pc-lan-workbench { grid-template-columns: minmax(170px, .8fr) minmax(180px, 1fr); gap: 18px; padding-inline: 0; }.pc-lan-cable { flex-direction: column; align-items: flex-start; padding: 12px; }.pc-lan-actions > p { font-size: 14px; } }
+@media (prefers-reduced-motion: reduce) { .is-connected .pc-lan-inserted { animation: none; } }

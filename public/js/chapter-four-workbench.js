@@ -8,13 +8,54 @@
     const stages = ['wireless', 'security', 'hotspot', 'connect', 'portal', 'profiles', 'users'];
     const key = 'netguard.chapter-four.v1.' + scene.dataset.userId;
     const defaultPortalHtml = [
-        '<!DOCTYPE html>', '<html>', '<head>', '    <meta charset="utf-8">', '    <title>Internet hotspot - Log in</title>', '    <meta name="viewport" content="width=device-width, initial-scale=1">', '    <style>', '        body { font-family: Arial, sans-serif; color: #737373; background: white; }', '        table { margin: auto; font-size: 14px; }', '        td { padding: 4px; }', '        input { border: 1px solid #bbbbbb; padding: 4px; }', '    </style>', '</head>', '<body>', '', '$(if chap-id)', '<form name="sendin" action="$(link-login-only)" method="post">', '    <input type="hidden" name="username">', '    <input type="hidden" name="password">', '    <input type="hidden" name="dst" value="$(link-orig)">', '    <input type="hidden" name="popup" value="true">', '</form>', '$(endif)', '', '<div align="center">', '<form name="login" action="$(link-login-only)" method="post">', '    <input type="hidden" name="dst" value="$(link-orig)">', '    <input type="hidden" name="popup" value="true">', '    <p>Please log on to use the internet hotspot service</p>', '    <table>', '        <tr><td>login</td><td><input name="username" value="$(username)"></td></tr>', '        <tr><td>password</td><td><input name="password" type="password"></td></tr>', '        <tr><td></td><td><input type="submit" value="OK"></td></tr>', '    </table>', '</form>', '$(if error)<p>$(error)</p>$(endif)', '<p>Powered by MikroTik RouterOS</p>', '</div>', '</body>', '</html>',
+        "<!DOCTYPE html>",
+        "<html lang=\"en\">",
+        "<head>",
+        "    <meta charset=\"utf-8\">",
+        "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
+        "    <title>Internet hotspot - Log in</title>",
+        "    <style>",
+        "        body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: Arial, sans-serif; background: linear-gradient(135deg, #858980, #9ca3ad 50%, #7d879b); color: white; }",
+        "        .wrap { width: 300px; max-width: calc(100vw - 48px); padding: 40px 24px; }",
+        "        .logo { text-align: center; font-size: 52px; font-style: italic; letter-spacing: -3px; margin-bottom: 34px; }",
+        "        .info, .powered { text-align: center; line-height: 1.45; }",
+        "        .powered { font-size: 12px; margin-top: 20px; }",
+        "        input { box-sizing: border-box; width: 100%; height: 44px; margin: 0 0 20px; padding: 3px 20px; border: 1px solid #ffffffcc; border-radius: 6px; background: #ffffffcc; font-size: 14px; }",
+        "        input[type=submit] { margin: 0; background: #3e4d59; color: white; border: 0; cursor: pointer; }",
+        "    </style>",
+        "</head>",
+        "<body>",
+        "$(if chap-id)",
+        "<form name=\"sendin\" action=\"$(link-login-only)\" method=\"post\">",
+        "    <input type=\"hidden\" name=\"username\">",
+        "    <input type=\"hidden\" name=\"password\">",
+        "    <input type=\"hidden\" name=\"dst\" value=\"$(link-orig)\">",
+        "    <input type=\"hidden\" name=\"popup\" value=\"true\">",
+        "</form>",
+        "$(endif)",
+        "<div class=\"wrap\">",
+        "<div class=\"logo\">MikroTik</div>",
+        "<div align=\"center\">",
+        "<form name=\"login\" action=\"$(link-login-only)\" method=\"post\">",
+        "    <input type=\"hidden\" name=\"dst\" value=\"$(link-orig)\">",
+        "    <input type=\"hidden\" name=\"popup\" value=\"true\">",
+        "    <p class=\"info\">Please log in to use the internet hotspot service</p>",
+        "    <input name=\"username\" type=\"text\" value=\"$(username)\" placeholder=\"Username\">",
+        "    <input name=\"password\" type=\"password\" placeholder=\"Password\">",
+        "    <input type=\"submit\" value=\"Connect\">",
+        "</form>",
+        "$(if error)<p>$(error)</p>$(endif)",
+        "<p class=\"powered\">Powered by MikroTik RouterOS</p>",
+        "</div>",
+        "</div>",
+        "</body>",
+        "</html>",
     ].join('\n');
     const fresh = () => ({ stage: 'intro', prologueComplete: false, wireless: { enabled: false, mode: 'station', ssid: 'MikroTik', security: 'default' }, security: null, hotspot: null, initialLogin: false, phoneConnected: false, portalHtml: defaultPortalHtml, portalVerified: false, exported: false, edited: false, uploaded: false, profiles: {}, users: {}, verified: {}, actions: {}, answers: [] });
     let saved = null;
     try { saved = JSON.parse(localStorage.getItem(key) || 'null'); } catch {}
     const state = { ...fresh(), ...saved };
-    if (!saved || (!state.edited && !state.uploaded && (state.portalHtml === defaultPortalHtml || state.portalHtml.includes('<!-- HotSpot login -->')))) state.portalHtml = defaultPortalHtml;
+    if (!saved || (!state.edited && !state.uploaded)) state.portalHtml = defaultPortalHtml;
     const inherited = window.NetGuardRouterConfiguration?.read(scene.dataset.userId);
     window.NetGuardRouterConfiguration?.bind(scene);
     if (!['intro', ...stages, 'quiz', 'finish'].includes(state.stage)) state.stage = 'intro';
@@ -37,6 +78,26 @@
     let setupStep = 0, setupDraft = [], setupConfirmed = Boolean(state.hotspotConfirmed), session = null, downloadedHtml = state.desktopHtml || state.portalHtml;
     let editingProfile = null, editingUser = null, editingInitialUser = false;
     let phoneScreen = 'home', phoneWifiEnabled = true;
+    let phoneOperation = null, phoneOperationTimer = null, phoneOperationToken = 0, phoneScanComplete = false;
+    const cancelPhoneOperation = () => {
+        window.clearTimeout(phoneOperationTimer);
+        phoneOperationTimer = null;
+        phoneOperation = null;
+        phoneOperationToken++;
+    };
+    const startPhoneOperation = (kind, text, duration, complete) => {
+        cancelPhoneOperation();
+        const token = phoneOperationToken, stageRevision = revision;
+        phoneOperation = { kind, text };
+        render();
+        phoneOperationTimer = window.setTimeout(() => {
+            if (token !== phoneOperationToken) return;
+            phoneOperation = null;
+            phoneOperationTimer = null;
+            if (phone.hidden || !phoneWifiEnabled || stageRevision !== revision) { render(); return; }
+            complete();
+        }, duration);
+    };
     const field = (name) => document.querySelector('[data-field="' + name + '"]');
     const value = (name) => field(name).value.trim();
     const open = (name) => !windows.get(name).hidden;
@@ -212,25 +273,30 @@
     const guidePlan = () => {
         const shared = parameters.profiles;
         if (state.stage === 'wireless') return [
-            ['Klik Wireless pada menu kiri WinBox. Pada tab WiFi Interfaces, klik baris wlan1 satu kali untuk memilihnya.', action('wlan:selected') || model.wirelessValid(state)],
+            ['Klik Wireless pada menu kiri WinBox.\nPada tab WiFi Interfaces, klik satu kali baris wlan1.', action('wlan:selected') || model.wirelessValid(state), ['[data-open-window="wireless"]', '[data-wireless-tab="interfaces"]', '[data-wlan-row]']],
             ['Klik tombol centang ✓ di atas tabel untuk mengaktifkan wlan1. Huruf X (disabled) pada baris harus hilang.', state.wireless.enabled],
-            ['Klik dua kali baris wlan1. Pada jendela Interface <wlan1>, klik tab Wireless.', action('radio:wireless') || model.wirelessValid(state)],
-            ['Pada tab Wireless, pilih Mode ap bridge. Isi SSID dengan nama WiFi pilihanmu, lalu klik OK. SSID ini yang nanti dipilih pada HP.', model.wirelessValid(state)],
+            ['Klik dua kali baris wlan1.\nPada jendela Interface <wlan1>, klik tab Wireless.', action('radio:wireless') || model.wirelessValid(state), ['[data-wlan-row]', '[data-radio-tab="wireless"]']],
+            ['Pada tab Wireless, pilih Mode ap bridge. Isi SSID dengan nama WiFi pilihanmu, lalu klik OK. SSID ini yang nanti dipilih pada HP.', model.wirelessValid(state), [{ selector: '[data-field="mode"]', expected: 'ap bridge' }, { selector: '[data-field="ssid"]', completeWhen: (input) => model.ssidValid(input.value) }, '[data-save-form="wireless-edit"]:not([data-apply])']],
         ];
         if (state.stage === 'security') return [
-            ['Klik Wireless → tab Security Profiles, lalu tombol + untuk membuat profile baru.', action('open:security-edit') || model.securityValid(state)],
-            ['Isi Name dengan nama Security Profile pilihanmu. Pilih Mode dynamic keys. Centang WPA PSK dan WPA2 PSK. Isi kedua Pre-Shared Key dengan password pilihanmu (8–63 karakter). Klik OK. Jika ada koreksi Pak Amat, perbaiki kolom yang disebutkan.', model.securityValid(state)],
-            ['Kembali ke tab WiFi Interfaces. Klik dua kali wlan1, lalu tab Wireless. Pilih Security Profile yang tadi kamu buat dan klik OK. Profile harus diterapkan, bukan hanya dibuat.', model.wifiReady(state)],
+            ['Klik tab Security Profiles pada jendela Wireless Tables.\nKlik tombol + untuk membuat profile baru.', action('open:security-edit') || model.securityValid(state), ['[data-open-window="wireless"]', '[data-wireless-tab="security"]', '[data-add-security]']],
+            ['Isi Name dengan nama Security Profile pilihanmu. Pilih Mode dynamic keys. Centang WPA PSK dan WPA2 PSK. Isi kedua Pre-Shared Key dengan password pilihanmu (8–63 karakter). Klik OK. Jika ada koreksi Pak Amat, perbaiki kolom yang disebutkan.', model.securityValid(state), [{ selector: '[data-field="security-name"]', completeWhen: (input) => Boolean(input.value.trim() && input.value.trim() !== 'default') },{ selector: '[data-field="security-mode"]', expected: 'dynamic keys' },{ selector: '[data-field="wpa"]', expected: true },{ selector: '[data-field="wpa2"]', expected: true },{ selector: '[data-field="wpa-key"]', completeWhen: (input) => model.passwordValid(input.value) },{ selector: '[data-field="wpa2-key"]', completeWhen: (input) => model.passwordValid(input.value) },"[data-save-form=\"security-edit\"]:not([data-apply])"]],
+            ['Klik tab WiFi Interfaces.\nKlik dua kali baris wlan1, lalu klik tab Wireless.\nPada Security Profile, pilih profile yang tadi kamu buat.\nKlik OK.', model.wifiReady(state), ['[data-open-window="wireless"]', '[data-wireless-tab="interfaces"]', '[data-wlan-row]', '[data-radio-tab="wireless"]', { selector: '[data-field="security"]', expected: state.security?.name || '' }, '[data-save-form="wireless-edit"]:not([data-apply])']],
         ];
         if (state.stage === 'hotspot') return [
             ['Klik IP → Hotspot. Pada tab Servers, klik Hotspot Setup. Wizard dimulai dari HotSpot Interface.', action('open:hotspot-setup') || model.hotspotValid(state)],
-            ...setupScreens.map((screen, index) => [index === 6 ? 'Pada DNS Name, ketik nama portal pilihanmu lalu klik Next. Gunakan nama tanpa spasi, http://, atau /login. Nama ini akan tampil sebagai alamat halaman login di HP.' : index === 7 ? 'Pada Create local HotSpot user, isi Name dengan username pilihanmu dan tentukan Password, lalu klik Next. Ingat akun ini untuk login melalui browser HP.' : 'Pada layar ' + screen[0] + ', ' + (index === 0 ? 'pilih wlan1' : 'pertahankan ' + screen[1] + ': ' + screen[2]) + ', lalu klik Next. Jika belum hijau, pastikan tombol Next pada wizard yang diklik.', model.hotspotValid(state) || setupStep > index]),
+            ...setupScreens.map((screen, index) => {
+                const targets = index === 7 ? ['[data-setup-credential="name"]', '[data-setup-credential="password"]', '[data-setup-next]']
+                    : index === 6 ? [{ selector: '[data-setup-input]', completeWhen: (input) => model.dnsNameValid(input.value.trim()) }, '[data-setup-next]']
+                        : [{ selector: screen[3] ? '[data-setup-select]' : '[data-setup-input]', expected: screen[2] }, '[data-setup-next]'];
+                return [index === 6 ? 'Pada DNS Name, ketik nama portal pilihanmu lalu klik Next. Gunakan nama tanpa spasi, http://, atau /login. Nama ini akan tampil sebagai alamat halaman login di HP.' : index === 7 ? 'Pada Create local HotSpot user, isi Name dengan username pilihanmu dan tentukan Password, lalu klik Next. Ingat akun ini untuk login melalui browser HP.' : 'Pada layar ' + screen[0] + ', ' + (index === 0 ? 'pilih wlan1' : 'pertahankan ' + screen[1] + ': ' + screen[2]) + ', lalu klik Next. Jika belum hijau, pastikan tombol Next pada wizard yang diklik.', model.hotspotValid(state) || setupStep > index, targets];
+            }),
             ['Setelah Setup has completed successfully tampil, klik OK. Baris hotspot1 akan terlihat di tabel Servers.', model.hotspotValid(state) && setupConfirmed],
         ];
         if (state.stage === 'connect') return [
             ['Klik HP uji · Wi-Fi sekolah di dekat taskbar. Pada layar utama HP, buka Pengaturan Wi-Fi. Pastikan Gunakan Wi-Fi menyala, lalu pilih jaringan dengan SSID yang kamu buat di WinBox.', action('phone:network') || state.initialLogin],
             ['Isi Password Wi-Fi sesuai WPA2 Pre-Shared Key yang kamu simpan, lalu klik Connect. Periksa HP menerima IP ' + phoneNetwork().address + ' dan gateway ' + phoneNetwork().gateway + '. Portal ' + (state.hotspot?.dnsName || 'pilihanmu') + ' terbuka setelah WiFi terhubung.', state.phoneConnected || state.initialLogin],
-            ['Pada browser HP, isi username dan password akun awal yang tadi kamu buat pada HotSpot Setup, lalu klik Log in. Ini akun HotSpot, bukan password WiFi. Status sesi akan muncul setelah autentikasi berhasil.', state.initialLogin],
+            ['Pada browser HP, isi username dan password akun awal yang tadi kamu buat pada HotSpot Setup, lalu klik Connect. Ini akun HotSpot, bukan password WiFi. Status sesi akan muncul setelah autentikasi berhasil.', state.initialLogin],
         ];
         if (state.stage === 'portal') return [
             ['Klik Kembali ke PC · WinBox jika HP terbuka. Buka Files pada menu kiri. Klik □ pada judul utama WinBox untuk mengecilkan jendelanya, lalu seret hotspot/login.html ke desktop yang terlihat di belakang WinBox.', state.exported],
@@ -241,11 +307,11 @@
         ];
         if (state.stage === 'profiles') return names.flatMap((name) => [
             ['Klik IP → Hotspot → tab User Profiles, lalu tombol + untuk profile ' + name + '.', model.profileValid(state, name) || (open('profile-edit') && editingProfile === name)],
-            ['Isi Name ' + name + ', Shared Users ' + shared[name].shared + ', Rate Limit ' + shared[name].rate + ', lalu klik OK. Shared Users membatasi sesi bersamaan per akun; Rate Limit membatasi kecepatannya.', model.profileValid(state, name)],
+            ['Isi pengaturan User Profile:\nName: ' + name + '\nShared Users: ' + shared[name].shared + '\nRate Limit: ' + shared[name].rate + '\nKlik OK.\n\nShared Users membatasi sesi bersamaan per akun. Rate Limit membatasi kecepatannya.', model.profileValid(state, name), [{ selector: '[data-field="profile-name"]', expected: name }, { selector: '[data-field="shared"]', expected: shared[name].shared }, { selector: '[data-field="rate"]', expected: shared[name].rate }, '[data-save-form="profile-edit"]:not([data-apply])']],
         ]);
         if (state.stage === 'users') return [
-            ...names.map((name) => ['Klik IP → Hotspot → Users → +. Buat Name ' + name + ', Password ' + shared[name].password + ', pilih Profile ' + name + ', lalu klik OK.', model.userValid(state, name)]),
-            ...names.map((name) => ['Buka HP uji. Jika akun sebelumnya masih login, klik Log out. Masuk dengan Username ' + name + ' dan Password ' + shared[name].password + ', lalu klik Log in. Pastikan detail sesi menunjukkan Profile ' + name + '.', Boolean(state.verified[name])]),
+            ...names.map((name) => ['Buka IP → Hotspot.\nKlik tab Users.\nKlik +.\nIsi Name: ' + name + '\nIsi Password: ' + shared[name].password + '\nPilih Profile: ' + name + '\nKlik OK.', model.userValid(state, name), open('user-edit') ? [{ selector: '[data-field="user-name"]', expected: name }, { selector: '[data-field="user-password"]', expected: shared[name].password }, { selector: '[data-field="user-profile"]', expected: name }, '[data-save-form="user-edit"]:not([data-apply])'] : open('hotspot') ? ['[data-hotspot-tab="Users"]', '[data-hotspot-add]'] : ['[data-ch2-menu="ip"]', '[data-ip-item="Hotspot"]']]),
+            ...names.map((name) => ['Buka HP uji. Jika akun sebelumnya masih login, klik Log out. Masuk dengan Username ' + name + ' dan Password ' + shared[name].password + ', lalu klik Connect. Pastikan detail sesi menunjukkan Profile ' + name + '.', Boolean(state.verified[name])]),
             ['Setelah mencoba ketiga akun, biarkan akun terakhir tetap login. Kembali ke WinBox, buka IP → Hotspot → Active, lalu klik baris akun yang sedang login. Active menampilkan sesi yang tersambung sekarang; dengan satu HP, hanya akun yang terakhir login yang muncul. Daftar semua akun ada di tab Users.', action('active:review')],
         ];
         return [[state.stage === 'intro' ? 'Ikuti arahan Pak Amat sebelum membangun WiFi sekolah.' : state.stage === 'quiz' ? 'Jawab lima soal, lalu klik Simpan hasil Chapter 4.' : 'Chapter 4 selesai. Kembali ke peta untuk melihat progres.', state.stage === 'finish']];
@@ -341,9 +407,17 @@
         document.querySelectorAll('[data-radio-tab]').forEach((node) => node.classList.toggle('is-active', node.dataset.radioTab === radioTab));
         document.querySelectorAll('[data-hotspot-tab]').forEach((node) => node.classList.toggle('is-active', node.dataset.hotspotTab === hotspotTab));
         document.querySelectorAll('[data-phone-screen]').forEach((screen) => { screen.hidden = screen.dataset.phoneScreen !== phoneScreen; });
-        document.querySelector('[data-phone-network]').hidden = !phoneWifiEnabled || !model.wirelessValid(state);
+        document.querySelector('[data-phone-network]').hidden = !phoneWifiEnabled || !phoneScanComplete || !model.wirelessValid(state);
+        document.querySelector('[data-phone-network]').disabled = Boolean(phoneOperation);
+        document.querySelector('[data-phone-progress]').hidden = !phoneOperation || phoneOperation.kind === 'portal';
+        document.querySelector('[data-phone-progress-text]').textContent = phoneOperation?.text || '';
+        document.querySelector('[data-wifi-connect] button[type="submit"]').disabled = Boolean(phoneOperation);
+        document.querySelector('[data-wifi-password]').disabled = Boolean(phoneOperation);
+        document.querySelector('[data-phone-signin]').disabled = Boolean(phoneOperation);
+        document.querySelector('[data-portal-loading]').hidden = phoneOperation?.kind !== 'portal';
+        document.querySelector('[data-portal-content]').hidden = phoneOperation?.kind === 'portal';
         document.querySelector('[data-phone-wifi-toggle]').checked = phoneWifiEnabled;
-        document.querySelector('[data-phone-scan]').textContent = !phoneWifiEnabled ? 'Wi-Fi dimatikan. Aktifkan untuk mencari jaringan.' : model.wirelessValid(state) ? 'Jaringan tersedia' : 'Jaringan sekolah belum ditemukan. Periksa wlan1 dan SSID pada router.';
+        document.querySelector('[data-phone-scan]').textContent = !phoneWifiEnabled ? 'Wi-Fi dimatikan. Aktifkan untuk mencari jaringan.' : phoneOperation?.kind === 'scan' ? 'Memindai Wi-Fi…' : !phoneScanComplete ? 'Buka Wi-Fi untuk mencari jaringan.' : model.wirelessValid(state) ? 'Jaringan tersedia' : 'Jaringan sekolah belum ditemukan. Periksa wlan1 dan SSID pada router.';
         document.querySelector('[data-phone-home-status]').textContent = state.phoneConnected ? 'Terhubung · ' + state.wireless.ssid : 'Belum terhubung ke Wi-Fi';
         document.querySelector('[data-phone-signal]').textContent = state.phoneConnected ? '◉' : '▱';
         document.querySelector('[data-phone-signal]').setAttribute('aria-label', state.phoneConnected ? 'Wi-Fi terhubung' : 'Wi-Fi belum terhubung');
@@ -352,7 +426,8 @@
         document.querySelector('[data-phone-forget]').hidden = !state.phoneConnected;
         document.querySelector('[data-phone-browser]').hidden = phoneScreen !== 'browser' || !state.phoneConnected || !model.hotspotValid(state);
         document.querySelector('[data-phone-signin]').hidden = !state.phoneConnected || !model.hotspotValid(state);
-        document.querySelector('[data-portal-heading]').textContent = state.uploaded && model.loginHtmlValid(state.portalHtml) ? parameters.heading : 'HotSpot Login';
+        document.querySelector('[data-portal-heading]').hidden = !state.uploaded || !model.loginHtmlValid(state.portalHtml);
+        document.querySelector('[data-portal-heading]').textContent = state.uploaded && model.loginHtmlValid(state.portalHtml) ? parameters.heading : '';
         document.querySelector('[data-phone-login]').hidden = Boolean(session);
         document.querySelector('[data-phone-session]').hidden = !session;
         document.querySelector('[data-previous]').hidden = state.stage === 'intro' || state.stage === 'finish';
@@ -573,7 +648,7 @@
     }));
     document.querySelector('[data-hotspot-reset-html]').addEventListener('click', () => { if (!state.hotspot) return; say('Reset HTML akan mengembalikan halaman HotSpot bawaan dan menghapus sambutan yang kamu tambahkan. Klik lanjut untuk menerapkan.', () => { state.portalHtml = defaultPortalHtml; state.loginFileRemoved = false; state.uploaded = false; state.portalVerified = false; persist(); render(); }); });
     document.querySelectorAll('[data-edit-form]').forEach((form) => form.addEventListener('submit', (event) => event.preventDefault()));
-    const disconnectPhone = () => { state.phoneConnected = false; session = null; document.querySelector('[data-phone-status]').textContent = 'Pengaturan WiFi berubah. Hubungkan ulang dengan SSID dan password yang baru disimpan.'; };
+    const disconnectPhone = () => { cancelPhoneOperation(); phoneScanComplete = false; state.phoneConnected = false; session = null; document.querySelector('[data-phone-status]').textContent = 'Pengaturan WiFi berubah. Hubungkan ulang dengan SSID dan password yang baru disimpan.'; };
     document.querySelectorAll('[data-save-form]').forEach((button) => button.addEventListener('click', () => {
         const name = button.dataset.saveForm;
         if (name === 'wireless-edit') {
@@ -639,40 +714,76 @@
         if (!phoneWifiEnabled || !state.phoneConnected) return explainError('HP belum terhubung ke Wi-Fi. Pada HP, buka Pengaturan Wi-Fi, aktifkan Gunakan Wi-Fi, pilih SSID buatanmu, lalu Connect memakai password WPA2 WiFi yang kamu simpan. Setelah itu halaman login HotSpot dapat dibuka.');
         if (!model.hotspotValid(state)) return explainError('HP sudah terhubung ke Wi-Fi, tetapi portal belum tersedia. Kembali ke WinBox → IP → Hotspot → Servers dan selesaikan Hotspot Setup pada wlan1.');
         if (state.loginFileRemoved) return explainError('File hotspot/login.html tidak ada di router. Buka IP → Hotspot → Servers → Reset HTML untuk memulihkan halaman login, atau unggah kembali login.html dari desktop.');
-        phoneScreen = 'browser'; record('phone:browser'); render();
+        phoneScreen = 'browser';
+        document.querySelector('[data-portal-error]').hidden = true;
+        startPhoneOperation('portal', 'Memuat halaman login…', 1400, () => {
+            if (!state.phoneConnected || !model.hotspotValid(state) || state.loginFileRemoved) { phoneScreen = 'wifi'; render(); return; }
+            if (state.uploaded && model.loginHtmlValid(state.portalHtml)) state.portalVerified = true;
+            record('phone:browser'); persist(); render();
+        });
     };
-    document.querySelector('[data-open-phone]').addEventListener('click', () => { closeMenus(); phone.hidden = false; phoneScreen = state.phoneConnected && model.hotspotValid(state) ? 'browser' : 'home'; record('phone:open'); render(); });
-    for (const selector of ['[data-phone-open-wifi]', '[data-phone-wifi-shortcut]']) document.querySelector(selector).addEventListener('click', () => { phoneScreen = 'wifi'; record('phone:wifi'); render(); });
-    document.querySelector('[data-phone-home]').addEventListener('click', () => { phoneScreen = 'home'; render(); });
-    document.querySelector('[data-phone-back]').addEventListener('click', () => { phoneScreen = phoneScreen === 'browser' ? 'wifi' : 'home'; render(); });
+    const scanPhoneWifi = () => {
+        phoneScreen = 'wifi'; phoneScanComplete = false;
+        document.querySelector('[data-wifi-connect]').hidden = true;
+        document.querySelector('[data-phone-status]').textContent = state.phoneConnected ? 'Terhubung ke ' + state.wireless.ssid : '';
+        record('phone:wifi');
+        if (!phoneWifiEnabled) { cancelPhoneOperation(); render(); return; }
+        startPhoneOperation('scan', 'Mencari jaringan di sekitar…', 1700, () => { phoneScanComplete = true; render(); });
+    };
+    document.querySelector('[data-open-phone]').addEventListener('click', () => {
+        cancelPhoneOperation(); closeMenus(); phone.hidden = false; phoneScreen = 'home'; record('phone:open'); render();
+        if (state.phoneConnected && model.hotspotValid(state)) openPhoneBrowser();
+    });
+    for (const selector of ['[data-phone-open-wifi]', '[data-phone-wifi-shortcut]']) document.querySelector(selector).addEventListener('click', scanPhoneWifi);
+    document.querySelector('[data-phone-home]').addEventListener('click', () => { cancelPhoneOperation(); phoneScreen = 'home'; render(); });
+    document.querySelector('[data-phone-back]').addEventListener('click', () => { cancelPhoneOperation(); if (phoneScreen === 'browser') scanPhoneWifi(); else { phoneScreen = 'home'; render(); } });
     for (const selector of ['[data-phone-open-browser]', '[data-phone-signin]']) document.querySelector(selector).addEventListener('click', openPhoneBrowser);
     document.querySelector('[data-phone-wifi-toggle]').addEventListener('change', (event) => {
         phoneWifiEnabled = event.currentTarget.checked;
+        cancelPhoneOperation(); phoneScanComplete = false;
         if (!phoneWifiEnabled) { state.phoneConnected = false; session = null; document.querySelector('[data-wifi-connect]').hidden = true; document.querySelector('[data-phone-status]').textContent = 'Wi-Fi dimatikan.'; }
         persist(); render();
+        if (phoneWifiEnabled) scanPhoneWifi();
     });
-    document.querySelector('[data-return-router]').addEventListener('click', () => { phone.hidden = true; pc.showWinbox(); render(); });
-    document.querySelector('[data-phone-network]').addEventListener('click', () => { document.querySelector('[data-wifi-connect]').hidden = false; record('phone:network'); });
+    document.querySelector('[data-return-router]').addEventListener('click', () => { cancelPhoneOperation(); phone.hidden = true; pc.showWinbox(); render(); });
+    document.querySelector('[data-phone-network]').addEventListener('click', () => { if (phoneOperation || !phoneScanComplete) return; document.querySelector('[data-wifi-connect]').hidden = false; record('phone:network'); });
     document.querySelector('[data-wifi-connect]').addEventListener('submit', (event) => {
         event.preventDefault();
+        if (phoneOperation) return;
         if (!phoneWifiEnabled) return explainError('Aktifkan Gunakan Wi-Fi pada HP sebelum menghubungkan ke jaringan sekolah.');
         if (!model.wifiReady(state)) return explainError('WiFi belum siap. Periksa Wireless: wlan1 aktif, Mode ap bridge, SSID terisi, dan Security Profile buatanmu sudah dipilih.');
-        if (document.querySelector('[data-wifi-password]').value !== state.security.key2) return explainError('Password WiFi belum cocok dengan WPA2 Pre-Shared Key yang kamu simpan. Periksa Wireless → Security Profiles, klik dua kali profile ' + state.security.name + ', lalu gunakan password WPA2 profile tersebut pada HP. Akun HotSpot awal buatanmu dipakai setelah halaman portal terbuka.');
-        state.phoneConnected = true; phoneScreen = model.hotspotValid(state) ? 'browser' : 'wifi'; document.querySelector('[data-wifi-connect]').hidden = true;
-        document.querySelector('[data-phone-status]').textContent = 'Terhubung ke ' + state.wireless.ssid + '\nIP: ' + phoneNetwork().address + '\nGateway/DNS: ' + phoneNetwork().gateway;
-        if (state.uploaded && model.loginHtmlValid(state.portalHtml)) state.portalVerified = true;
-        persist(); render(); message('HP terhubung. Lanjutkan login pada browser portal.', 'success');
+        const password = document.querySelector('[data-wifi-password]').value;
+        const ssid = state.wireless.ssid;
+        startPhoneOperation('connect', 'Menghubungkan ke ' + ssid + '…', 1600, () => {
+            if (!model.wifiReady(state) || state.wireless.ssid !== ssid) { render(); return; }
+            if (password !== state.security.key2) { render(); return explainError('Password WiFi belum cocok dengan WPA2 Pre-Shared Key yang kamu simpan. Periksa password pada Security Profile, lalu ulangi Connect.'); }
+            startPhoneOperation('address', 'Mendapatkan alamat IP…', 1000, () => {
+                if (!model.wifiReady(state) || state.wireless.ssid !== ssid || password !== state.security.key2) { render(); return; }
+                state.phoneConnected = true;
+                document.querySelector('[data-wifi-connect]').hidden = true;
+                document.querySelector('[data-phone-status]').textContent = 'Terhubung ke ' + ssid + '\nIP: ' + phoneNetwork().address + '\nGateway/DNS: ' + phoneNetwork().gateway;
+                persist(); render(); message('HP terhubung. Membuka portal HotSpot…', 'success');
+                if (model.hotspotValid(state)) openPhoneBrowser();
+            });
+        });
     });
-    document.querySelector('[data-phone-forget]').addEventListener('click', () => { state.phoneConnected = false; session = null; phoneScreen = 'wifi'; document.querySelector('[data-wifi-password]').value = ''; document.querySelector('[data-wifi-connect]').hidden = true; document.querySelector('[data-phone-status]').textContent = 'Jaringan dilupakan. Pilih SSID sekolah dan hubungkan kembali.'; persist(); render(); });
+    document.querySelector('[data-phone-forget]').addEventListener('click', () => { cancelPhoneOperation(); state.phoneConnected = false; session = null; document.querySelector('[data-wifi-password]').value = ''; document.querySelector('[data-wifi-connect]').hidden = true; document.querySelector('[data-phone-status]').textContent = 'Jaringan dilupakan. Pilih SSID sekolah dan hubungkan kembali.'; persist(); scanPhoneWifi(); });
     document.querySelector('[data-phone-login]').addEventListener('submit', (event) => {
-        event.preventDefault(); const name = document.querySelector('[data-phone-user]').value.trim(); const password = document.querySelector('[data-phone-password]').value;
+        event.preventDefault(); if (phoneOperation) return; const name = document.querySelector('[data-phone-user]').value.trim(); const password = document.querySelector('[data-phone-password]').value;
         const result = model.authenticate(state, name, password, session?.name === name ? 1 : 0);
-        if (!result.ok) return explainError(result.reason === 'credentials' ? 'Username, password atau profile belum cocok. Gunakan akun awal yang kamu simpan pada HotSpot Setup. Akun kepala sekolah, guru dan siswa mengikuti pasangan akun serta User Profile pada petunjuk.' : result.reason === 'sessions' ? 'Shared Users akun ini sudah mencapai batas sesi. Log out sesi sebelumnya pada HP sebelum login lagi.' : 'Hubungkan HP ke WiFi sekolah dan pastikan HotSpot Setup pada wlan1 sudah selesai.');
+        if (!result.ok) {
+            const error = document.querySelector('[data-portal-error]');
+            error.textContent = result.reason === 'credentials' ? 'invalid username or password' : result.reason === 'sessions' ? 'no more sessions are allowed for user' : 'hotspot service is not available';
+            error.hidden = false;
+            window.NetGuardAudio?.play('error');
+            return;
+        }
+        document.querySelector('[data-portal-error]').hidden = true;
         session = { name, ...result }; if (result.initial) state.initialLogin = true; else { state.verified[name] = true; state.users[name].stats = { uptime: '00:00:01', bytesIn: '0 B', bytesOut: '0 B' }; }
         document.querySelector('[data-session-details]').textContent = 'Login berhasil\nUser: ' + name + '\nIP: ' + phoneNetwork().address + '\nProfile: ' + result.profile + '\nShared Users: ' + result.shared + '\nRate Limit rx/tx: ' + result.rate;
         persist(); render(); message('Login HotSpot berhasil. Periksa detail sesi.', 'success');
     });
-    document.querySelector('[data-phone-logout]').addEventListener('click', () => { session = null; document.querySelector('[data-phone-user]').value = ''; document.querySelector('[data-phone-password]').value = ''; render(); });
+    document.querySelector('[data-phone-logout]').addEventListener('click', () => { session = null; document.querySelector('[data-phone-user]').value = ''; document.querySelector('[data-phone-password]').value = ''; render(); openPhoneBrowser(); });
     const desktop = document.querySelector('[data-pc-desktop]');
     const desktopFile = document.createElement('button'); desktopFile.type = 'button'; desktopFile.className = 'ch4-desktop-file'; desktopFile.textContent = '▤ login.html'; desktopFile.draggable = true; desktopFile.hidden = !state.exported; desktop.append(desktopFile);
     const fileMenu = document.createElement('button'); fileMenu.type = 'button'; fileMenu.className = 'ch4-file-menu'; fileMenu.textContent = 'Open with Notepad'; fileMenu.hidden = true; desktop.append(fileMenu);
@@ -715,7 +826,7 @@
         if (!overlay.hidden) { window.clearInterval(dialogueTimer); dialogueTimer = null; dialogueCallback = null; overlay.hidden = true; surface.inert = false; return; }
         const order = ['intro', ...stages, 'quiz', 'finish']; const destination = order[Math.max(0, order.indexOf(state.stage) - 1)];
         const resets = (name) => order.indexOf(name) >= order.indexOf(destination);
-        revision++; window.clearTimeout(completionTimer); announced = null; session = null; state.phoneConnected = false;
+        revision++; cancelPhoneOperation(); phoneScanComplete = false; window.clearTimeout(completionTimer); announced = null; session = null; state.phoneConnected = false;
         stages.filter(resets).forEach((name) => { delete state.actions[name]; });
         if (resets('wireless')) state.wireless = fresh().wireless;
         if (resets('security')) { state.security = null; state.wireless.security = 'default'; }
@@ -733,7 +844,7 @@
     document.querySelector('[data-save]').addEventListener('click', () => message(persist() ? 'Progres Chapter 4 tersimpan.' : 'Progres belum dapat disimpan di browser ini.', persist() ? 'success' : 'error'));
     document.querySelector('[data-close-quiz]').addEventListener('click', () => quiz.close());
     document.querySelector('[data-close-finish]').addEventListener('click', () => finish.close());
-    document.querySelector('[data-quiz-form]').addEventListener('change', () => { evaluation.clear(); persist(); });
+    document.querySelector('[data-quiz-form]').addEventListener('change', () => { evaluation.clear(); state.evaluationResult = null; persist(); });
     document.querySelector('[data-quiz-form]').addEventListener('submit', async (event) => {
         event.preventDefault(); const answers = [1, 2, 3, 4, 5].map((n) => document.querySelector('[name="answer-' + n + '"]:checked'));
         if (answers.some((answer) => !answer)) return evaluation.showError('Jawab kelima soal terlebih dahulu.');
