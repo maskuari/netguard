@@ -58,7 +58,7 @@
                     settledFields = new WeakSet();
                     window.clearTimeout(fieldTimer);
                 }
-                if (!highlightWinbox || done || document.querySelector('dialog[open], .chapter-dialogue:not([hidden]), .ch2-dialogue-overlay:not([hidden])')) {
+                if (!highlightWinbox || done || targetSelector === false || document.querySelector('dialog[open], .chapter-dialogue:not([hidden]), .ch2-dialogue-overlay:not([hidden])')) {
                     clearHighlight();
                     return;
                 }
@@ -151,7 +151,7 @@
             const refresh = () => {
                 const nextKey = String(getKey());
                 const plan = getPlan();
-                if (!plan.length) return;
+                if (!plan.length) { cancel(); clearHighlight(); return; }
                 let completed = 0;
                 while (completed < plan.length && plan[completed][1]) completed++;
                 if (nextKey !== key || completed < index) {

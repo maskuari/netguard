@@ -78,7 +78,16 @@
     let setupStep = 0, setupDraft = [], setupConfirmed = Boolean(state.hotspotConfirmed), session = null, downloadedHtml = state.desktopHtml || state.portalHtml;
     let editingProfile = null, editingUser = null, editingInitialUser = false;
     let phoneScreen = 'home', phoneWifiEnabled = true;
+    let phoneHistory = [];
+    const browserTabs = [{ id: 1, type: 'portal' }];
+    let activeBrowserTab = 1, nextBrowserTabId = 2, browserTabsOpen = false;
     let phoneOperation = null, phoneOperationTimer = null, phoneOperationToken = 0, phoneScanComplete = false;
+    const phoneBrowserError = () => {
+        if (!phoneWifiEnabled || !state.phoneConnected) return { title: 'Tidak ada koneksi internet', description: 'Hubungkan HP ke Wi-Fi, lalu muat ulang halaman ini.', code: 'ERR_INTERNET_DISCONNECTED' };
+        if (!model.hotspotValid(state)) return { title: 'Situs ini tidak dapat dijangkau', description: 'Wi-Fi terhubung, tetapi portal HotSpot belum tersedia. Periksa HotSpot Setup pada router.', code: 'ERR_CONNECTION_REFUSED' };
+        if (state.loginFileRemoved) return { title: 'Halaman tidak ditemukan', description: 'File login.html tidak tersedia. Pulihkan halaman login melalui Reset HTML pada router.', code: 'HTTP ERROR 404' };
+        return null;
+    };
     const cancelPhoneOperation = () => {
         window.clearTimeout(phoneOperationTimer);
         phoneOperationTimer = null;
@@ -219,6 +228,44 @@
         return { address: inherited.leases.local?.address || lan.pool.split('-')[0], gateway: lan.gateway };
     }, onError: explainError });
     pc.setAvailable(true); pc.setNetwork(inherited ? Boolean(inherited.wan.bound && inherited.wan.defaultRoute && inherited.nat && !inherited.nat.disabled) : false);
+    const htmlDragHint = document.querySelector('[data-html-drag-hint]');
+    const fileWorkbench = document.querySelector('.ch2-workbench');
+    let htmlDragActive = false, htmlDragFrame = null;
+    const updateHtmlDragHint = () => {
+        htmlDragFrame = null;
+        const returningToRouter = state.exported && state.edited && !state.uploaded;
+        const file = document.querySelector(returningToRouter ? '.ch4-desktop-file' : '[data-login-file]');
+        const visible = document.documentElement.dataset.page === 'chapter-four' && state.stage === 'portal' && (!state.exported || returningToRouter) && !htmlDragActive
+            && phone.hidden && !app.hidden && app.classList.contains('is-app-restored') && open('files') && file && !file.hidden && document.querySelector('[data-notepad]').hidden
+            && overlay.hidden && !learning.open && prologue.hidden && !document.querySelector('dialog[open]');
+        htmlDragHint.hidden = !visible;
+        if (!visible) return;
+        const workbenchBounds = fileWorkbench.getBoundingClientRect(), fileBounds = file.getBoundingClientRect(), appBounds = app.getBoundingClientRect();
+        const scaleX = workbenchBounds.width / fileWorkbench.offsetWidth, scaleY = workbenchBounds.height / fileWorkbench.offsetHeight;
+        const exposedWidth = (appBounds.left - workbenchBounds.left) / scaleX;
+        if (!scaleX || !scaleY || !fileBounds.width || exposedWidth < 70) { htmlDragHint.hidden = true; return; }
+        const startX = (fileBounds.left + (returningToRouter ? fileBounds.width / 2 : Math.min(fileBounds.width * .25, 150 * scaleX)) - workbenchBounds.left) / scaleX;
+        const startY = (fileBounds.top + (returningToRouter ? Math.min(fileBounds.height * .4, 32 * scaleY) : fileBounds.height / 2) - workbenchBounds.top) / scaleY;
+        const destination = document.querySelector('[data-upload-login]').getBoundingClientRect();
+        const endX = returningToRouter ? (destination.left + Math.min(destination.width * .33, 220 * scaleX) - workbenchBounds.left) / scaleX : exposedWidth * .52;
+        const endY = returningToRouter ? (destination.top + Math.min(destination.height * .36, 140 * scaleY) - workbenchBounds.top) / scaleY : Math.min(startY + 90, fileWorkbench.offsetHeight - 100);
+        const midX = (startX + endX) / 2;
+        document.querySelector('[data-html-drag-path]').setAttribute('viewBox', '0 0 ' + fileWorkbench.offsetWidth + ' ' + fileWorkbench.offsetHeight);
+        document.querySelector('[data-html-drag-route]').setAttribute('d', `M ${startX} ${startY} C ${midX} ${startY}, ${midX} ${endY}, ${endX} ${endY}`);
+        const end = document.querySelector('[data-html-drag-end]'); end.setAttribute('cx', endX); end.setAttribute('cy', endY);
+        const hand = document.querySelector('[data-html-drag-hand]');
+        hand.style.left = startX + 'px'; hand.style.top = startY + 'px';
+        hand.style.setProperty('--html-drag-x', (endX - startX) + 'px'); hand.style.setProperty('--html-drag-y', (endY - startY) + 'px');
+        const label = document.querySelector('[data-html-drag-label]'); label.style.left = endX + 'px'; label.style.top = (endY + 36) + 'px';
+        label.textContent = returningToRouter ? 'Seret kembali ke File List' : 'Seret ke desktop';
+    };
+    const scheduleHtmlDragHint = () => { if (htmlDragFrame === null) htmlDragFrame = window.requestAnimationFrame(updateHtmlDragHint); };
+    const htmlDragObserver = new MutationObserver((changes) => {
+        if (changes.some((change) => !htmlDragHint.contains(change.target))) scheduleHtmlDragHint();
+    });
+    htmlDragObserver.observe(scene, { attributes: true, subtree: true, attributeFilter: ['class', 'hidden', 'open'] });
+    const htmlDragResizeObserver = new ResizeObserver(scheduleHtmlDragHint); htmlDragResizeObserver.observe(fileWorkbench);
+    fileWorkbench.addEventListener('scroll', scheduleHtmlDragHint, true);
     document.querySelectorAll('[data-ch2-app-hide]').forEach((button) => button.addEventListener('click', () => {
         app.hidden = true; pc.showDesktop();
     }));
@@ -231,9 +278,11 @@
         const restored = app.classList.toggle('is-app-restored');
         if (restored) pc.showPreview(); else pc.showWinbox();
         syncFileDesktop();
+        guide.refresh(); scheduleHtmlDragHint();
     });
+    const setupInterfaces = (inherited ?? window.NetGuardRouterConfiguration.fromStates()).interfaces.map((item) => item.name);
     const setupScreens = [
-        ['Select interface to run HotSpot on', 'HotSpot Interface', 'wlan1', ['ether1-internet', 'ether3-local', 'wlan1']],
+        ['Select interface to run HotSpot on', 'HotSpot Interface', 'wlan1', setupInterfaces],
         ['Set HotSpot address for interface', 'Local Address of Network', inherited?.addresses.find((item) => item.group === 'wireless')?.address || '192.168.20.1/24'],
         ['Set pool for HotSpot addresses', 'Address Pool of Network', inherited?.dhcp.find((item) => item.group === 'wireless')?.pool || '192.168.20.2-192.168.20.254'],
         ['Select certificate', 'Select Certificate', 'none', ['none']],
@@ -294,27 +343,40 @@
             ['Setelah Setup has completed successfully tampil, klik OK. Baris hotspot1 akan terlihat di tabel Servers.', model.hotspotValid(state) && setupConfirmed],
         ];
         if (state.stage === 'connect') return [
-            ['Klik HP uji · Wi-Fi sekolah di dekat taskbar. Pada layar utama HP, buka Pengaturan Wi-Fi. Pastikan Gunakan Wi-Fi menyala, lalu pilih jaringan dengan SSID yang kamu buat di WinBox.', action('phone:network') || state.initialLogin],
-            ['Isi Password Wi-Fi sesuai WPA2 Pre-Shared Key yang kamu simpan, lalu klik Connect. Periksa HP menerima IP ' + phoneNetwork().address + ' dan gateway ' + phoneNetwork().gateway + '. Portal ' + (state.hotspot?.dnsName || 'pilihanmu') + ' terbuka setelah WiFi terhubung.', state.phoneConnected || state.initialLogin],
-            ['Pada browser HP, isi username dan password akun awal yang tadi kamu buat pada HotSpot Setup, lalu klik Connect. Ini akun HotSpot, bukan password WiFi. Status sesi akan muncul setelah autentikasi berhasil.', state.initialLogin],
+            ['Klik HP uji · Wi-Fi sekolah.\nBuka Pengaturan.\nAktifkan Gunakan Wi-Fi.\nPilih SSID yang kamu buat di WinBox.', action('phone:network') || state.initialLogin, false],
+            ['Isi Password sesuai WPA2 Pre-Shared Key yang kamu simpan.\nKlik Hubungkan.\nTunggu hingga Wi-Fi terhubung dan HP menerima IP ' + phoneNetwork().address + '.', state.phoneConnected || state.initialLogin, false],
+            ['Klik baris Wi-Fi ' + state.wireless.ssid + ' yang sudah terhubung untuk membuka portal login.\nIsi username dan password akun awal dari HotSpot Setup.\nKlik Connect.\nGunakan akun HotSpot, bukan password Wi-Fi.', state.initialLogin, false],
         ];
-        if (state.stage === 'portal') return [
-            ['Klik Kembali ke PC · WinBox jika HP terbuka. Buka Files pada menu kiri. Klik □ pada judul utama WinBox untuk mengecilkan jendelanya, lalu seret hotspot/login.html ke desktop yang terlihat di belakang WinBox.', state.exported],
-            ['Klik Desktop PC di taskbar. Klik kanan file login.html, lalu pilih Open with Notepad. Pada layar sentuh klik file untuk menampilkan pilihan yang sama.', action('notepad:open') || state.edited],
-            ['Di Notepad, cari <div align="center">. Tepat di bawahnya tambahkan <h1>Selamat Datang di Hotspot SMK Negeri 1 Amuntai</h1>. Tekan Ctrl+S atau klik Simpan.', state.edited],
-            ['Tutup Notepad. Klik WinBox pada taskbar, buka Files, dan klik □ pada judul WinBox agar desktop terlihat. Seret file login.html dari desktop ke tabel File List. Konfirmasi penggantian file ketika diminta.', state.uploaded && model.loginHtmlValid(state.portalHtml)],
-            ['Buka HP uji. Klik Wi-Fi pada navigasi bawah HP, lalu Lupakan jaringan / hubungkan ulang. Pilih SSID buatanmu, masukkan password WPA2 WiFi yang kamu simpan dan Connect lagi. Pastikan browser kini menampilkan sambutan sekolah sebelum login.', state.portalVerified && state.uploaded],
-        ];
+        if (state.stage === 'portal') {
+            const restored = app.classList.contains('is-app-restored');
+            const fileAccess = !phone.hidden ? ['Klik Kembali ke PC · WinBox.', ['[data-return-router]']]
+                : app.hidden ? ['Klik WinBox pada taskbar.', ['[data-pc-task-winbox]']]
+                    : !open('files') ? ['Klik Files pada menu kiri WinBox.', ['[data-open-window="files"]']]
+                        : !restored ? ['Klik □ pada judul utama WinBox agar desktop terlihat.', ['[data-ch2-app-size]']]
+                            : ['Seret hotspot/login.html dari File List ke area desktop di sebelah kiri WinBox.', ['[data-login-file]']];
+            const uploadAccess = !document.querySelector('[data-notepad]').hidden ? ['Tutup Notepad.', ['[data-close-notepad]']]
+                : app.hidden ? ['Klik WinBox pada taskbar.', ['[data-pc-task-winbox]']]
+                    : !open('files') ? ['Klik Files pada menu kiri WinBox.', ['[data-open-window="files"]']]
+                        : !restored ? ['Klik □ pada judul utama WinBox agar desktop terlihat.', ['[data-ch2-app-size]']]
+                            : ['Seret login.html dari desktop ke File List.\nKonfirmasi penggantian file ketika diminta.', ['[data-upload-login]']];
+            return [
+                [fileAccess[0], state.exported, fileAccess[1]],
+                ['Klik kanan file login.html di desktop.\nPilih Open with → Notepad.\nPada layar sentuh, ketuk file untuk membuka menu.', action('notepad:open') || state.edited, false],
+                ['Di Notepad, cari <div align="center">. Tepat di bawahnya tambahkan <h1>Selamat Datang di Hotspot SMK Negeri 1 Amuntai</h1>. Tekan Ctrl+S atau klik Simpan.', state.edited, false],
+                [uploadAccess[0], state.uploaded && model.loginHtmlValid(state.portalHtml), uploadAccess[1]],
+                ['Buka HP uji.\nKlik Wi-Fi pada navigasi bawah.\nKlik Lupakan jaringan.\nPilih SSID dan hubungkan kembali dengan password WPA2 Wi-Fi.\nKlik baris Wi-Fi yang sudah terhubung untuk membuka portal.\nPeriksa sambutan sekolah sebelum login.', state.portalVerified && state.uploaded, false],
+            ];
+        }
         if (state.stage === 'profiles') return names.flatMap((name) => [
             ['Klik IP → Hotspot → tab User Profiles, lalu tombol + untuk profile ' + name + '.', model.profileValid(state, name) || (open('profile-edit') && editingProfile === name)],
             ['Isi pengaturan User Profile:\nName: ' + name + '\nShared Users: ' + shared[name].shared + '\nRate Limit: ' + shared[name].rate + '\nKlik OK.\n\nShared Users membatasi sesi bersamaan per akun. Rate Limit membatasi kecepatannya.', model.profileValid(state, name), [{ selector: '[data-field="profile-name"]', expected: name }, { selector: '[data-field="shared"]', expected: shared[name].shared }, { selector: '[data-field="rate"]', expected: shared[name].rate }, '[data-save-form="profile-edit"]:not([data-apply])']],
         ]);
         if (state.stage === 'users') return [
             ...names.map((name) => ['Buka IP → Hotspot.\nKlik tab Users.\nKlik +.\nIsi Name: ' + name + '\nIsi Password: ' + shared[name].password + '\nPilih Profile: ' + name + '\nKlik OK.', model.userValid(state, name), open('user-edit') ? [{ selector: '[data-field="user-name"]', expected: name }, { selector: '[data-field="user-password"]', expected: shared[name].password }, { selector: '[data-field="user-profile"]', expected: name }, '[data-save-form="user-edit"]:not([data-apply])'] : open('hotspot') ? ['[data-hotspot-tab="Users"]', '[data-hotspot-add]'] : ['[data-ch2-menu="ip"]', '[data-ip-item="Hotspot"]']]),
-            ...names.map((name) => ['Buka HP uji. Jika akun sebelumnya masih login, klik Log out. Masuk dengan Username ' + name + ' dan Password ' + shared[name].password + ', lalu klik Connect. Pastikan detail sesi menunjukkan Profile ' + name + '.', Boolean(state.verified[name])]),
-            ['Setelah mencoba ketiga akun, biarkan akun terakhir tetap login. Kembali ke WinBox, buka IP → Hotspot → Active, lalu klik baris akun yang sedang login. Active menampilkan sesi yang tersambung sekarang; dengan satu HP, hanya akun yang terakhir login yang muncul. Daftar semua akun ada di tab Users.', action('active:review')],
+            ...names.map((name) => ['Buka HP uji, lalu buka Browser. Jika akun sebelumnya masih login, klik Log out. Masuk dengan Username ' + name + ' dan Password ' + shared[name].password + ', lalu klik Connect. Pastikan detail sesi menunjukkan Profile ' + name + '.', Boolean(state.verified[name]), false]),
+            ['Setelah mencoba ketiga akun, biarkan akun terakhir tetap login. Kembali ke WinBox, buka IP → Hotspot → Active, lalu klik baris akun yang sedang login. Active menampilkan sesi yang tersambung sekarang; dengan satu HP, hanya akun yang terakhir login yang muncul. Daftar semua akun ada di tab Users.', action('active:review'), !phone.hidden ? false : !open('hotspot') ? ['[data-ch2-menu="ip"]', '[data-ip-item="Hotspot"]'] : hotspotTab !== 'Active' ? ['[data-hotspot-tab="Active"]'] : ['[data-hotspot-table] [data-hotspot-record]']],
         ];
-        return [[state.stage === 'intro' ? 'Ikuti arahan Pak Amat sebelum membangun WiFi sekolah.' : state.stage === 'quiz' ? 'Jawab lima soal, lalu klik Simpan hasil Chapter 4.' : 'Chapter 4 selesai. Kembali ke peta untuk melihat progres.', state.stage === 'finish']];
+        return [[state.stage === 'intro' ? 'Ikuti arahan Pak Amat sebelum membangun WiFi sekolah.' : state.stage === 'quiz' ? 'Jawab lima soal, lalu klik Simpan hasil Chapter 4.' : 'Chapter 4 selesai. Kembali ke peta untuk melihat progres.', state.stage === 'finish', false]];
     };
     const guide = window.NetGuardStepGuide.create({ list: document.querySelector('[data-guide-list]'), root: scene, getKey: () => state.stage + ':' + revision, getPlan: guidePlan });
     const paintHotspot = () => {
@@ -406,33 +468,69 @@
         document.querySelector('[data-remove-hotspot="user"]').disabled = !Object.hasOwn(state.users, editingUser) && !(editingInitialUser && state.hotspot && !state.hotspot.userRemoved);
         document.querySelectorAll('[data-radio-tab]').forEach((node) => node.classList.toggle('is-active', node.dataset.radioTab === radioTab));
         document.querySelectorAll('[data-hotspot-tab]').forEach((node) => node.classList.toggle('is-active', node.dataset.hotspotTab === hotspotTab));
+        const browserError = phoneBrowserError();
+        const activeTab = browserTabs.find((tab) => tab.id === activeBrowserTab);
+        const showPortal = activeTab.type === 'portal' && !browserTabsOpen;
+        if (browserError && phoneOperation?.kind === 'portal') cancelPhoneOperation();
         document.querySelectorAll('[data-phone-screen]').forEach((screen) => { screen.hidden = screen.dataset.phoneScreen !== phoneScreen; });
         document.querySelector('[data-phone-network]').hidden = !phoneWifiEnabled || !phoneScanComplete || !model.wirelessValid(state);
         document.querySelector('[data-phone-network]').disabled = Boolean(phoneOperation);
         document.querySelector('[data-phone-progress]').hidden = !phoneOperation || phoneOperation.kind === 'portal';
         document.querySelector('[data-phone-progress-text]').textContent = phoneOperation?.text || '';
-        document.querySelector('[data-wifi-connect] button[type="submit"]').disabled = Boolean(phoneOperation);
+        document.querySelector('[data-wifi-connect] button[type="submit"]').disabled = Boolean(phoneOperation) || !document.querySelector('[data-wifi-password]').value;
+        document.querySelector('[data-wifi-connect]').classList.toggle('is-connecting', ['connect', 'address'].includes(phoneOperation?.kind));
+        if (['connect', 'address'].includes(phoneOperation?.kind)) document.querySelector('[data-wifi-connect-status]').textContent = phoneOperation.text;
         document.querySelector('[data-wifi-password]').disabled = Boolean(phoneOperation);
-        document.querySelector('[data-phone-signin]').disabled = Boolean(phoneOperation);
-        document.querySelector('[data-portal-loading]').hidden = phoneOperation?.kind !== 'portal';
-        document.querySelector('[data-portal-content]').hidden = phoneOperation?.kind === 'portal';
+        document.querySelector('[data-portal-loading]').hidden = !showPortal || phoneOperation?.kind !== 'portal';
+        document.querySelector('[data-portal-content]').hidden = !showPortal || Boolean(browserError) || phoneOperation?.kind === 'portal';
+        document.querySelector('[data-phone-browser-error]').hidden = !showPortal || !browserError;
+        document.querySelector('[data-browser-toolbar]').hidden = browserTabsOpen;
+        document.querySelector('[data-browser-tab-overview]').hidden = !browserTabsOpen;
+        document.querySelector('[data-browser-google]').hidden = browserTabsOpen || activeTab.type !== 'google';
+        const tabButton = document.querySelector('[data-browser-tabs]');
+        tabButton.textContent = String(browserTabs.length);
+        tabButton.setAttribute('aria-label', 'Lihat ' + browserTabs.length + ' tab terbuka');
+        tabButton.setAttribute('aria-expanded', String(browserTabsOpen));
+        if (browserTabsOpen) {
+            const cards = browserTabs.map((tab) => {
+                const card = document.createElement('button');
+                card.type = 'button'; card.className = 'ch4-browser-tab-card'; card.dataset.browserTab = String(tab.id);
+                card.classList.toggle('is-selected', tab.id === activeBrowserTab);
+                card.setAttribute('aria-pressed', String(tab.id === activeBrowserTab));
+                const title = document.createElement('b'); title.textContent = tab.type === 'google' ? 'Google' : 'MikroTik';
+                const preview = document.createElement('span'); preview.className = 'ch4-browser-tab-preview ch4-browser-tab-preview--' + tab.type;
+                preview.textContent = tab.type === 'google' ? 'Google' : 'MikroTik'; preview.setAttribute('aria-hidden', 'true');
+                const address = document.createElement('small'); address.textContent = tab.type === 'google' ? 'google.com' : state.hotspot?.dnsName || 'hotspot';
+                card.append(title, preview, address);
+                card.addEventListener('click', () => { activeBrowserTab = tab.id; openPhoneBrowser(); });
+                return card;
+            });
+            document.querySelector('[data-browser-tab-list]').replaceChildren(...cards);
+        }
+        if (browserError) {
+            document.querySelector('[data-browser-error-title]').textContent = browserError.title;
+            document.querySelector('[data-browser-error-description]').textContent = browserError.description;
+            document.querySelector('[data-browser-error-code]').textContent = browserError.code;
+        }
         document.querySelector('[data-phone-wifi-toggle]').checked = phoneWifiEnabled;
         document.querySelector('[data-phone-scan]').textContent = !phoneWifiEnabled ? 'Wi-Fi dimatikan. Aktifkan untuk mencari jaringan.' : phoneOperation?.kind === 'scan' ? 'Memindai Wi-Fi…' : !phoneScanComplete ? 'Buka Wi-Fi untuk mencari jaringan.' : model.wirelessValid(state) ? 'Jaringan tersedia' : 'Jaringan sekolah belum ditemukan. Periksa wlan1 dan SSID pada router.';
         document.querySelector('[data-phone-home-status]').textContent = state.phoneConnected ? 'Terhubung · ' + state.wireless.ssid : 'Belum terhubung ke Wi-Fi';
+        document.querySelector('[data-phone-network]').classList.toggle('is-connected', state.phoneConnected);
+        document.querySelector('[data-phone-network-state]').textContent = state.phoneConnected ? (session ? 'Terhubung' : 'Terhubung · Login ke jaringan') : 'Diamankan · WPA/WPA2 PSK';
+        document.querySelector('[data-wifi-connect-ssid]').textContent = state.wireless.ssid;
         document.querySelector('[data-phone-signal]').textContent = state.phoneConnected ? '◉' : '▱';
         document.querySelector('[data-phone-signal]').setAttribute('aria-label', state.phoneConnected ? 'Wi-Fi terhubung' : 'Wi-Fi belum terhubung');
         document.querySelector('[data-phone-ssid]').textContent = state.wireless.ssid;
-        document.querySelector('[data-portal-address]').textContent = (state.hotspot?.dnsName || '') + (session ? '/status' : '/login');
+        document.querySelector('[data-portal-address]').textContent = activeTab.type === 'google' || !phoneWifiEnabled || !state.phoneConnected ? 'google.com' : (state.hotspot?.dnsName || 'hotspot') + (session ? '/status' : '/login');
         document.querySelector('[data-phone-forget]').hidden = !state.phoneConnected;
-        document.querySelector('[data-phone-browser]').hidden = phoneScreen !== 'browser' || !state.phoneConnected || !model.hotspotValid(state);
-        document.querySelector('[data-phone-signin]').hidden = !state.phoneConnected || !model.hotspotValid(state);
+        document.querySelector('[data-phone-browser]').hidden = phoneScreen !== 'browser';
         document.querySelector('[data-portal-heading]').hidden = !state.uploaded || !model.loginHtmlValid(state.portalHtml);
         document.querySelector('[data-portal-heading]').textContent = state.uploaded && model.loginHtmlValid(state.portalHtml) ? parameters.heading : '';
         document.querySelector('[data-phone-login]').hidden = Boolean(session);
         document.querySelector('[data-phone-session]').hidden = !session;
         document.querySelector('[data-previous]').hidden = state.stage === 'intro' || state.stage === 'finish';
         document.querySelector('[data-reread-learning]').hidden = !stages.includes(state.stage);
-        paintHotspot(); guide.refresh();
+        paintHotspot(); guide.refresh(); scheduleHtmlDragHint();
         window.clearTimeout(completionTimer);
         if (stages.includes(state.stage) && done(state.stage) && announced !== state.stage && overlay.hidden && !learning.open && prologue.hidden) {
             const current = state.stage, token = revision;
@@ -710,34 +808,76 @@
         }
         setupStep++; persist(); setupPaint(); render();
     });
+    const navigatePhone = (screen) => {
+        cancelPhoneOperation();
+        browserTabsOpen = false;
+        document.querySelector('[data-wifi-connect]').hidden = true;
+        if (phoneScreen !== screen) { phoneHistory.push(phoneScreen); phoneScreen = screen; }
+        document.querySelector('.ch4-phone-content').scrollTop = 0;
+    };
+    const returnToRouter = () => {
+        cancelPhoneOperation();
+        document.querySelector('[data-wifi-connect]').hidden = true;
+        phone.hidden = true;
+        phoneHistory = [];
+        pc.showWinbox();
+        render();
+    };
+    const closeWifiPassword = () => {
+        cancelPhoneOperation();
+        document.querySelector('[data-wifi-connect]').hidden = true;
+        document.querySelector('[data-wifi-connect-status]').textContent = '';
+        render();
+        document.querySelector('[data-phone-network]').focus({ preventScroll: true });
+    };
+    const phoneBack = () => {
+        if (phoneScreen === 'browser' && browserTabsOpen) { browserTabsOpen = false; render(); return; }
+        if (!document.querySelector('[data-wifi-connect]').hidden) { closeWifiPassword(); return; }
+        cancelPhoneOperation();
+        if (phoneScreen === 'home') { returnToRouter(); return; }
+        phoneScreen = phoneHistory.pop() || 'home';
+        document.querySelector('.ch4-phone-content').scrollTop = 0;
+        if (phoneScreen === 'browser') { openPhoneBrowser(); return; }
+        render();
+    };
     const openPhoneBrowser = () => {
-        if (!phoneWifiEnabled || !state.phoneConnected) return explainError('HP belum terhubung ke Wi-Fi. Pada HP, buka Pengaturan Wi-Fi, aktifkan Gunakan Wi-Fi, pilih SSID buatanmu, lalu Connect memakai password WPA2 WiFi yang kamu simpan. Setelah itu halaman login HotSpot dapat dibuka.');
-        if (!model.hotspotValid(state)) return explainError('HP sudah terhubung ke Wi-Fi, tetapi portal belum tersedia. Kembali ke WinBox → IP → Hotspot → Servers dan selesaikan Hotspot Setup pada wlan1.');
-        if (state.loginFileRemoved) return explainError('File hotspot/login.html tidak ada di router. Buka IP → Hotspot → Servers → Reset HTML untuk memulihkan halaman login, atau unggah kembali login.html dari desktop.');
-        phoneScreen = 'browser';
+        navigatePhone('browser');
+        if (browserTabs.find((tab) => tab.id === activeBrowserTab).type === 'google') { render(); return; }
         document.querySelector('[data-portal-error]').hidden = true;
+        if (phoneBrowserError()) { render(); return; }
         startPhoneOperation('portal', 'Memuat halaman login…', 1400, () => {
-            if (!state.phoneConnected || !model.hotspotValid(state) || state.loginFileRemoved) { phoneScreen = 'wifi'; render(); return; }
+            if (phoneBrowserError()) { render(); return; }
             if (state.uploaded && model.loginHtmlValid(state.portalHtml)) state.portalVerified = true;
             record('phone:browser'); persist(); render();
         });
     };
+    const openHotspotBrowser = () => {
+        activeBrowserTab = browserTabs.find((tab) => tab.type === 'portal').id;
+        openPhoneBrowser();
+    };
+    const openNewBrowserTab = () => {
+        const tab = { id: nextBrowserTabId++, type: 'google' };
+        browserTabs.push(tab); activeBrowserTab = tab.id;
+        openPhoneBrowser();
+    };
     const scanPhoneWifi = () => {
-        phoneScreen = 'wifi'; phoneScanComplete = false;
-        document.querySelector('[data-wifi-connect]').hidden = true;
+        navigatePhone('wifi'); phoneScanComplete = false;
         document.querySelector('[data-phone-status]').textContent = state.phoneConnected ? 'Terhubung ke ' + state.wireless.ssid : '';
         record('phone:wifi');
         if (!phoneWifiEnabled) { cancelPhoneOperation(); render(); return; }
         startPhoneOperation('scan', 'Mencari jaringan di sekitar…', 1700, () => { phoneScanComplete = true; render(); });
     };
     document.querySelector('[data-open-phone]').addEventListener('click', () => {
-        cancelPhoneOperation(); closeMenus(); phone.hidden = false; phoneScreen = 'home'; record('phone:open'); render();
-        if (state.phoneConnected && model.hotspotValid(state)) openPhoneBrowser();
+        cancelPhoneOperation(); closeMenus(); phone.hidden = false; phoneScreen = 'home'; phoneHistory = [];
+        document.querySelector('[data-wifi-connect]').hidden = true;
+        record('phone:open'); render();
     });
-    for (const selector of ['[data-phone-open-wifi]', '[data-phone-wifi-shortcut]']) document.querySelector(selector).addEventListener('click', scanPhoneWifi);
-    document.querySelector('[data-phone-home]').addEventListener('click', () => { cancelPhoneOperation(); phoneScreen = 'home'; render(); });
-    document.querySelector('[data-phone-back]').addEventListener('click', () => { cancelPhoneOperation(); if (phoneScreen === 'browser') scanPhoneWifi(); else { phoneScreen = 'home'; render(); } });
-    for (const selector of ['[data-phone-open-browser]', '[data-phone-signin]']) document.querySelector(selector).addEventListener('click', openPhoneBrowser);
+    for (const selector of ['[data-phone-open-wifi]', '[data-phone-wifi-shortcut]', '[data-phone-browser-wifi]']) document.querySelector(selector).addEventListener('click', scanPhoneWifi);
+    document.querySelector('[data-phone-home]').addEventListener('click', () => { navigatePhone('home'); phoneHistory = []; render(); });
+    for (const selector of ['[data-phone-back]', '[data-phone-settings-back]', '[data-phone-browser-back]']) document.querySelector(selector).addEventListener('click', phoneBack);
+    for (const selector of ['[data-phone-open-browser]', '[data-phone-browser-reload]']) document.querySelector(selector).addEventListener('click', openPhoneBrowser);
+    for (const selector of ['[data-browser-new-tab]', '[data-browser-overview-new-tab]']) document.querySelector(selector).addEventListener('click', openNewBrowserTab);
+    document.querySelector('[data-browser-tabs]').addEventListener('click', () => { browserTabsOpen = true; render(); });
     document.querySelector('[data-phone-wifi-toggle]').addEventListener('change', (event) => {
         phoneWifiEnabled = event.currentTarget.checked;
         cancelPhoneOperation(); phoneScanComplete = false;
@@ -745,8 +885,25 @@
         persist(); render();
         if (phoneWifiEnabled) scanPhoneWifi();
     });
-    document.querySelector('[data-return-router]').addEventListener('click', () => { cancelPhoneOperation(); phone.hidden = true; pc.showWinbox(); render(); });
-    document.querySelector('[data-phone-network]').addEventListener('click', () => { if (phoneOperation || !phoneScanComplete) return; document.querySelector('[data-wifi-connect]').hidden = false; record('phone:network'); });
+    document.querySelector('[data-return-router]').addEventListener('click', returnToRouter);
+    document.querySelector('[data-wifi-cancel]').addEventListener('click', closeWifiPassword);
+    document.querySelector('[data-wifi-show-password]').addEventListener('change', (event) => { document.querySelector('[data-wifi-password]').type = event.currentTarget.checked ? 'text' : 'password'; });
+    document.querySelector('[data-wifi-password]').addEventListener('input', () => { document.querySelector('[data-wifi-connect-status]').textContent = ''; render(); });
+    document.querySelector('[data-phone-network]').addEventListener('click', () => {
+        if (phoneOperation || !phoneScanComplete) return;
+        if (state.phoneConnected) { record('phone:network'); openHotspotBrowser(); return; }
+        document.querySelector('[data-wifi-password]').value = '';
+        document.querySelector('[data-wifi-password]').type = 'password';
+        document.querySelector('[data-wifi-show-password]').checked = false;
+        document.querySelector('[data-wifi-connect-status]').textContent = '';
+        document.querySelector('[data-wifi-connect]').hidden = false;
+        record('phone:network'); render();
+        document.querySelector('[data-wifi-password]').focus({ preventScroll: true });
+    });
+    phone.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return;
+        event.preventDefault(); event.stopPropagation(); phoneBack();
+    });
     document.querySelector('[data-wifi-connect]').addEventListener('submit', (event) => {
         event.preventDefault();
         if (phoneOperation) return;
@@ -756,14 +913,16 @@
         const ssid = state.wireless.ssid;
         startPhoneOperation('connect', 'Menghubungkan ke ' + ssid + '…', 1600, () => {
             if (!model.wifiReady(state) || state.wireless.ssid !== ssid) { render(); return; }
-            if (password !== state.security.key2) { render(); return explainError('Password WiFi belum cocok dengan WPA2 Pre-Shared Key yang kamu simpan. Periksa password pada Security Profile, lalu ulangi Connect.'); }
+            if (password !== state.security.key2) {
+                document.querySelector('[data-wifi-connect-status]').textContent = 'Password salah. Periksa dan coba lagi.';
+                render(); document.querySelector('[data-wifi-password]').focus({ preventScroll: true }); return;
+            }
             startPhoneOperation('address', 'Mendapatkan alamat IP…', 1000, () => {
                 if (!model.wifiReady(state) || state.wireless.ssid !== ssid || password !== state.security.key2) { render(); return; }
                 state.phoneConnected = true;
                 document.querySelector('[data-wifi-connect]').hidden = true;
                 document.querySelector('[data-phone-status]').textContent = 'Terhubung ke ' + ssid + '\nIP: ' + phoneNetwork().address + '\nGateway/DNS: ' + phoneNetwork().gateway;
-                persist(); render(); message('HP terhubung. Membuka portal HotSpot…', 'success');
-                if (model.hotspotValid(state)) openPhoneBrowser();
+                persist(); render(); message('HP terhubung. Klik baris Wi-Fi ' + ssid + ' untuk membuka portal login.', 'success');
             });
         });
     });
@@ -785,23 +944,79 @@
     });
     document.querySelector('[data-phone-logout]').addEventListener('click', () => { session = null; document.querySelector('[data-phone-user]').value = ''; document.querySelector('[data-phone-password]').value = ''; render(); openPhoneBrowser(); });
     const desktop = document.querySelector('[data-pc-desktop]');
-    const desktopFile = document.createElement('button'); desktopFile.type = 'button'; desktopFile.className = 'ch4-desktop-file'; desktopFile.textContent = '▤ login.html'; desktopFile.draggable = true; desktopFile.hidden = !state.exported; desktop.append(desktopFile);
-    const fileMenu = document.createElement('button'); fileMenu.type = 'button'; fileMenu.className = 'ch4-file-menu'; fileMenu.textContent = 'Open with Notepad'; fileMenu.hidden = true; desktop.append(fileMenu);
-    const exportFile = () => { if (!model.hotspotValid(state)) return explainError('Selesaikan HotSpot Setup dahulu agar direktori hotspot dan login.html dibuat.'); state.exported = true; downloadedHtml = state.portalHtml; state.desktopHtml = downloadedHtml; desktopFile.hidden = false; persist(); render(); message('login.html tersalin ke desktop. Klik kanan file, lalu Open with Notepad.', 'success'); };
-    const loginFile = document.querySelector('[data-login-file]');
-    loginFile.addEventListener('dragstart', (event) => event.dataTransfer.setData('text/plain', 'router-login-html'));
-    loginFile.addEventListener('keydown', (event) => { if (event.key === 'Enter') exportFile(); });
-    desktopFile.addEventListener('dragstart', (event) => event.dataTransfer.setData('text/plain', 'desktop-login-html'));
     const host = document.querySelector('.ch2-workbench');
+    const desktopFile = document.createElement('button'); desktopFile.type = 'button'; desktopFile.className = 'ch4-desktop-file'; desktopFile.draggable = true; desktopFile.hidden = !state.exported;
+    desktopFile.setAttribute('aria-haspopup', 'menu'); desktopFile.setAttribute('aria-expanded', 'false');
+    desktopFile.innerHTML = '<svg viewBox="0 0 48 56" aria-hidden="true"><path class="ch4-html-document" d="M6 2h24l12 12v40H6Z"/><path class="ch4-html-fold" d="M30 2v12h12"/><path class="ch4-html-code" d="m17 26-6 6 6 6m14-12 6 6-6 6m-5-15-4 18"/></svg><span>login.html</span>';
+    desktop.append(desktopFile);
+    const fileMenu = document.createElement('div'); fileMenu.className = 'ch4-file-menu'; fileMenu.hidden = true; fileMenu.setAttribute('role', 'menu'); fileMenu.setAttribute('aria-label', 'Pilihan untuk login.html');
+    fileMenu.innerHTML = '<div class="ch4-file-menu-caption" role="presentation">login.html</div><button type="button" role="menuitem" data-file-open-with aria-haspopup="menu" aria-expanded="false"><span class="ch4-menu-open-icon" aria-hidden="true">↗</span><span>Open with</span><span class="ch4-menu-arrow" aria-hidden="true">›</span></button><div class="ch4-file-submenu" data-file-open-submenu role="menu" aria-label="Open with" hidden><button type="button" role="menuitem" data-file-open-notepad><svg viewBox="0 0 32 36" aria-hidden="true"><path d="M6 3h20v30H6Z"/><path d="M10 1v6M16 1v6M22 1v6M11 13h10M11 18h10M11 23h7"/></svg><span>Notepad</span></button></div>';
+    host.append(fileMenu);
+    const openWithButton = fileMenu.querySelector('[data-file-open-with]'), notepadMenu = fileMenu.querySelector('[data-file-open-submenu]'), notepadButton = fileMenu.querySelector('[data-file-open-notepad]');
+    const closeFileMenu = (returnFocus = false) => {
+        fileMenu.hidden = true; notepadMenu.hidden = true;
+        openWithButton.setAttribute('aria-expanded', 'false'); desktopFile.setAttribute('aria-expanded', 'false');
+        if (returnFocus) desktopFile.focus({ preventScroll: true });
+    };
+    const openNotepad = () => {
+        closeFileMenu();
+        const editor = document.querySelector('[data-login-html]'); editor.value = downloadedHtml;
+        document.querySelector('[data-notepad]').hidden = false;
+        record('notepad:open'); editor.focus({ preventScroll: true });
+    };
+    const exportFile = () => { if (!model.hotspotValid(state)) return explainError('Selesaikan HotSpot Setup dahulu agar direktori hotspot dan login.html dibuat.'); state.exported = true; downloadedHtml = state.portalHtml; state.desktopHtml = downloadedHtml; desktopFile.hidden = false; persist(); render(); message('login.html tersalin ke desktop. Klik kanan file, lalu pilih Open with → Notepad.', 'success'); };
+    const loginFile = document.querySelector('[data-login-file]');
+    loginFile.addEventListener('dragstart', (event) => { htmlDragActive = true; htmlDragHint.hidden = true; event.dataTransfer.setData('text/plain', 'router-login-html'); });
+    loginFile.addEventListener('dragend', () => { htmlDragActive = false; scheduleHtmlDragHint(); });
+    loginFile.addEventListener('keydown', (event) => { if (event.key === 'Enter') exportFile(); });
+    desktopFile.addEventListener('dragstart', (event) => { closeFileMenu(); htmlDragActive = true; htmlDragHint.hidden = true; event.dataTransfer.setData('text/plain', 'desktop-login-html'); });
+    desktopFile.addEventListener('dragend', () => { htmlDragActive = false; scheduleHtmlDragHint(); });
     host.addEventListener('dragover', (event) => { if (app.classList.contains('is-app-restored') || !desktop.hidden) event.preventDefault(); });
     host.addEventListener('drop', (event) => { if (event.target.closest('[data-upload-login], .routeros')) return; event.preventDefault(); if (event.dataTransfer.getData('text/plain') === 'router-login-html') exportFile(); });
-    const showFileMenu = (event) => { event.preventDefault(); fileMenu.hidden = false; };
-    desktopFile.addEventListener('contextmenu', showFileMenu); desktopFile.addEventListener('click', showFileMenu);
-    fileMenu.addEventListener('click', () => { fileMenu.hidden = true; document.querySelector('[data-login-html]').value = downloadedHtml; document.querySelector('[data-notepad]').hidden = false; record('notepad:open'); });
+    const showFileMenu = (event) => {
+        event.preventDefault(); closeFileMenu(); desktopFile.classList.add('is-selected'); fileMenu.hidden = false;
+        desktopFile.setAttribute('aria-expanded', 'true');
+        const bounds = host.getBoundingClientRect(), fileBounds = desktopFile.getBoundingClientRect();
+        const scaleX = bounds.width / host.offsetWidth || 1, scaleY = bounds.height / host.offsetHeight || 1;
+        const usePointer = event.type !== 'keydown' && (event.clientX || event.clientY);
+        const x = ((usePointer ? event.clientX : fileBounds.right) - bounds.left) / scaleX;
+        const y = ((usePointer ? event.clientY : fileBounds.top) - bounds.top) / scaleY;
+        fileMenu.style.left = Math.max(8, Math.min(x, host.clientWidth - fileMenu.offsetWidth - 8)) + 'px';
+        fileMenu.style.top = Math.max(8, Math.min(y, host.clientHeight - fileMenu.offsetHeight - 52)) + 'px';
+        openWithButton.focus({ preventScroll: true });
+    };
+    const showNotepadMenu = (focus = false) => {
+        notepadMenu.hidden = false; openWithButton.setAttribute('aria-expanded', 'true');
+        const x = parseFloat(fileMenu.style.left), y = parseFloat(fileMenu.style.top);
+        const roomOnRight = host.clientWidth - x - fileMenu.offsetWidth;
+        const side = roomOnRight >= notepadMenu.offsetWidth + 8 ? 'right' : x >= notepadMenu.offsetWidth + 8 ? 'left' : 'below';
+        fileMenu.dataset.submenuSide = side;
+        if (side === 'below') fileMenu.style.top = Math.max(8, Math.min(y, host.clientHeight - fileMenu.offsetHeight - notepadMenu.offsetHeight - 60)) + 'px';
+        notepadMenu.style.top = side === 'below' ? fileMenu.offsetHeight + 4 + 'px' : Math.max(-y + 8, Math.min(openWithButton.offsetTop - 4, host.clientHeight - y - notepadMenu.offsetHeight - 52)) + 'px';
+        if (focus) notepadButton.focus({ preventScroll: true });
+    };
+    desktopFile.addEventListener('contextmenu', showFileMenu);
+    desktopFile.addEventListener('click', (event) => { desktopFile.classList.add('is-selected'); if (event.pointerType === 'touch' || event.detail === 0) showFileMenu(event); else closeFileMenu(); });
+    desktopFile.addEventListener('keydown', (event) => { if (event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10')) showFileMenu(event); });
+    openWithButton.addEventListener('pointerenter', () => showNotepadMenu());
+    openWithButton.addEventListener('click', () => showNotepadMenu(true));
+    notepadButton.addEventListener('click', openNotepad);
+    fileMenu.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closeFileMenu(true); }
+        else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') { event.preventDefault(); showNotepadMenu(true); }
+        else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') { event.preventDefault(); notepadMenu.hidden = true; openWithButton.setAttribute('aria-expanded', 'false'); openWithButton.focus({ preventScroll: true }); }
+        else if (event.key === 'Tab') closeFileMenu();
+    });
+    document.addEventListener('pointerdown', (event) => { if (!fileMenu.contains(event.target) && !desktopFile.contains(event.target)) { closeFileMenu(); desktopFile.classList.remove('is-selected'); } });
+    document.addEventListener('contextmenu', (event) => { if (!fileMenu.contains(event.target) && !desktopFile.contains(event.target)) closeFileMenu(); });
+    window.addEventListener('resize', () => closeFileMenu());
+    host.addEventListener('scroll', () => closeFileMenu(), true);
+    const fileMenuVisibilityObserver = new MutationObserver(() => { if (desktop.hidden || !phone.hidden) closeFileMenu(); });
+    for (const node of [desktop, phone]) fileMenuVisibilityObserver.observe(node, { attributes: true, attributeFilter: ['hidden'] });
     const saveHtml = () => { const html = document.querySelector('[data-login-html]').value; if (!model.loginHtmlValid(html)) return explainError('Tambahkan <h1>Selamat Datang di Hotspot SMK Negeri 1 Amuntai</h1> tepat di bawah <div align="center">. Jangan menghapus formulir login yang sudah ada.'); downloadedHtml = html; state.desktopHtml = html; state.edited = true; document.querySelector('[data-notepad-status]').textContent = 'Tersimpan di desktop'; persist(); render(); };
     document.querySelector('[data-save-html]').addEventListener('click', saveHtml);
     document.querySelector('[data-login-html]').addEventListener('keydown', (event) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') { event.preventDefault(); saveHtml(); } });
-    document.querySelector('[data-close-notepad]').addEventListener('click', () => { document.querySelector('[data-notepad]').hidden = true; });
+    document.querySelector('[data-close-notepad]').addEventListener('click', () => { document.querySelector('[data-notepad]').hidden = true; desktopFile.focus({ preventScroll: true }); });
     const upload = document.querySelector('[data-upload-login]'); upload.addEventListener('dragover', (event) => { event.preventDefault(); });
     const queueLoginUpload = () => {
         if (!state.edited || !model.loginHtmlValid(downloadedHtml)) return explainError('Simpan perubahan login.html di Notepad dahulu sebelum mengunggah ke router.');

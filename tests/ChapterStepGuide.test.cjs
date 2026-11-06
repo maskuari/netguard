@@ -5,11 +5,14 @@ const vm = require('node:vm');
 const path = require('node:path');
 
 const source = fs.readFileSync(path.join(__dirname, '../public/js/chapter-step-guide.js'), 'utf8');
-const setup = (steps) => {
+const setup = (steps, controls = []) => {
     const makeNode = () => {
         const classes = new Set();
+        let ownText = '';
         return {
-            children: [], dataset: {}, attributes: {}, textContent: '',
+            children: [], dataset: {}, attributes: {},
+            get textContent() { return ownText + this.children.map((child) => child.textContent).join(''); },
+            set textContent(value) { ownText = value; this.children = []; },
             get firstElementChild() { return this.children[0]; },
             get className() { return [...classes].join(' '); },
             set className(value) { classes.clear(); value.split(' ').filter(Boolean).forEach((name) => classes.add(name)); },
@@ -27,10 +30,10 @@ const setup = (steps) => {
     let key = 'mission';
     let mutation;
     let disconnected = false;
-    const root = { addEventListener(name, handler) { handlers.set(name, handler); }, removeEventListener(name) { handlers.delete(name); } };
-    const context = { window: { setTimeout(callback) { timers.set(++sequence, callback); return sequence; }, clearTimeout(id) { timers.delete(id); } }, document: { body: root, createElement: makeNode }, MutationObserver: class { constructor(callback) { mutation = callback; } observe() {} disconnect() { disconnected = true; } }, queueMicrotask };
+    const root = { addEventListener(name, handler) { handlers.set(name, handler); }, removeEventListener(name) { handlers.delete(name); }, querySelectorAll(selector) { return selector.startsWith('button, a,') ? controls : []; } };
+    const context = { window: { setTimeout(callback) { timers.set(++sequence, callback); return sequence; }, clearTimeout(id) { timers.delete(id); } }, document: { documentElement: { dataset: { page: "test" } }, body: root, createElement: makeNode, querySelector: () => null }, MutationObserver: class { constructor(callback) { mutation = callback; } observe() {} disconnect() { disconnected = true; } }, queueMicrotask };
     vm.runInNewContext(source, context);
-    const guide = context.window.NetGuardStepGuide.create({ list, root, getKey: () => key, getPlan: () => steps });
+    const guide = context.window.NetGuardStepGuide.create({ list, root, getKey: () => key, getPlan: () => typeof steps === 'function' ? steps() : steps, highlightWinbox: controls.length > 0 });
     return {
         guide, list, timers, handlers,
         setKey(value) { key = value; },
@@ -108,4 +111,48 @@ test('DOM changes and input update steps without polling or an observer loop', a
     assert.equal(game.disconnected(), true);
     assert.equal(game.handlers.size, 0);
     assert.equal(game.timers.size, 0);
+});
+
+test('orange highlight follows dropdown and add arrow before allowing the save target', () => {
+    const control = (tag, selector) => {
+        const classes = new Set();
+        return {
+            value: '', textContent: '', type: tag === 'input' ? 'number' : '', disabled: false, readOnly: false,
+            matches(query) { return query.split(',').some((part) => [tag, selector].includes(part.trim())); },
+            closest(query) { return query === '.routeros, .winbox-window' ? {} : null; },
+            getClientRects: () => [{}], getAttribute: () => null, hasAttribute: () => false,
+            querySelector: () => null, querySelectorAll: () => [], contains(node) { return this === node; },
+            classList: { add(name) { classes.add(name); }, remove(name) { classes.delete(name); }, contains: (name) => classes.has(name) },
+        };
+    };
+    const id = control('input', '[data-vlan-id]');
+    const firstPort = control('select', '[data-vlan-port-index="0"]');
+    const add = control('button', '[data-vlan-port-add="0"]');
+    const secondPort = control('select', '[data-vlan-port-index="1"]');
+    const save = control('button', '[data-save-vlan]');
+    let secondRowExists = false;
+    const controls = [id, firstPort, add, secondPort, save];
+    const game = setup(() => [
+        ['Isi VLAN ID 20.', id.value === '20', { selector: '[data-vlan-id]', expected: 20 }],
+        ['Pilih ether1.', firstPort.value === 'ether1', { selector: '[data-vlan-port-index="0"]', expected: 'ether1' }],
+        ['Tambahkan baris port.', secondRowExists, '[data-vlan-port-add="0"]'],
+        ['Pilih ether4.', secondPort.value === 'ether4', { selector: '[data-vlan-port-index="1"]', expected: 'ether4' }],
+        ['Klik OK.', false, '[data-save-vlan]'],
+    ], controls);
+    const highlighted = () => controls.find((node) => node.classList.contains('chapter-guide-target'));
+    assert.equal(highlighted(), id);
+    id.value = '20'; game.guide.refresh(); game.advance();
+    assert.equal(highlighted(), firstPort);
+    firstPort.value = 'ether2'; game.guide.refresh();
+    assert.equal(highlighted(), firstPort);
+    firstPort.value = 'ether1'; game.guide.refresh(); game.advance();
+    assert.equal(highlighted(), add);
+    secondRowExists = true; game.guide.refresh(); game.advance();
+    assert.equal(highlighted(), secondPort);
+    assert.equal(save.classList.contains('chapter-guide-target'), false);
+    secondPort.value = 'ether4'; game.guide.refresh(); game.advance();
+    assert.equal(highlighted(), save);
+    secondPort.value = ''; game.guide.refresh();
+    assert.equal(highlighted(), secondPort);
+    assert.equal(save.classList.contains('chapter-guide-target'), false);
 });

@@ -41,7 +41,6 @@
 .ch4-phone-apps button > span { display: grid; place-items: center; width: 55px; height: 55px; border-radius: 16px; background: white; color: #286bc5; box-shadow: 0 4px 9px #274e8130; font-size: 30px; }
 .ch4-phone .ch4-wifi-toggle { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #cfdfec; }
 .ch4-phone .ch4-wifi-toggle input { width: 35px; height: 22px; accent-color: #0879ef; }
-.ch4-phone .ch4-open-portal { display: block; width: 100%; margin-top: 15px; border-color: #0879ef; color: #075eaf; background: #e7f2ff; }
 .ch4-phone .ch4-phone-navigation { display: flex; flex: none; justify-content: space-around; align-items: center; height: 40px; border-top: 1px solid #d8e4ed; }
 .ch4-phone-navigation button { min-width: 55px; padding: 5px; border: 0; background: transparent; font-size: 20px; }
 .ch4-phone-navigation [data-phone-wifi-shortcut] { font-size: 12px; }
@@ -50,17 +49,55 @@
 .ch4-portal-brand { display: block; margin-top: 20px; color: #0879ef; font-size: 10px; font-weight: 700; letter-spacing: .06em; }
 .ch4-upload { margin: 12px; padding: 18px; border: 2px dashed #7fadc9; color: #305a76; font-size: 13px; }
 .ch4-upload.is-dragging { background: #d4edff; }
-.ch4-scene .ch4-notepad { position: absolute; z-index: 60; inset: 55px 25px 65px; display: flex; flex-direction: column; border: 1px solid #92a9bf; background: white; box-shadow: 0 8px 25px #23426155; }
-.ch4-notepad > header, .ch4-notepad > footer { display: flex; justify-content: space-between; align-items: center; min-height: 36px; padding: 6px 12px; background: #edf4fa; font-size: 13px; }
+.ch4-scene .ch4-notepad { position: absolute; z-index: 60; inset: 55px 25px 65px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #c2cbd7; border-radius: 7px; background: white; box-shadow: 0 16px 50px #112b4e55, 0 0 0 1px #ffffff50; font-family: "Segoe UI", Arial, sans-serif; }
+.ch4-notepad > header, .ch4-notepad > footer { display: flex; justify-content: space-between; align-items: center; min-height: 36px; padding: 6px 12px; background: #f6f7f9; color: #202934; font-size: 13px; }
+.ch4-notepad > header { justify-content: flex-start; gap: 10px; min-height: 40px; padding: 0 0 0 14px; }
+.ch4-notepad > header::before { content: ''; flex: none; width: 13px; height: 17px; border: 1px solid #6191b2; border-top: 3px solid #77c8ed; border-radius: 1px; background: repeating-linear-gradient(to bottom, #fff 0 3px, #b9d5e8 3px 4px); }
+.ch4-notepad > header button { align-self: stretch; width: 44px; margin-left: auto; padding: 0; border: 0; border-radius: 0; background: transparent; color: #505c6a; font-size: 21px; }
+.ch4-notepad > header button:hover { color: white; background: #c42b1c; }
+.ch4-notepad > footer { gap: 12px; border-top: 1px solid #e3e7ec; font-size: 12px; }
 .ch4-notepad button { padding: 4px 8px; border: 1px solid #9bbbd5; background: white; color: #234563; cursor: pointer; }
 .ch4-notepad textarea { flex: 1; min-height: 0; width: 100%; padding: 12px; border: 0; outline: 0; resize: none; font: 13px/1.6 Consolas, monospace; }
-.ch4-desktop-file { margin: 15px; padding: 12px; border: 1px solid #ffffff70; background: #ffffff20; color: white; cursor: grab; }
-.ch4-file-menu { margin: 0 15px; padding: 8px; border: 1px solid #aac8df; background: white; color: #203e58; }
+.ch4-desktop-file { display: grid; justify-items: center; gap: 6px; width: 92px; margin: 14px 0 0; padding: 8px 5px; border: 1px solid transparent; border-radius: 4px; background: transparent; color: white; font: 13px/1.3 "Segoe UI", Arial, sans-serif; text-align: center; cursor: grab; }
+.ch4-desktop-file svg { width: 45px; height: 53px; filter: drop-shadow(0 2px 3px #164a7840); }
+.ch4-html-document { fill: #fff; stroke: #cbd7e2; stroke-width: 1.5; stroke-linejoin: round; }
+.ch4-html-fold { fill: #dfebf7; stroke: #b8ccde; stroke-width: 1.5; stroke-linejoin: round; }
+.ch4-html-code { fill: none; stroke: #e48639; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.ch4-desktop-file > span { text-shadow: 0 1px 3px #143768; }
+.ch4-desktop-file:hover, .ch4-desktop-file.is-selected, .ch4-desktop-file:focus-visible { border-color: #c1e5ff; background: #ffffff2b; }
+.ch4-desktop-file:active { cursor: grabbing; }
+.ch4-file-menu, .ch4-file-submenu { position: absolute; z-index: 55; box-sizing: border-box; width: 210px; margin: 0; padding: 5px; border: 1px solid #c6cdd5; border-radius: 6px; background: #fafbfc; color: #202731; box-shadow: 0 7px 22px #10253f40, 0 1px 3px #10253f25; font: 13px/1.3 "Segoe UI", Arial, sans-serif; text-align: left; }
+.ch4-file-menu-caption { margin: 0 5px 4px; padding: 6px 5px 9px; border-bottom: 1px solid #e1e5ea; color: #697481; font-size: 11px; }
+.ch4-file-menu button { display: flex; align-items: center; gap: 12px; box-sizing: border-box; width: 100%; min-height: 35px; padding: 7px 10px; border: 0; border-radius: 3px; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.ch4-file-menu button:hover, .ch4-file-menu button:focus-visible, .ch4-file-menu [aria-expanded="true"] { outline: 0; background: #e1ecf9; }
+.ch4-menu-open-icon { width: 20px; color: #6085aa; font-size: 19px; }
+.ch4-menu-arrow { margin-left: auto; color: #64778b; font-size: 21px; line-height: 1; }
+.ch4-file-submenu { top: 36px; left: calc(100% + 3px); width: 180px; }
+.ch4-file-menu[data-submenu-side="left"] .ch4-file-submenu { left: auto; right: calc(100% + 3px); }
+.ch4-file-menu[data-submenu-side="below"] .ch4-file-submenu { left: 0; right: auto; }
+.ch4-file-submenu svg { width: 22px; height: 25px; fill: #f9fdff; stroke: #4c94b8; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .ch4-scene .ch2-workbench.ch4-file-mode > .simulation-monitor { position: absolute; z-index: 25; top: 4%; right: 1%; bottom: 48px; left: 28%; width: auto; height: auto; margin: 0; padding: 0; overflow: visible; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
 .ch4-scene .ch2-workbench.ch4-file-mode > .simulation-monitor > .simulation-monitor__screen { width: 100%; height: 100%; min-height: 0; background: transparent; }
 .ch4-file-mode .ch2-monitor .ch2-routeros.is-app-restored { width: calc(100% - 28px); height: calc(100% - 28px); margin: 14px; }
 .ch4-file-mode .lab-pc-apps { flex-direction: column; }
 .ch4-file-mode .ch4-desktop-file { margin-left: 0; }
+.ch4-html-drag-hint { position: absolute; z-index: 38; inset: 0; overflow: hidden; pointer-events: none; }
+body:has(dialog[open]) .ch4-html-drag-hint { display: none; }
+.ch4-html-drag-path { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.ch4-html-drag-path > path { fill: none; stroke: #117cf0; stroke-width: 3; stroke-dasharray: 6 8; opacity: .65; }
+.ch4-html-drag-path marker path { fill: none; stroke: #117cf0; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.ch4-html-drag-path circle { fill: #e7f5ff80; stroke: #1683f5; stroke-width: 2; stroke-dasharray: 4 4; }
+.ch4-html-drag-hand { position: absolute; width: 44px; height: 44px; animation: ch4-html-drag 3.4s ease-in-out infinite; }
+.ch4-html-drag-hand svg { position: absolute; top: -8px; left: -16px; width: 44px; height: 44px; overflow: visible; fill: white; stroke: #155bb1; stroke-width: 2; stroke-linejoin: round; filter: drop-shadow(0 3px 4px #134b7b50); }
+.ch4-html-drag-hand span { position: absolute; top: 27px; left: 14px; padding: 5px 8px; border: 1px solid #72aff7; border-radius: 7px; background: #fff; color: #1e5ba1; box-shadow: 0 3px 8px #164c7c25; font: 11px Arial, sans-serif; white-space: nowrap; }
+.ch4-html-drag-label { position: absolute; padding: 7px 12px; border: 1px solid #8dc8ff; border-radius: 20px; background: #f5fbff; color: #1761b2; box-shadow: 0 3px 9px #164c7c20; font: 600 12px Arial, sans-serif; transform: translateX(-50%); white-space: nowrap; }
+@keyframes ch4-html-drag {
+    0%, 8% { opacity: 0; transform: translate(0, 0) scale(1.1); }
+    15%, 25% { opacity: 1; transform: translate(0, 0) scale(.95); }
+    70%, 80% { opacity: 1; transform: translate(var(--html-drag-x), var(--html-drag-y)) scale(.95); }
+    90%, 100% { opacity: 0; transform: translate(var(--html-drag-x), var(--html-drag-y)) scale(1.1); }
+}
+@media (prefers-reduced-motion: reduce) { .ch4-html-drag-hand { animation: none; } }
 @media (max-width: 1000px) { .ch4-scene .ch4-hp-launcher { right: 0; bottom: 44px; font-size: 11px; } .ch4-scene .ch4-notepad { inset: 20px 8px 50px; } }
 
 .ch4-scene .ch2-monitor .ch4-wireless-native { background: #eee; font: 11px Tahoma, sans-serif; }
@@ -185,3 +222,88 @@
 .ch4-phone .ch4-default-portal [data-session-details] { white-space: pre-line; }
 @keyframes ch4-phone-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .ch4-phone-spinner { animation-duration: 2s; } }
+
+.ch4-phone-area { background: radial-gradient(ellipse at 50% 35%, #f6fbff, #d8e6f3); }
+.ch4-phone { width: min(360px, 100%); height: min(700px, calc(100% - 52px)); padding: 8px 0 0; border-color: #202733; border-radius: 38px; background: #f8f9fc; color: #20252d; box-shadow: 0 20px 40px #1d375a30, 0 0 0 2px #ffffff90; font-family: Arial, sans-serif; }
+.ch4-phone > header { align-items: center; padding: 7px 20px 14px; color: #232933; font-size: 12px; font-weight: 600; }
+.ch4-phone-content { padding: 12px; }
+.ch4-phone .ch4-phone-home { box-sizing: border-box; min-height: 100%; padding: 42px 18px 24px; border-radius: 22px; background: radial-gradient(ellipse at 10% 20%, #ffffffaa, transparent 45%), radial-gradient(ellipse at 100% 80%, #92e0d4, transparent 65%), linear-gradient(145deg, #b6d3ff, #bbbeed); }
+.ch4-phone-clock b { font-size: 62px; letter-spacing: -3px; }
+.ch4-phone-clock > span { font-size: 14px; }
+.ch4-phone-apps { margin-top: auto; gap: 20px; }
+.ch4-phone .ch4-phone-apps button { font-size: 12px; font-weight: 600; }
+.ch4-phone .ch4-phone-apps button > span { width: 60px; height: 60px; border-radius: 19px; color: white; background: linear-gradient(145deg, #698091, #425364); box-shadow: 0 5px 10px #3c477930, inset 0 1px 0 #ffffff60; }
+.ch4-phone .ch4-phone-apps [data-phone-open-browser] > span { background: conic-gradient(#ea5c50 0deg 120deg, #efc54c 120deg 240deg, #60b788 240deg); color: white; }
+.ch4-settings-header { display: flex; align-items: center; gap: 12px; padding: 4px 0 20px; }
+.ch4-phone .ch4-settings-header button { padding: 0; width: 32px; height: 36px; border: 0; background: transparent; color: #252e39; font-size: 32px; line-height: 1; }
+.ch4-phone .ch4-settings-header h2 { margin: 0; color: #20252d; font-size: 27px; font-weight: 500; }
+.ch4-phone .ch4-wifi-toggle { margin: 0 0 24px; gap: 14px; padding: 20px 16px; border: 0; border-radius: 18px; background: #e5ecfa; font-size: 16px; }
+.ch4-wifi-toggle span { display: grid; gap: 6px; }
+.ch4-wifi-toggle small { color: #5d687a; font-size: 11px; font-weight: 400; }
+.ch4-phone .ch4-wifi-toggle input { appearance: none; flex: none; position: relative; width: 44px; height: 26px; padding: 0; margin: 0; border: 0; border-radius: 20px; background: #a2aab7; cursor: pointer; transition: background .2s; }
+.ch4-phone .ch4-wifi-toggle input::after { content: ''; position: absolute; width: 20px; height: 20px; top: 3px; left: 3px; border-radius: 50%; background: white; box-shadow: 0 1px 3px #0003; transition: transform .2s; }
+.ch4-phone .ch4-wifi-toggle input:checked { background: #3478e5; }
+.ch4-phone .ch4-wifi-toggle input:checked::after { transform: translateX(18px); }
+.ch4-phone [data-phone-scan] { margin: 12px 8px; color: #667080; font-size: 12px; }
+.ch4-phone .ch4-network { position: relative; align-items: center; grid-template-columns: 30px minmax(0, 1fr) 16px; gap: 5px 12px; padding: 17px 14px; border: 1px solid #e2e6ed; border-radius: 16px; color: #252d39; background: white; }
+.ch4-network svg { grid-row: 1 / 3; width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.ch4-network b { overflow-wrap: anywhere; font-size: 15px; font-weight: 500; }
+.ch4-network small { grid-column: 2; color: #677384; font-size: 11px; }
+.ch4-network .ch4-network-arrow { grid-column: 3; grid-row: 1 / 3; color: #7e8998; font-size: 24px; }
+.ch4-phone .ch4-network.is-connected { border-color: #acc7f1; background: #edf4ff; color: #2463bb; }
+.ch4-network.is-connected small { color: #2463bb; }
+.ch4-phone [data-phone-status] { margin: 16px 8px; color: #667080; font-size: 12px; }
+.ch4-phone [data-phone-forget] { display: block; margin: 8px auto; border: 0; background: transparent; color: #b04444; font-size: 12px; }
+.ch4-phone .ch4-wifi-connect { position: absolute; z-index: 5; inset: auto 8px 48px; max-height: calc(100% - 100px); overflow-y: auto; padding: 24px 20px 18px; border: 1px solid #e0e5ee; border-radius: 24px; background: #f9faff; box-shadow: 0 0 0 700px #111b2c70, 0 10px 30px #0002; }
+.ch4-wifi-sheet-label { color: #788395; font-size: 10px; font-weight: 600; letter-spacing: .1em; }
+.ch4-wifi-connect h3 { margin: 8px 0 24px; color: #26303e; font-size: 22px; overflow-wrap: anywhere; }
+.ch4-phone .ch4-wifi-connect input[data-wifi-password] { box-sizing: border-box; padding: 13px; border: 1px solid #b7c3d6; border-radius: 10px; font-size: 15px; }
+.ch4-phone .ch4-show-password { display: flex; align-items: center; gap: 9px; margin: 15px 0; font-size: 12px; }
+.ch4-phone .ch4-show-password input { width: 17px; height: 17px; padding: 0; accent-color: #3478e5; }
+.ch4-phone [data-wifi-connect-status] { min-height: 20px; margin: 14px 0; color: #b34646; font-size: 12px; }
+.ch4-phone .is-connecting [data-wifi-connect-status] { color: #3970b5; }
+.ch4-wifi-connect-actions { display: flex; justify-content: flex-end; gap: 10px; }
+.ch4-phone .ch4-wifi-connect-actions button { min-height: 40px; padding: 10px 16px; border: 0; border-radius: 20px; background: #e6ebf4; color: #3a567e; font-size: 13px; }
+.ch4-phone .ch4-wifi-connect-actions [type="submit"] { background: #3478e5; color: white; }
+.ch4-phone-content:has([data-wifi-connect]:not([hidden])) [data-phone-screen="wifi"] > :not([data-wifi-connect]) { pointer-events: none; }
+.ch4-phone .ch4-address-bar button { padding: 0; width: 24px; border: 0; background: transparent; color: #4c5665; font-size: 26px; }
+.ch4-phone .ch4-address-bar { position: sticky; top: -12px; z-index: 2; gap: 8px; }
+.ch4-phone .ch4-address-bar button { flex: none; }
+.ch4-phone .ch4-address-bar .ch4-browser-tab-count { width: 21px; height: 23px; border: 2px solid #606b7a; border-radius: 4px; color: #4c5665; font: 600 11px Arial, sans-serif; }
+.ch4-phone .ch4-browser-tabs { min-height: 460px; padding: 18px 14px 24px; background: #edf1f7; }
+.ch4-browser-tabs > header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; }
+.ch4-phone .ch4-browser-tabs h3 { margin: 0; color: #344055; font: 500 17px Arial, sans-serif; }
+.ch4-phone .ch4-browser-tabs header button { padding: 9px 12px; border: 0; border-radius: 20px; color: #2868bd; background: #dae7fc; font: 13px Arial, sans-serif; }
+.ch4-browser-tab-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.ch4-phone .ch4-browser-tab-card { min-width: 0; overflow: hidden; padding: 0; border: 2px solid #d1d9e5; border-radius: 16px; color: #344055; background: white; text-align: left; }
+.ch4-phone .ch4-browser-tab-card.is-selected { border-color: #3478e5; box-shadow: 0 0 0 2px #3478e51a; }
+.ch4-browser-tab-card b { display: block; padding: 12px 10px; font: 500 13px Arial, sans-serif; }
+.ch4-browser-tab-preview { display: grid; place-items: center; height: 145px; margin: 0 6px; border-radius: 8px; background: #f8faff; color: #4285f4; font: 500 24px Arial, sans-serif; letter-spacing: -1px; }
+.ch4-browser-tab-preview--portal { background: linear-gradient(135deg, #929a92, #8993aa); color: white; font-style: italic; }
+.ch4-browser-tab-card small { display: block; overflow: hidden; padding: 12px 10px; color: #7a8697; font: 10px Arial, sans-serif; text-overflow: ellipsis; white-space: nowrap; }
+.ch4-phone .ch4-google-home { display: flex; min-height: 460px; box-sizing: border-box; flex-direction: column; padding: 20px 18px 0; background: white; color: #333; font-family: Arial, sans-serif; }
+.ch4-google-links { display: flex; align-items: center; gap: 20px; color: #68727d; font-size: 12px; }
+.ch4-google-links > :first-child { padding-bottom: 8px; border-bottom: 2px solid #4285f4; color: #4285f4; }
+.ch4-google-links > :last-child { margin-left: auto; color: #606974; font-size: 24px; }
+.ch4-google-wordmark { display: flex; justify-content: center; margin: 64px 0 30px; font: 500 57px/1.1 Arial, sans-serif; letter-spacing: -3px; }
+.ch4-google-wordmark > :nth-child(1), .ch4-google-wordmark > :nth-child(4) { color: #4285f4; }
+.ch4-google-wordmark > :nth-child(2), .ch4-google-wordmark > :nth-child(6) { color: #ea4335; }
+.ch4-google-wordmark > :nth-child(3) { color: #fbbc05; }
+.ch4-google-wordmark > :nth-child(5) { color: #34a853; }
+.ch4-phone .ch4-google-search { display: flex; align-items: center; gap: 10px; margin: 0; padding: 3px 12px; border: 1px solid #dfe1e5; border-radius: 26px; box-shadow: 0 1px 5px #26334a12; }
+.ch4-google-search svg { flex: none; width: 19px; height: 19px; fill: none; stroke: #929ba6; stroke-width: 2; }
+.ch4-phone .ch4-google-search input { min-width: 0; padding: 12px 0; border: 0; background: transparent; color: #343941; font: 13px Arial, sans-serif; }
+.ch4-phone .ch4-google-home p { margin: 24px 0 50px; color: #737980; font: 11px/1.5 Arial, sans-serif; text-align: center; }
+.ch4-google-home p span { color: #2965ba; }
+.ch4-google-home footer { margin: auto -18px 0; padding: 15px 18px; border-top: 1px solid #e2e5e9; background: #f4f5f6; color: #6d7580; font-size: 12px; }
+.ch4-phone .ch4-browser-error { min-height: 410px; box-sizing: border-box; padding: 48px 26px 30px; background: #fff; color: #30343b; }
+.ch4-browser-error > svg { width: 42px; height: 42px; margin-bottom: 20px; fill: none; stroke: #6b7078; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ch4-phone .ch4-browser-error h3 { margin: 0 0 16px; font: 500 22px/1.3 Arial, sans-serif; }
+.ch4-phone .ch4-browser-error p { margin: 0 0 18px; color: #606771; font: 14px/1.6 Arial, sans-serif; }
+.ch4-browser-error > small { display: block; color: #7b828c; font: 10px/1.5 Arial, sans-serif; overflow-wrap: anywhere; }
+.ch4-browser-error-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+.ch4-phone .ch4-browser-error-actions button { padding: 10px 16px; border: 1px solid #d9e2ee; border-radius: 20px; background: white; color: #2169c2; font: 13px Arial, sans-serif; }
+.ch4-phone .ch4-browser-error-actions [data-phone-browser-reload] { border-color: #2875dc; background: #2875dc; color: white; }
+.ch4-phone .ch4-phone-navigation { position: relative; z-index: 6; height: 40px; background: #f8f9fc; }
+.ch4-phone .ch4-phone-navigation button { border: 0; color: #596271; background: transparent; }
+.ch4-phone button:focus-visible, .ch4-phone input:focus-visible { outline: 2px solid #3478e5; outline-offset: 3px; }

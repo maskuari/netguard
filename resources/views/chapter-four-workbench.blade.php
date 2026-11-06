@@ -60,6 +60,11 @@
             <section class="ch2-workbench" aria-label="WinBox dan dialog Pak Amat">
             @include('lab-pc-desktop')
             @include('chapter-four-phone')
+            <div class="ch4-html-drag-hint" data-html-drag-hint aria-hidden="true" hidden>
+                <svg class="ch4-html-drag-path" data-html-drag-path><defs><marker id="ch4-html-drag-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M1 1 6 4 1 7"/></marker></defs><path data-html-drag-route marker-end="url(#ch4-html-drag-arrow)"/><circle data-html-drag-end r="24"/></svg>
+                <div class="ch4-html-drag-hand" data-html-drag-hand><svg viewBox="0 0 48 48"><path d="M17 27V9a3 3 0 0 1 6 0v13-4a3 3 0 0 1 6 0v5-3a3 3 0 0 1 6 0v5-2a3 3 0 0 1 6 0v11c0 8-5 12-12 12h-3c-5 0-8-3-11-7L7 29a3 3 0 0 1 4-4l6 5Z"/></svg><span>login.html</span></div>
+                <span class="ch4-html-drag-label" data-html-drag-label>Seret ke desktop</span>
+            </div>
             <div class="simulation-monitor simulation-monitor--classic ch2-monitor"><div class="simulation-monitor__screen">
                 <div class="routeros ch2-routeros">
                     <header class="ch2-winbox-titlebar"><span class="routeros__title"><img src="{{ asset('images/logo/winbox.png') }}" alt="WinBox" width="17" height="17">admin@48:A9:8A:1C:01:01 (<b data-router-identity>Router</b>) - WinBox (64bit) v7.14.3 on hAP lite (smips)</span><span class="ch2-window-chrome"><button type="button" data-ch2-app-hide aria-label="Minimalkan WinBox">−</button><button type="button" data-ch2-app-size aria-label="Pulihkan / maksimalkan WinBox">□</button><button type="button" data-ch2-app-hide aria-label="Tutup WinBox">×</button></span></header>
