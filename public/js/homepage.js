@@ -146,6 +146,13 @@
             return;
         }
 
+        if (panelName === 'practice' && trigger.dataset.practiceUrl) {
+            leaving = true;
+            showLoading('Menyiapkan studi kasus Practice...');
+            window.location.assign(trigger.dataset.practiceUrl);
+            return;
+        }
+
         if (trigger.classList.contains('mode-card')) {
             showLoading(`Membuka info ${panel.title}...`);
             modeTimer = window.setTimeout(() => {

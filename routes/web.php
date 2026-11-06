@@ -2,11 +2,12 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ChapterFourController;
 use App\Http\Controllers\ChapterFiveController;
+use App\Http\Controllers\ChapterFourController;
 use App\Http\Controllers\ChapterOneController;
 use App\Http\Controllers\ChapterThreeController;
 use App\Http\Controllers\ChapterTwoController;
+use App\Http\Controllers\PracticeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -22,6 +23,8 @@ Route::post('/register', [AuthController::class, 'register'])->middleware('throt
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 Route::view('/homepage', 'homepage')->middleware(['auth', 'active'])->name('homepage');
 Route::view('/adventure', 'adventure')->middleware(['auth', 'active'])->name('adventure');
+Route::get('/practice', [PracticeController::class, 'show'])->middleware(['auth', 'active'])->name('practice');
+Route::post('/practice/{attempt}/check', [PracticeController::class, 'check'])->middleware(['auth', 'active', 'throttle:20,1'])->name('practice.check');
 Route::get('/adventure/chapter-1', [ChapterOneController::class, 'show'])->middleware(['auth', 'active'])->name('chapter.one');
 Route::post('/adventure/chapter-1/complete', [ChapterOneController::class, 'complete'])->middleware(['auth', 'active', 'throttle:10,1'])->name('chapter.one.complete');
 Route::post('/adventure/chapter-1/reset', [ChapterOneController::class, 'resetProgress'])->middleware(['auth', 'active', 'throttle:5,1'])->name('chapter.one.reset');
