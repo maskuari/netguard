@@ -138,6 +138,12 @@ class AdventureProgressTest extends TestCase
         $this->assertSame('100', $progress->getAttribute('max'));
         $this->assertSame($practiceLocked, $practice->getAttribute('data-mode-locked'));
         $this->assertSame($practiceLocked, $practice->getAttribute('aria-disabled'));
+        if ($practiceLocked === 'false') {
+            $this->assertSame(0, $xpath->query('.//use[@href="#home-lock" or @href="#home-unlock"]', $practice)->length);
+            $this->assertSame(0, $xpath->query('.//*[@id="practice-status"]', $practice)->length);
+        } else {
+            $this->assertGreaterThan(0, $xpath->query('.//use[@href="#home-lock"]', $practice)->length);
+        }
         $this->assertSame($certificationLocked, $certification->getAttribute('data-mode-locked'));
         $this->assertSame($certificationLocked, $certification->getAttribute('aria-disabled'));
         $this->assertSame(asset('images/asset/char/siswa/cewe/bicara_santai.png'), $avatar->getAttribute('src'));

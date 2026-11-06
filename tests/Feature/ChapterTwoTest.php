@@ -15,9 +15,21 @@ class ChapterTwoTest extends TestCase
         $this->get(route('chapter.two'))->assertRedirect(route('login'));
 
         $user = User::factory()->create();
-        $this->actingAs($user)->get(route('chapter.two'))->assertRedirect(route('adventure'));
+        $this->actingAs($user)->get(route('chapter.two'))->assertRedirect(route('adventure'))->assertSessionHas('chapter_notice');
         $this->postJson(route('chapter.two.complete'), ['answers' => [1, 2, 3, 0, 2]])->assertForbidden();
         $this->assertSame(0, $user->fresh()->completedAdventureChapters());
+    }
+
+    public function test_adventure_map_only_offers_chapter_two_after_chapter_one_is_complete(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user)->get(route('adventure'))->assertOk()
+            ->assertSeeText('Selesaikan Chapter 1')
+            ->assertDontSee('href="'.route('chapter.two').'"', false);
+
+        $user->completed_adventure_chapters = 1;
+        $user->save();
+        $this->get(route('adventure'))->assertOk()->assertSee('href="'.route('chapter.two').'"', false);
     }
 
     public function test_unlocked_chapter_two_displays_all_module_missions_without_completing_progress(): void

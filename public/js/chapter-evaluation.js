@@ -40,6 +40,8 @@
             const total = result?.totalQuestions ?? 5;
             if (!Number.isInteger(correct) || !Number.isInteger(total) || correct < 0 || correct > total) return null;
             const summary = { correctAnswers: correct, incorrectAnswers: total - correct, totalQuestions: total, score: correct };
+            const practiceNotice = document.querySelector('[data-practice-unlocked]');
+            if (practiceNotice) practiceNotice.hidden = !(correct === total && result?.practiceUnlockedNow === true);
             document.querySelectorAll('[data-evaluation-result]').forEach((panel) => {
                 panel.hidden = false;
                 panel.querySelector('[data-correct-count]').textContent = String(correct);

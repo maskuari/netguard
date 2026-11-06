@@ -83,7 +83,9 @@ class ChapterThreeTest extends TestCase
             ->assertSeeText('Lab Chapter 03')->assertSeeText('Akses Internet melalui Router')
             ->assertSeeText('DNS Settings')->assertSeeText('Allow Remote Requests')->assertSeeText('masquerade')
             ->assertSeeText('ether1-internet')->assertSeeText('0.0.0.0/0')->assertSeeText('New Terminal')
-            ->assertSeeText('EVALUASI PEMAHAMAN')->assertSeeText('Benar')->assertSeeText('Salah');
+            ->assertSeeText('EVALUASI PEMAHAMAN')->assertSeeText('Benar')->assertSeeText('Salah')
+            ->assertSeeText('Practice Mode siap dimainkan!')->assertSee('data-practice-unlocked hidden', false)
+            ->assertSee('href="'.route('practice').'"', false);
         $document = new \DOMDocument;
         $previous = libxml_use_internal_errors(true);
         $document->loadHTML($response->getContent());
@@ -124,12 +126,13 @@ class ChapterThreeTest extends TestCase
         $user = User::factory()->create(['completed_adventure_chapters' => 2]);
         $this->actingAs($user)->postJson(route('chapter.three.complete'), ['answers' => [0, 0, 0, 0, 0]])
             ->assertOk()->assertJsonPath('completedChapters', 3)->assertJsonPath('correctAnswers', 5)
-            ->assertJsonPath('incorrectAnswers', 0)->assertJsonPath('totalQuestions', 5);
+            ->assertJsonPath('incorrectAnswers', 0)->assertJsonPath('totalQuestions', 5)->assertJsonPath('practiceUnlockedNow', true);
         $this->assertSame(3, $user->fresh()->completedAdventureChapters());
         $this->assertTrue($user->fresh()->isPracticeUnlocked());
+        $this->postJson(route('chapter.three.complete'), ['answers' => [0, 0, 0, 0, 0]])->assertOk()->assertJsonPath('practiceUnlockedNow', false);
         $user->completed_adventure_chapters = 5;
         $user->save();
-        $this->postJson(route('chapter.three.complete'), ['answers' => [0, 0, 0, 0, 0]])->assertOk()->assertJsonPath('completedChapters', 5);
+        $this->postJson(route('chapter.three.complete'), ['answers' => [0, 0, 0, 0, 0]])->assertOk()->assertJsonPath('completedChapters', 5)->assertJsonPath('practiceUnlockedNow', false);
         $this->assertSame(5, $user->fresh()->completedAdventureChapters());
     }
 

@@ -148,7 +148,11 @@
                                     @if ($loop->first)
                                         <a href="{{ route('chapter.one') }}" data-page-link="chapter-one"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg>{{ $user->completedAdventureChapters() >= 1 ? 'Main Lagi Chapter' : 'Mulai Chapter' }}</a>
                                     @elseif ($loop->iteration === 2)
+                                        @if ($user->completedAdventureChapters() >= 1)
                                         <a href="{{ route('chapter.two') }}" data-page-link="chapter-two"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg>{{ $user->completedAdventureChapters() >= 2 ? 'Main Lagi Chapter' : 'Mulai Chapter' }}</a>
+                                        @else
+                                            <button type="button" disabled aria-disabled="true"><svg class="icon" aria-hidden="true"><use href="#chapter-lock"/></svg>Selesaikan Chapter 1</button>
+                                        @endif
                                     @elseif ($loop->iteration === 3)
                                         @if ($user->completedAdventureChapters() >= 2)
                                             <a href="{{ route('chapter.three') }}" data-page-link="chapter-three"><svg class="icon" aria-hidden="true"><use href="#chapter-play"/></svg>{{ $user->completedAdventureChapters() >= 3 ? 'Main Lagi Chapter' : 'Mulai Chapter' }}</a>

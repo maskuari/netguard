@@ -84,16 +84,18 @@
                                     </span>
                                     <span class="mode-card__action" aria-hidden="true"><svg class="icon"><use href="#home-chevron"/></svg></span>
                                 </a>
-                                <button class="mode-card mode-card--practice" type="button" data-home-panel="practice" data-practice-url="{{ route('practice') }}" data-mode-locked="{{ $practiceUnlocked ? 'false' : 'true' }}" aria-disabled="{{ $practiceUnlocked ? 'false' : 'true' }}" aria-haspopup="{{ $practiceUnlocked ? 'false' : 'dialog' }}" aria-controls="homepage-dialog" aria-labelledby="practice-title" aria-describedby="practice-description practice-status">
+                                <button class="mode-card mode-card--practice" type="button" data-home-panel="practice" data-practice-url="{{ route('practice') }}" data-mode-locked="{{ $practiceUnlocked ? 'false' : 'true' }}" aria-disabled="{{ $practiceUnlocked ? 'false' : 'true' }}" aria-haspopup="{{ $practiceUnlocked ? 'false' : 'dialog' }}" aria-controls="homepage-dialog" aria-labelledby="practice-title" aria-describedby="practice-description{{ $practiceUnlocked ? '' : ' practice-status' }}">
                                     <img class="mode-card__art" src="{{ asset('images/asset/practice-target-v2.webp') }}?v={{ filemtime(public_path('images/asset/practice-target-v2.webp')) }}" alt="" width="1254" height="1254" decoding="async" draggable="false">
                                     <span class="mode-card__copy">
                                         <span class="mode-card__title" id="practice-title">Practice Mode</span>
                                         <span class="mode-card__description" id="practice-description">Asah konfigurasi MikroTik melalui latihan mandiri.</span>
                                     </span>
-                                    <span class="mode-card__availability" id="practice-status">
-                                        <span class="mode-card__status"><svg class="icon" aria-hidden="true"><use href="{{ $practiceUnlocked ? '#home-unlock' : '#home-lock' }}"/></svg>{{ $practiceUnlocked ? 'Mode terbuka' : 'Terkunci' }}</span>
-                                        <span class="mode-card__hint">{{ $practiceUnlocked ? 'Jelajahi latihan konfigurasi' : 'Selesaikan Chapter 3 Adventure' }}</span>
-                                    </span>
+                                    @unless ($practiceUnlocked)
+                                        <span class="mode-card__availability" id="practice-status">
+                                            <span class="mode-card__status"><svg class="icon" aria-hidden="true"><use href="#home-lock"/></svg>Terkunci</span>
+                                            <span class="mode-card__hint">Selesaikan Chapter 3 Adventure</span>
+                                        </span>
+                                    @endunless
                                     <span class="mode-card__action" aria-hidden="true"><svg class="icon"><use href="{{ $practiceUnlocked ? '#home-chevron' : '#home-lock' }}"/></svg></span>
                                 </button>
                                 <button class="mode-card mode-card--certification" type="button" data-home-panel="certification" data-mode-locked="{{ $certificationUnlocked ? 'false' : 'true' }}" aria-disabled="{{ $certificationUnlocked ? 'false' : 'true' }}" aria-haspopup="dialog" aria-controls="homepage-dialog" aria-labelledby="certification-title" aria-describedby="certification-description certification-status">

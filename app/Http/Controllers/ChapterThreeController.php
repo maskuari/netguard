@@ -46,9 +46,10 @@ class ChapterThreeController extends Controller
         }
 
         $user = $request->user();
+        $practiceUnlockedNow = ! $user->isPracticeUnlocked();
         $user->completed_adventure_chapters = max($user->completedAdventureChapters(), 3);
         $user->save();
 
-        return response()->json(['message' => 'Chapter 3 selesai! Progresmu sudah tersimpan.', 'completedChapters' => $user->completedAdventureChapters(), ...$result]);
+        return response()->json(['message' => 'Chapter 3 selesai! Progresmu sudah tersimpan.', 'completedChapters' => $user->completedAdventureChapters(), 'practiceUnlockedNow' => $practiceUnlockedNow, ...$result]);
     }
 }

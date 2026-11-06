@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -36,8 +37,12 @@ class ChapterTwoController extends Controller
         ],
     ];
 
-    public function show(): View
+    public function show(Request $request): View|RedirectResponse
     {
+        if ($request->user()->completedAdventureChapters() < 1) {
+            return redirect()->route('adventure')->with('chapter_notice', 'Selesaikan Chapter 1 terlebih dahulu untuk membuka Chapter 2.');
+        }
+
         $questions = array_map(
             fn (array $question): array => [
                 'question' => $question['question'],
@@ -51,6 +56,8 @@ class ChapterTwoController extends Controller
 
     public function complete(Request $request): JsonResponse
     {
+        abort_if($request->user()->completedAdventureChapters() < 1, 403, 'Selesaikan Chapter 1 terlebih dahulu.');
+
         $validated = $request->validate([
             'answers' => ['required', 'array', 'size:5'],
             'answers.*' => ['required', 'integer', 'between:0,3'],
