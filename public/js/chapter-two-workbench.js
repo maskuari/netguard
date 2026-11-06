@@ -257,7 +257,7 @@
     const startChapterPrologue = (replay = false) => {
         replayingPrologue = replay;
         prologueReturnFocus = document.activeElement;
-        prologueIndex = replay ? 0 : Math.max(0, Math.min(chapterPrologueScenes.length - 1, Number(state.prologueIndex) || 0));
+        prologueIndex = 0;
         labSurface.inert = true;
         chapterPrologue.hidden = false;
         scene.classList.add('is-prologue');
@@ -280,7 +280,10 @@
         if (prologueReturnFocus?.isConnected) prologueReturnFocus.focus({ preventScroll: true });
         openDialogue(chapterOpeningDialogue, replayingPrologue ? null : mainAction);
     };
-    chapterPrologue.addEventListener('click', (event) => { event.stopPropagation(); advanceChapterPrologue(); });
+    chapterPrologue.addEventListener('click', (event) => {
+        if (event.target.closest('[data-step-back]')) return;
+        event.stopPropagation(); advanceChapterPrologue();
+    });
     chapterPrologue.addEventListener('keydown', (event) => {
         if (event.repeat || (event.key !== 'Enter' && event.key !== ' ')) return;
         event.preventDefault();
@@ -1346,7 +1349,7 @@
     clearWorkspace();
     restoreDrafts(); render();
     if (state.wanClient && !state.wanClient.disabled && !state.wanClient.bound) bindWanClient();
-    if (state.stage === 'intro' && !state.prologueComplete && state.highest === 0) {
+    if (state.stage === 'intro') {
         startChapterPrologue();
     } else {
         chapterPrologue.hidden = true;

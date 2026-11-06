@@ -235,6 +235,25 @@
         scene.classList.toggle('is-wiring-stage', stage === 'wiring');
         scene.classList.toggle('is-terminate-stage', stage === 'terminate');
         scene.classList.toggle('is-topology-lesson-stage', stage === 'topologyLesson');
+        const isMaterialStage = ['topologyLesson', 'lesson'].includes(stage);
+        scene.classList.toggle('is-material-stage', isMaterialStage);
+        const guidePanel = document.querySelector('.lab-guide');
+        guidePanel.hidden = isMaterialStage;
+        const guideActions = guidePanel.querySelector('.lab-guide__steps');
+        const continueAction = document.querySelector('[data-continue]');
+        const lessonAction = document.querySelector('[data-lesson-next]');
+        if (isMaterialStage) {
+            const material = stageNodes.find((node) => node.dataset.stage === stage);
+            const board = document.querySelector('.lab-board');
+            let actions = board.querySelector('.lab-material-actions');
+            if (!actions) { actions = document.createElement('div'); actions.className = 'lab-material-actions'; board.append(actions); }
+            actions.hidden = false;
+            actions.append(stage === 'lesson' ? lessonAction : continueAction);
+            guideActions.append(stage === 'lesson' ? continueAction : lessonAction);
+        } else {
+            guideActions.append(lessonAction, continueAction);
+            const actions = document.querySelector('.lab-material-actions'); if (actions) actions.hidden = true;
+        }
         const labLayout = document.querySelector('.lab-layout');
         labLayout.classList.toggle('is-simulator', isSimulatorStage);
         labLayout.classList.toggle('is-device-stage', stage === 'devices');
@@ -1805,7 +1824,7 @@
             ...['ether1', 'ether2', 'ether3'].flatMap((name) => {
                 const target = { ether1: 'ether1-internet', ether2: 'ether2-vlan', ether3: 'ether3-local' }[name];
                 return [
-                    ['Klik Interfaces di menu kiri. Pada tab Interface, klik dua kali baris ' + name + ' untuk membuka pengaturannya. Pada layar sentuh, ketuk baris sekali.\n\nPastikan jendela yang dibuka milik ' + name + ', agar nama tidak diberikan pada port yang salah.', interfaceSaved[name] || (editingInterface === name && visible('[data-config-panel="edit"]'))],
+                    [(visible('[data-config-panel="interfaces"]') ? 'Pada tab Interface, klik dua kali baris ' : 'Klik Interfaces di menu kiri, lalu klik dua kali baris ') + name + ' untuk membuka pengaturannya. Pada layar sentuh, ketuk baris sekali.\n\nPastikan jendela yang dibuka milik ' + name + ', agar nama tidak diberikan pada port yang salah.', interfaceSaved[name] || (editingInterface === name && visible('[data-config-panel="edit"]')), visible('[data-config-panel="interfaces"]') ? '[data-edit-interface="' + name + '"]' : '[data-config-nav="interfaces"]'],
                     ['Ubah kolom Name menjadi ' + target + ', lalu klik OK.\n\nJika Pak Amat memberi koreksi, perbaiki ejaan dan simpan kembali. Nomor port fisik tetap sama; nama ini menjelaskan fungsi jalurnya.', interfaceSaved[name], [{ selector: '[data-interface-input]', expected: target },"[data-save-interface]"]],
                 ];
             }),

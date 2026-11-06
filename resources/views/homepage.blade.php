@@ -60,11 +60,6 @@
                                 <p class="hero-badge" data-home-reveal><svg class="icon" aria-hidden="true"><use href="#home-gamepad"/></svg><span>Belajar Jaringan Jadi Petualangan Seru!</span><span class="hero-badge__spark" aria-hidden="true"></span></p>
                                 <h1 class="homepage-title" id="homepage-title" data-home-reveal>NetGuard Academy:<span class="homepage-title__accent">MikroTik Mission</span></h1>
                                 <p class="homepage-description" data-home-reveal>Belajar konfigurasi MikroTik melalui simulasi interaktif<br class="homepage-line-break"> dan misi menantang yang seru dan mudah dipahami.</p>
-                                <ul class="homepage-benefits" aria-label="Belajar bersama NetGuard" data-home-reveal>
-                                    <li><span class="benefit-icon"><svg class="icon" aria-hidden="true"><use href="#home-gamepad"/></svg></span><span>Simulasi<br>Interaktif</span></li>
-                                    <li><span class="benefit-icon"><svg class="icon" aria-hidden="true"><use href="#home-progress"/></svg></span><span>Misi<br>Menantang</span></li>
-                                    <li><span class="benefit-icon"><svg class="icon" aria-hidden="true"><use href="#home-team"/></svg></span><span>Belajar<br>Sambil Bermain</span></li>
-                                </ul>
                             </div>
                             <svg class="homepage-waves" viewBox="0 0 1600 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 28C130 0 194 100 340 46S532 13 690 66 1000 96 1600 12V100H0Z" fill="#b0eaff"/><path d="M0 64C124 21 164 0 280 48S416 0 548 18 740 96 1020 74 1410 18 1600 40V100H0Z" fill="#f0fbff"/></svg>
                         </section>
