@@ -28,6 +28,7 @@
         <link rel="stylesheet" href="{{ asset('css/lab-pc-desktop.css') }}?v={{ filemtime(public_path('css/lab-pc-desktop.css')) }}">
         <script src="{{ asset('js/lab-pc-desktop.js') }}?v={{ filemtime(public_path('js/lab-pc-desktop.js')) }}" defer></script>
         <script src="{{ asset('js/chapter-three-workbench.js') }}?v={{ filemtime(public_path('js/chapter-three-workbench.js')) }}" defer></script>
+    @include('device-layout')
 </head>
 <body>
 <div class="academy-scene chapter-one-scene ch2-scene ch3-scene is-prologue" data-teacher-base="{{ asset(rtrim($teacherPath, '/')) }}" data-user-id="{{ $student->id }}" data-complete-url="{{ route('chapter.three.complete') }}" data-completed="{{ $student->completedAdventureChapters() >= 3 ? 'true' : 'false' }}">

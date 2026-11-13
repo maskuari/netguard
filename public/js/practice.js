@@ -3,6 +3,7 @@
     const root = document.querySelector('[data-practice]');
     if (!root) return;
     const scenario = JSON.parse(document.querySelector('#practice-scenario').textContent);
+    const certification = scenario.mode === 'certification';
     const simulator = window.NetGuardPracticeSimulator;
     const schemas = simulator.schemas;
     const host = root.querySelector('[data-practice-host]');
@@ -15,34 +16,53 @@
     const storageKey = 'netguard.practice.' + root.dataset.userId + '.' + scenario.id;
     let saved;
     try { saved = JSON.parse(localStorage.getItem(storageKey) || 'null'); } catch { saved = null; }
-    let engine = simulator.create(saved?.state || scenario.initialState);
+    let activeDevice = certification ? (saved?.activeDevice || 'hap') : 'hap';
+    const deviceStates = certification ? JSON.parse(JSON.stringify(saved?.devices || scenario.devices)) : {};
+    let sharedPhysical = certification ? JSON.parse(JSON.stringify(saved?.physical || scenario.initialState.physical)) : null;
+    let physicalTab = 'wiring';
+    let certificationWireEnd = 'a', selectedTesterEnd = '', selectedPcLanCable = false;
+    const certificationDeviceControls = [];
+    const loadEngine = (state) => {
+        const instance = simulator.create(state);
+        if (certification) { instance.state.physical = sharedPhysical; if (activeDevice === 'hex') instance.state.upstream = deviceStates.hap; }
+        return instance;
+    };
+    let engine = loadEngine(certification ? deviceStates[activeDevice] : (saved?.state || scenario.initialState));
+    const restoreEngine = (state) => { if (certification) sharedPhysical = state.physical; engine = loadEngine(state); };
+    const snapshot = () => { const state = engine.snapshot(); delete state.upstream; return state; };
+    const certificationState = () => { deviceStates[activeDevice] = snapshot(); return { devices: deviceStates, physical: sharedPhysical }; };
     let submitted = Boolean(scenario.result), view = scenario.surface, zIndex = 40, selectedCable = '', phoneScreen = 'home', phoneTimer = null, noticeTimer = null, safeSnapshot = null;
     let configurationStarted = saved?.configurationStarted === true || (saved?.configurationStarted === undefined && Boolean(saved?.state));
     const submitControl = root.querySelector('[data-practice-submit]');
-    submitControl.hidden = !configurationStarted || submitted;
+    submitControl.hidden = certification || !configurationStarted || submitted;
     const undo = [], redo = [], windows = new Map(), refreshers = new Map();
     const assets = root.dataset.assets;
     const element = (tag, className = '', text = '') => { const node = document.createElement(tag); if (className) node.className = className; if (text) node.textContent = text; return node; };
     const button = (text, callback, className = '') => { const node = element('button', className, text); node.type = 'button'; node.addEventListener('click', callback); return node; };
     const icon = (name) => { const node = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); node.setAttribute('class', 'wb-icon'); node.setAttribute('aria-hidden', 'true'); const use = document.createElementNS('http://www.w3.org/2000/svg', 'use'); use.setAttribute('href', assets + '/logo/winbox-icons.svg#' + name); node.append(use); return node; };
-    const saveLocal = () => { try { localStorage.setItem(storageKey, JSON.stringify({ state: engine.snapshot(), configurationStarted })); } catch { /* The attempt can still be submitted when browser storage is full. */ } };
-    const beginConfiguration = () => { if (submitted || configurationStarted) return; configurationStarted = true; submitControl.hidden = false; saveLocal(); };
+    const saveLocal = () => { try { localStorage.setItem(storageKey, JSON.stringify(certification ? { ...certificationState(), activeDevice, configurationStarted } : { state: engine.snapshot(), configurationStarted })); } catch { /* The attempt can still be submitted when browser storage is full. */ } };
+    const beginConfiguration = () => { if (submitted || configurationStarted) return; configurationStarted = true; submitControl.hidden = certification; saveLocal(); };
     const notice = (message) => { const node = root.querySelector('[data-practice-notice]'); node.textContent = message; node.hidden = false; window.clearTimeout(noticeTimer); noticeTimer = window.setTimeout(() => { node.hidden = true; }, 3200); };
-    const change = (action) => { if (submitted) return; const before = engine.snapshot(); try { action(); beginConfiguration(); undo.push(before); if (undo.length > 30) undo.shift(); redo.length = 0; saveLocal(); refreshAll(); } catch (error) { engine = simulator.create(before); throw error; } };
+    const change = (action) => { if (submitted) return; const before = engine.snapshot(); try { action(); beginConfiguration(); undo.push(before); if (undo.length > 30) undo.shift(); redo.length = 0; saveLocal(); refreshAll(); } catch (error) { restoreEngine(before); throw error; } };
     const attempt = (action) => { try { action(); } catch (error) { notice(error.message); } };
     const closeMenu = () => desktop.querySelector('.practice-menu')?.remove();
     const childTasks = element('div', 'practice-child-tasks'); desktop.append(childTasks);
     const updateTitle = () => {
+        if (certification) app.classList.toggle('is-disconnected', !engine.state.session.connected);
         root.querySelector('[data-session-title]').textContent = 'admin@' + engine.state.session.mac + ' (' + engine.state.identity + ') - WinBox (64bit) v7.14.3 on ' + engine.state.device + ' (' + (engine.state.device === 'hEX lite' ? 'mipsbe' : 'smips') + ')';
         root.querySelector('[data-session-mac]').textContent = engine.state.session.mac;
         root.querySelector('[data-board-title]').textContent = 'RouterOS 7.14.3 · ' + engine.state.device;
         const network = root.querySelector('[data-pc-network]');
         network.classList.toggle('is-online', Boolean(engine.state.physical.pcPort && engine.state.physical.pcLan));
+        if (certification) {
+            const routerState = activeDevice === 'hap' ? engine.state : deviceStates.hap;
+            root.classList.toggle('has-firewall', (routerState.tables.nat || []).some((rule) => !rule.disabled && rule.chain === 'srcnat' && rule.action === 'masquerade'));
+        }
         network.setAttribute('title', engine.state.physical.pcPort ? 'Ethernet · ' + engine.state.physical.pcPort : 'Kabel LAN terlepas');
     };
-    const refreshAll = () => { updateTitle(); for (const refresh of refreshers.values()) refresh(); };
+    const refreshAll = () => { updateTitle(); if (certification) refreshCertificationAccess(); for (const refresh of refreshers.values()) refresh(); };
     const disconnectSession = () => {
-        if (safeSnapshot) { engine = simulator.create(safeSnapshot); safeSnapshot = null; root.querySelector('[data-safe-mode]').classList.remove('is-active'); }
+        if (safeSnapshot) { restoreEngine(safeSnapshot); safeSnapshot = null; root.querySelector('[data-safe-mode]').classList.remove('is-active'); }
         change(() => { engine.state.session.connected = false; }); openLoader();
     };
     const showView = (next) => {
@@ -63,7 +83,7 @@
         const node = element('section', 'practice-window' + (editor ? ' practice-editor' : ' is-maximized'));
         node.setAttribute('aria-label', title); node.dataset.practiceWindow = id; node.style.zIndex = String(++zIndex);
         const header = element('header'), controls = element('span'); header.append(element('span', '', title), controls);
-        const close = () => { node.remove(); windows.delete(id); refreshers.delete(id); childTasks.querySelector('[data-restore="' + id + '"]')?.remove(); };
+        const close = () => { node.remove(); windows.delete(id); refreshers.delete(id); childTasks.querySelector('[data-restore="' + id + '"]')?.remove(); if (certification && id === 'loader') { app.classList.remove('simulation-monitor--classic'); app.classList.toggle('is-disconnected', !engine.state.session.connected); } };
         if (!editor) {
             controls.append(button('−', () => { node.hidden = true; const restore = button(title, () => { node.hidden = false; node.style.zIndex = String(++zIndex); restore.remove(); }); restore.dataset.restore = id; childTasks.append(restore); }));
             controls.append(button('□', () => node.classList.toggle('is-maximized')));
@@ -437,20 +457,117 @@
     root.querySelectorAll('[data-top-menu]').forEach((trigger) => trigger.addEventListener('click', () => menu(trigger, trigger.dataset.topMenu === 'Session' ? [['Disconnect', disconnectSession], ['Close', () => showView('desktop')]] : trigger.dataset.topMenu === 'Settings' ? [['Hide Passwords', () => { desktop.querySelectorAll('input[type=password]').forEach((input) => { input.type = 'text'; }); }], ['Inline Comments', () => notice('Inline Comments')]] : [['CPU', () => openSystem('Resources')], ['Memory', () => openSystem('Resources')]])));
     root.addEventListener('pointerdown', (event) => { if (!event.target.closest('.practice-menu, .ch5-nav, [data-top-menu]')) closeMenu(); });
 
+    const openCertificationLoader = () => {
+        app.classList.add('is-disconnected', 'simulation-monitor--classic');
+        const win = makeWindow('loader', 'WinBox (64bit) v3.41', true);
+        win.classList.add('wb-loader', 'winbox-window');
+        const loaderTitle = win.querySelector('header > span:first-child');
+        loaderTitle.classList.add('routeros__title');
+        loaderTitle.prepend(Object.assign(element('img'), { src: assets + '/logo/winbox.png', alt: 'WinBox' }));
+        const loaderControls = win.querySelector('header > span:last-child');
+        loaderControls.classList.add('winbox-window-controls');
+        loaderControls.prepend(element('span', 'wb-loader__chrome', '─  □'));
+        const menubar = element('div', 'routeros__menubar');
+        menubar.append(element('span', '', 'File'), element('span', '', 'Tools'));
+        const login = element('div', 'winbox-login');
+        const connection = element('div', 'winbox-connect wb-loader__connection');
+        const credentials = element('div', 'winbox-credentials');
+        const values = { address: '', login: 'admin', password: '' };
+        credentials.append(
+            renderField({ key: 'address', label: 'Connect To:', type: 'text' }, values),
+            renderField({ key: 'login', label: 'Login:', type: 'text' }, values),
+            renderField({ key: 'password', label: 'Password:', type: 'password' }, values)
+        );
+        const addressField = credentials.querySelector('[aria-label="Connect To:"]');
+        credentials.querySelector('[aria-label="Password:"]').autocomplete = 'new-password';
+        const options = element('div', 'wb-loader__options');
+        for (const title of ['Keep Password', 'Open In New Window']) {
+            const label = element('label'), checkbox = element('input');
+            checkbox.type = 'checkbox';
+            label.append(checkbox, document.createTextNode(' ' + title));
+            options.append(label);
+        }
+        credentials.append(options);
+        const actions = element('div', 'wb-loader__buttons');
+        const status = element('footer', 'wb-loader__status', '0 items');
+        const error = element('div', 'practice-window-status');
+        const neighbors = element('div', 'winbox-neighbors');
+        const neighborList = element('div', 'winbox-neighbors__list');
+        const tabs = element('div', 'winbox-tabs');
+        tabs.setAttribute('role', 'tablist');
+        const toolbar = element('div', 'winbox-toolbar');
+        const table = element('div', 'winbox-table');
+        const heading = element('div', 'winbox-table__head');
+        ['MAC Address', 'IP Address', 'Identity', 'Version', 'Board', 'Uptime'].forEach((title) => heading.append(element('span', '', title)));
+        const neighborRow = button('', () => { values.address = engine.state.session.mac; addressField.value = values.address; neighborRow.classList.add('is-selected'); });
+        neighborRow.dataset.neighborRow = '';
+        const managedRow = button('', () => { values.address = engine.state.session.mac; addressField.value = values.address; managedRow.classList.add('is-selected'); });
+        managedRow.dataset.managedRow = '';
+        let discovered = false, managed = false, activeTab = 'neighbors', search = '';
+        const rowCells = (row) => row.replaceChildren(...[engine.state.session.mac, '0.0.0.0', engine.state.identity, '7.14.3', engine.state.device, '00:04:32'].map((value) => element('span', '', value)));
+        const drawRows = () => {
+            rowCells(neighborRow); rowCells(managedRow);
+            neighborRow.hidden = activeTab !== 'neighbors' || !discovered || ![engine.state.session.mac, engine.state.identity, engine.state.device].some((value) => value.toLowerCase().includes(search));
+            managedRow.hidden = activeTab !== 'managed' || !managed || ![engine.state.session.mac, engine.state.identity, engine.state.device].some((value) => value.toLowerCase().includes(search));
+            status.textContent = neighborRow.hidden && managedRow.hidden ? '0 items' : '1 item';
+            managedTab.setAttribute('aria-selected', String(activeTab === 'managed'));
+            neighborsTab.setAttribute('aria-selected', String(activeTab === 'neighbors'));
+            remove.hidden = activeTab !== 'managed' || !managed;
+        };
+        const managedTab = button('Managed', () => { activeTab = 'managed'; drawRows(); });
+        const neighborsTab = button('Neighbors', () => { activeTab = 'neighbors'; drawRows(); });
+        managedTab.setAttribute('role', 'tab'); neighborsTab.setAttribute('role', 'tab');
+        tabs.append(managedTab, neighborsTab);
+        const refresh = button('Refresh', () => {
+            status.textContent = 'Discovering…';
+            window.setTimeout(() => {
+                if (!win.isConnected || submitted) return;
+                discovered = certificationCableReady() && sharedPhysical.pcDevice === activeDevice && Boolean(sharedPhysical.pcPort && sharedPhysical.pcLan && sharedPhysical.powered);
+                drawRows();
+            }, 650);
+        });
+        const remove = button('Remove', () => { managed = false; drawRows(); });
+        const find = element('label', 'wb-loader__find', 'Find '), findInput = element('input');
+        findInput.type = 'search'; findInput.setAttribute('aria-label', 'Find router');
+        findInput.addEventListener('input', () => { search = findInput.value.toLowerCase(); drawRows(); });
+        find.append(findInput); toolbar.append(refresh, remove, find);
+        table.append(heading, neighborRow, managedRow);
+        neighborList.append(tabs, toolbar, table); neighbors.append(neighborList);
+        actions.append(button('Add/Set', () => { if (values.address.toLowerCase() !== engine.state.session.mac.toLowerCase()) return; managed = true; activeTab = 'managed'; drawRows(); }, 'winbox-control'));
+        const romon = button('Connect To RoMON', () => {}, 'winbox-control'); romon.disabled = true;
+        actions.append(romon, button('Connect', () => {
+            if (!certificationCableReady() || sharedPhysical.pcDevice !== activeDevice || !sharedPhysical.pcPort || !sharedPhysical.pcLan || !sharedPhysical.powered) { error.textContent = 'ERROR: perangkat tidak terjangkau. Periksa kabel, LAN PC, dan daya.'; return; }
+            if (values.address.toLowerCase() !== engine.state.session.mac.toLowerCase() || values.login !== 'admin' || values.password !== '') { error.textContent = 'ERROR: could not connect / invalid username or password'; return; }
+            error.textContent = 'Connecting…';
+            window.setTimeout(() => { if (submitted) return; change(() => { engine.state.session.connected = true; engine.state.session.connectedMac = values.address; }); win.closePractice(); }, 650);
+        }, 'winbox-control'));
+        credentials.append(actions); connection.append(credentials, error); login.append(connection, neighbors);
+        win.append(menubar, login, status);
+        drawRows();
+    };
     const openLoader = () => {
         for (const win of [...windows.values()]) win.closePractice();
         if (windows.has('loader')) return;
+        if (certification) return openCertificationLoader();
         const win = makeWindow('loader', 'WinBox (64bit) v3.41', true), form = element('div', 'practice-form'), values = { address: '', login: 'admin', password: '' };
         form.append(renderField({ key: 'address', label: 'Connect To', type: 'text' }, values), renderField({ key: 'login', label: 'Login', type: 'text' }, values), renderField({ key: 'password', label: 'Password', type: 'password' }, values));
+        form.querySelector('[aria-label="Connect To"]').autocomplete = 'off';
+        form.querySelector('[aria-label="Password"]').autocomplete = 'new-password';
         const rows = element('div', 'practice-table-scroll'), status = element('div', 'practice-window-status');
         form.append(button('Connect', () => {
-            if (values.address !== engine.state.session.mac || values.login !== 'admin' || values.password !== '') { status.textContent = 'ERROR: could not connect / invalid username or password'; return; }
+            if (certification && (!certificationCableReady() || sharedPhysical.pcDevice !== activeDevice || !sharedPhysical.pcPort || !sharedPhysical.pcLan || !sharedPhysical.powered)) { status.textContent = 'ERROR: perangkat tidak terjangkau. Periksa kabel, LAN PC, dan daya.'; return; }
+            if (values.address.toLowerCase() !== engine.state.session.mac.toLowerCase() || values.login !== 'admin' || values.password !== '') { status.textContent = 'ERROR: could not connect / invalid username or password'; return; }
             status.textContent = 'Connecting…';
             window.setTimeout(() => { if (submitted) return; change(() => { engine.state.session.connected = true; engine.state.session.connectedMac = values.address; }); win.closePractice(); }, 650);
         }));
-        const tabs = element('div', 'practice-tabs'); tabs.append(button('Managed', () => rows.replaceChildren()), button('Neighbors', () => rows.replaceChildren()));
-        const refresh = button('Refresh', () => { rows.textContent = 'Discovering…'; window.setTimeout(() => { if (!win.isConnected || submitted) return; rows.replaceChildren(button(engine.state.session.mac + '   0.0.0.0   ' + engine.state.identity + '   ' + engine.state.device, () => { values.address = engine.state.session.mac; form.querySelector('[aria-label="Connect To"]').value = values.address; })); }, 650); });
+        const refresh = button('Refresh', () => { rows.textContent = 'Discovering…'; window.setTimeout(() => {
+            if (!win.isConnected || submitted) return;
+            if (certification && (!certificationCableReady() || !sharedPhysical.pcLan || !sharedPhysical.powered || !sharedPhysical.pcPort || sharedPhysical.pcDevice !== activeDevice)) { rows.textContent = 'No devices found'; return; }
+            rows.replaceChildren(button(engine.state.session.mac + '   0.0.0.0   ' + engine.state.identity + '   ' + engine.state.device, () => { values.address = engine.state.session.mac; form.querySelector('[aria-label="Connect To"]').value = values.address; }));
+        }, 650); });
+        const tabs = element('div', 'practice-tabs'); tabs.append(button('Managed', () => rows.replaceChildren()), button('Neighbors', () => refresh.click()));
         win.append(form, tabs, refresh, rows, status);
+        if (certification) refresh.click();
     };
     const powerScreen = () => {
         app.hidden = true; pcDesktop.hidden = false;
@@ -468,7 +585,7 @@
         const file = element('tr'); file.tabIndex = 0; file.draggable = true; file.append(element('td', '', 'hotspot/login.html'), element('td', '', '.html file'), element('td', '', '1.9 KiB'), element('td'));
         file.addEventListener('dragstart', (event) => event.dataTransfer.setData('text/plain', 'practice-router-html')); file.addEventListener('click', () => file.classList.toggle('is-selected')); body.append(file); table.append(head, body); area.append(table);
         const copy = () => change(() => { engine.state.files.desktopHtml = engine.state.files.routerHtml; renderDesktopFile(); });
-        toolbar.append(button('Backup', () => { const backup = engine.snapshot(); delete backup.files.backup; engine.state.files.backup = backup; saveLocal(); notice('Berkas backup.backup dibuat.'); }), button('Restore', () => { if (!engine.state.files.backup) return notice('Belum ada berkas backup.backup.'); const backup = engine.state.files.backup; change(() => { engine = simulator.create(backup); }); }), button('Upload…', () => {
+        toolbar.append(button('Backup', () => { const backup = engine.snapshot(); delete backup.files.backup; engine.state.files.backup = backup; saveLocal(); notice('Berkas backup.backup dibuat.'); }), button('Restore', () => { if (!engine.state.files.backup) return notice('Belum ada berkas backup.backup.'); const backup = engine.state.files.backup; change(() => { restoreEngine(backup); }); }), button('Upload…', () => {
             const input = element('input'); input.type = 'file'; input.accept = '.html,.htm'; input.addEventListener('change', async () => { const selected = input.files[0]; if (!selected) return; if (selected.size > 32768) return notice('Ukuran berkas maksimal 32 KiB.'); const html = await selected.text(); change(() => { engine.state.files.desktopHtml = html; renderDesktopFile(); }); confirmUpload(); }); input.click();
         }));
         file.addEventListener('contextmenu', (event) => { event.preventDefault(); const popup = fileMenu(event.clientX, event.clientY); popup.append(button('Download', () => { copy(); popup.remove(); showView('desktop'); })); });
@@ -499,11 +616,186 @@
         text.addEventListener('input', () => { header.firstChild.textContent = '*login.html — Notepad'; });
         text.addEventListener('keydown', (event) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') { event.preventDefault(); save(); } }); win.append(header, text); host.append(win); text.focus();
     };
+    const certificationCableReady = () => {
+        const order = ['putih-oranye', 'oranye', 'putih-hijau', 'biru', 'putih-biru', 'hijau', 'putih-cokelat', 'cokelat'];
+        return sharedPhysical.tested && ['a', 'b'].every((end) => sharedPhysical.crimp[end] && order.every((color, index) => sharedPhysical.wires[end][index] === color));
+    };
+    const certificationCableAssembled = () => ['a', 'b'].every((end) => sharedPhysical.wires[end].filter(Boolean).length === 8);
+    const refreshCertificationAccess = () => { certificationDeviceControls.forEach((control) => { control.hidden = !certificationCableAssembled(); }); };
+    const switchCertificationDevice = (key) => {
+        if (submitted) return;
+        if (!certificationCableAssembled()) { physicalTab = 'wiring'; showView('physical'); return; }
+        saveLocal();
+        for (const win of [...windows.values()]) win.closePractice();
+        safeSnapshot = null; undo.length = 0; redo.length = 0;
+        activeDevice = key; engine = loadEngine(deviceStates[key]);
+        refreshAll(); renderDesktopFile(); saveLocal();
+        showView(view === 'physical' ? 'physical' : 'winbox');
+    };
+    const certificationTabs = () => {
+        const tabs = element('div', 'certification-physical-tabs');
+        tabs.append(button('Rakit kabel', () => { physicalTab = 'wiring'; renderPhysical(); }, physicalTab === 'wiring' ? 'is-active' : ''));
+        if (certificationCableAssembled()) {
+            tabs.append(button('LAN tester', () => { physicalTab = 'tester'; renderPhysical(); }, physicalTab === 'tester' ? 'is-active' : ''), button('Port router hAP', () => { physicalTab = 'ports'; switchCertificationDevice('hap'); showView('physical'); }, physicalTab === 'ports' && activeDevice === 'hap' ? 'is-active' : ''), button('Port switch hEX', () => { physicalTab = 'ports'; switchCertificationDevice('hex'); showView('physical'); }, physicalTab === 'ports' && activeDevice === 'hex' ? 'is-active' : ''));
+            if (sharedPhysical.pcPort) tabs.append(button('Port LAN PC', () => { physicalTab = 'pcLan'; renderPhysical(); }, physicalTab === 'pcLan' ? 'is-active' : ''));
+        }
+        return tabs;
+    };
+    const renderCertificationPorts = () => {
+        if (!certificationCableAssembled()) { physicalTab = 'wiring'; return renderPhysical(); }
+        physical.replaceChildren(certificationTabs());
+        const heading = element('header'); heading.append(element('h2', '', activeDevice === 'hap' ? 'Router hAP' : 'Switch hEX'), element('p', '', 'Pilih kabel lalu klik port tujuan. Klik kabel yang terpasang untuk melepasnya. Ujung kabel PC yang sama dipindah untuk konfigurasi dan pengujian.')); physical.append(heading);
+        const layout = element('div', 'ch5-cabling-layout'), device = element('div', 'ch5-hex-device'), image = element('img'), actions = element('div', 'ch5-cabling-actions');
+        const hex = activeDevice === 'hex'; image.src = assets + '/asset/alat/' + (hex ? 'hex-lite-front-v2.png' : 'mkrotikhapport.png'); image.alt = hex ? 'MikroTik hEX lite' : 'MikroTik hAP lite'; image.draggable = false; device.append(image);
+        const wired = (port) => (sharedPhysical.pcDevice === activeDevice && sharedPhysical.pcPort === port) || (hex ? sharedPhysical.hexUplink === port : Object.entries(sharedPhysical.connections).some(([key, value]) => key !== 'pc' && value === port));
+        const setPort = (port) => {
+            if (!selectedCable && !wired(port)) return;
+            let attachedPc = false;
+            change(() => {
+                if (sharedPhysical.pcDevice === activeDevice && sharedPhysical.pcPort === port) { sharedPhysical.pcPort = ''; delete sharedPhysical.connections.pc; selectedCable = 'pc'; }
+                else if (hex && sharedPhysical.hexUplink === port) { sharedPhysical.hexUplink = ''; selectedCable = 'uplink'; }
+                else {
+                    const connection = !hex && Object.entries(sharedPhysical.connections).find(([key, value]) => key !== 'pc' && value === port);
+                    if (connection) { delete sharedPhysical.connections[connection[0]]; selectedCable = connection[0]; }
+                    else if (selectedCable === 'pc') {
+                        sharedPhysical.pcDevice = activeDevice; sharedPhysical.pcPort = port; delete sharedPhysical.connections.pc;
+                        if (!hex) sharedPhysical.connections.pc = port;
+                        engine.state.session.connected = false; deviceStates.hap.session.connected = false; deviceStates.hex.session.connected = false; selectedCable = ''; attachedPc = true;
+                    } else if (hex && selectedCable === 'uplink') { sharedPhysical.hexUplink = port; selectedCable = ''; }
+                    else if (!hex && ['internet', 'switch'].includes(selectedCable)) { sharedPhysical.connections[selectedCable] = port; selectedCable = ''; }
+                }
+            }); renderPhysical();
+            if (attachedPc && !sharedPhysical.pcLan) notice('Kabel terpasang di ' + port + '. Sekarang pasang ujung satunya ke port LAN PC.');
+        };
+        for (let index = 1; index <= (hex ? 5 : 4); index++) {
+            const port = 'ether' + index, control = button('', () => setPort(port), 'ch5-hex-port ch5-hex-port--' + index);
+            control.setAttribute('aria-label', port); control.classList.toggle('is-connected', wired(port)); control.append(element('b', '', port), element('span', 'ch5-cable-plug'));
+            if (!hex) { control.style.left = [0, 39.2, 50.5, 61.7, 73][index] + '%'; control.style.top = '71.4%'; control.style.width = '10%'; control.style.height = '14.5%'; }
+            control.addEventListener('dragover', (event) => event.preventDefault()); control.addEventListener('drop', (event) => { event.preventDefault(); selectedCable = event.dataTransfer.getData('text/plain'); setPort(port); }); device.append(control);
+        }
+        for (const [key, title] of (hex ? [['uplink', 'Uplink dari hAP'], ['pc', 'Kabel LAN PC yang sama']] : [['internet', 'Internet / ISP'], ['switch', 'Uplink menuju hEX'], ['pc', 'Kabel LAN PC']])) {
+            const cable = button(title, () => { selectedCable = key; renderPhysical(); }, 'ch5-cable-choice'); cable.classList.toggle('is-selected', selectedCable === key); cable.draggable = true; cable.addEventListener('dragstart', (event) => event.dataTransfer.setData('text/plain', key)); actions.append(cable);
+        }
+        actions.append(element('p', '', sharedPhysical.pcPort ? 'PC ke ' + sharedPhysical.pcDevice + ' ' + sharedPhysical.pcPort : 'Kabel PC belum terpasang'), button(sharedPhysical.pcLan ? 'Lihat sambungan LAN PC' : 'Pasang ujung kabel ke LAN PC', () => { if (!sharedPhysical.pcPort) { notice('Pasang ujung kabel pada port router atau switch terlebih dahulu.'); return; } physicalTab = 'pcLan'; renderPhysical(); }, 'ch2-task-back'), button(sharedPhysical.powered ? 'PC menyala' : 'Nyalakan PC', () => { if (!sharedPhysical.pcLan) { physicalTab = 'pcLan'; renderPhysical(); notice('Pasang ujung kabel ke port LAN PC sebelum menyalakan komputer.'); return; } change(() => { sharedPhysical.powered = true; }); renderPhysical(); }, 'ch2-task-back'), button('Buka PC / WinBox', () => showView('winbox'), 'ch2-task-button'));
+        layout.append(device, actions); physical.append(layout);
+    };
+    const renderCertificationPcLan = () => {
+        if (!sharedPhysical.pcPort) { physicalTab = 'ports'; return renderCertificationPorts(); }
+        physical.replaceChildren(certificationTabs());
+        const workbench = element('div', 'pc-lan-workbench'), computer = element('div', 'pc-lan-computer'), imageWrap = element('div', 'pc-lan-computer__image'), image = element('img'), actions = element('div', 'pc-lan-actions');
+        workbench.classList.toggle('is-connected', Boolean(sharedPhysical.pcLan));
+        workbench.classList.toggle('is-cable-selected', selectedPcLanCable);
+        computer.append(element('span', 'pc-lan-computer__label', 'BAGIAN BELAKANG PC'));
+        image.src = assets + '/asset/alat/pc-rear-lan.png'; image.alt = 'Bagian belakang komputer dengan soket LAN RJ45'; image.draggable = false;
+        const connect = () => {
+            if (sharedPhysical.pcLan) { change(() => { sharedPhysical.pcLan = false; }); selectedPcLanCable = false; renderPhysical(); return; }
+            if (!selectedPcLanCable) { notice('Pilih dulu ujung kabel RJ45, lalu klik port LAN PC.'); return; }
+            change(() => { sharedPhysical.pcLan = true; }); selectedPcLanCable = false; renderPhysical(); notice('Konektor RJ45 terpasang pada port LAN PC.');
+        };
+        const socket = button('', connect, 'pc-lan-socket'); socket.setAttribute('aria-label', 'Pasang konektor RJ45 ke port LAN komputer'); socket.append(element('span', 'pc-lan-inserted'), element('span', 'pc-lan-socket__label', 'LAN · RJ45'));
+        socket.addEventListener('dragover', (event) => { if (selectedPcLanCable) event.preventDefault(); });
+        socket.addEventListener('drop', (event) => { event.preventDefault(); if (event.dataTransfer.getData('application/x-netguard-pc-lan') === 'pc') connect(); });
+        const usb = button('', () => notice('Itu port USB. Cari soket LAN RJ45 di sebelahnya.'), 'pc-lan-usb'); usb.setAttribute('aria-label', 'Port USB komputer');
+        imageWrap.append(image, socket, usb); computer.append(imageWrap);
+        const source = sharedPhysical.pcDevice === 'hex' ? 'hEX' : 'hAP';
+        actions.append(element('span', 'pc-lan-eyebrow', 'SAMBUNGKAN UJUNG SATUNYA'), element('h3', '', 'Dari ' + source + ' ke komputer'), element('p', '', 'Ujung pertama kabel sudah terpasang pada ' + sharedPhysical.pcPort + ' ' + source + '. Hubungkan ujung satunya ke port LAN komputer.'));
+        const cable = button('', () => { if (sharedPhysical.pcLan) return; selectedPcLanCable = true; renderPhysical(); }, 'pc-lan-cable'), plug = element('img'), details = element('span');
+        plug.src = assets + '/asset/alat/rj45-single-hd.webp'; plug.alt = 'Konektor RJ45'; plug.draggable = false;
+        details.append(element('b', '', 'Ujung kabel dari ' + sharedPhysical.pcPort), element('small', '', sharedPhysical.pcLan ? 'Kedua ujung kabel sudah terpasang' : selectedPcLanCable ? 'Konektor dipilih. Klik port LAN komputer' : 'Seret ke port LAN, atau klik untuk memilih'));
+        cable.append(plug, details); cable.disabled = Boolean(sharedPhysical.pcLan); cable.draggable = !sharedPhysical.pcLan; cable.setAttribute('aria-pressed', String(selectedPcLanCable || sharedPhysical.pcLan));
+        cable.addEventListener('dragstart', (event) => { selectedPcLanCable = true; event.dataTransfer.setData('application/x-netguard-pc-lan', 'pc'); });
+        actions.append(cable, element('p', 'pc-lan-status', sharedPhysical.pcLan ? sharedPhysical.pcPort + ' ' + source + ' terhubung ke port LAN PC' : 'Belum terhubung ke PC'));
+        if (sharedPhysical.pcLan) actions.append(button(sharedPhysical.powered ? 'Buka PC / WinBox' : 'Nyalakan PC', () => { if (sharedPhysical.powered) showView('desktop'); else { change(() => { sharedPhysical.powered = true; }); renderPhysical(); } }, 'ch2-task-button'));
+        workbench.append(computer, actions); physical.append(workbench);
+    };
     const wireColors = { 'putih-oranye': ['#fff', '#f4942c'], oranye: ['#f4942c', '#f4942c'], 'putih-hijau': ['#fff', '#46a36a'], hijau: ['#46a36a', '#46a36a'], biru: ['#288ae0', '#288ae0'], 'putih-biru': ['#fff', '#288ae0'], cokelat: ['#92583f', '#92583f'], 'putih-cokelat': ['#fff', '#92583f'] };
+    const renderCertificationCable = () => {
+        physical.replaceChildren(certificationTabs());
+        const heading = element('div', 'wiring-heading'), title = element('div');
+        title.append(element('span', '', 'KABEL STRAIGHT · T568B'), element('h2', '', 'Pasang inti kabel — Ujung ' + certificationWireEnd.toUpperCase()), element('p', '', 'Ketuk warna atau seret ke pin pada konektor RJ45.'));
+        heading.append(title, element('span', 'wiring-heading__badge', sharedPhysical.wires[certificationWireEnd].filter(Boolean).length + ' / 8')); physical.append(heading);
+        const station = element('div', 'wiring-station'), art = element('div', 'wiring-station__art'), image = element('img'), slots = element('div', 'wire-slots'), controls = element('div', 'wiring-station__controls');
+        image.src = assets + '/asset/alat/rj45-wiring-board-cartoon.png'; image.alt = 'Konektor RJ45 dengan delapan ruang pin'; image.draggable = false; art.append(image, slots, element('span', 'wiring-station__art-label', 'RJ45 · 8 PIN'));
+        const ends = element('div', 'certification-physical-tabs');
+        for (const end of ['a', 'b']) ends.append(button('Ujung ' + end.toUpperCase(), () => { certificationWireEnd = end; renderPhysical(); }, end === certificationWireEnd ? 'is-active' : ''));
+        controls.append(ends, element('h3', '', 'Pilih inti kabel'));
+        const bank = element('div', 'wire-bank'); controls.append(bank);
+        const colors = { 'putih-oranye': 'white-orange', oranye: 'orange', 'putih-hijau': 'white-green', hijau: 'green', biru: 'blue', 'putih-biru': 'white-blue', 'putih-cokelat': 'white-brown', cokelat: 'brown' };
+        const place = (color, pin) => {
+            if (color !== null && !colors[color]) return;
+            const wasAssembled = certificationCableAssembled();
+            change(() => {
+                const wires = sharedPhysical.wires[certificationWireEnd];
+                const old = color === null ? -1 : wires.indexOf(color);
+                if (old >= 0 && old !== pin) wires[old] = null;
+                wires[pin] = color;
+                for (const end of ['a', 'b']) sharedPhysical.crimp[end] = sharedPhysical.wires[end].filter(Boolean).length === 8;
+                sharedPhysical.tested = false; sharedPhysical.testerConnections = {};
+            });
+            if (!wasAssembled && certificationCableAssembled()) { physicalTab = 'tester'; notice('Kabel selesai dirakit. Port router hAP dan switch hEX sekarang tersedia.'); }
+            else if (certificationWireEnd === 'a' && sharedPhysical.crimp.a && !sharedPhysical.crimp.b) certificationWireEnd = 'b';
+            renderPhysical();
+        };
+        const swatch = (color, pin = false) => { const img = element('img', pin ? 'wire-swatch wire-swatch--pin' : 'wire-swatch'); img.src = assets + '/asset/alat/t568b-' + (pin ? 'pin-' : '') + colors[color] + '.svg'; img.alt = ''; img.draggable = false; return img; };
+        for (let index = 0; index < 8; index++) {
+            const color = sharedPhysical.wires[certificationWireEnd][index], slot = button('', () => { if (color) place(null, index); }, 'wire-slot');
+            slot.setAttribute('aria-label', 'Pin ' + (index + 1) + (color ? ': ' + color : ' kosong')); slot.classList.toggle('is-filled', Boolean(color));
+            if (color) slot.append(swatch(color, true)); slot.append(element('b', '', String(index + 1)));
+            slot.addEventListener('dragover', (event) => event.preventDefault()); slot.addEventListener('drop', (event) => { event.preventDefault(); place(event.dataTransfer.getData('text/plain'), index); }); slots.append(slot);
+        }
+        for (const color of Object.keys(colors)) {
+            const choice = button('', () => { const wires = sharedPhysical.wires[certificationWireEnd]; const index = Array.from({ length: 8 }, (_, pin) => pin).find((pin) => !wires[pin]); if (index !== undefined) place(color, index); }, 'wire-chip');
+            choice.setAttribute('aria-label', color); choice.append(swatch(color), element('span', '', color)); choice.disabled = sharedPhysical.wires[certificationWireEnd].includes(color); choice.draggable = true;
+            choice.addEventListener('dragstart', (event) => event.dataTransfer.setData('text/plain', color)); bank.append(choice);
+        }
+        const actions = element('div', 'wiring-station__actions'); actions.append(button('Kosongkan ujung ini', () => { change(() => { sharedPhysical.wires[certificationWireEnd] = []; sharedPhysical.crimp[certificationWireEnd] = false; sharedPhysical.tested = false; sharedPhysical.testerConnections = {}; }); renderPhysical(); }, 'lab-button lab-button--ghost'));
+        controls.append(actions); station.append(art, controls); physical.append(station);
+    };
+    const renderCertificationTester = () => {
+        physical.replaceChildren(certificationTabs());
+        const layout = element('div', 'tester-layout'), bench = element('div', 'tester-bench'), devices = element('div', 'tester-bench__devices'), image = element('img'), instructions = element('div', 'tester-instructions');
+        image.src = assets + '/asset/alat/lab-tester-real.png'; image.alt = 'LAN tester MAIN dan REMOTE'; image.draggable = false; devices.append(image);
+        const connections = sharedPhysical.testerConnections || (sharedPhysical.tested ? { main: true, remote: true } : {});
+        const cableEnds = element('div', 'tester-cable-ends');
+        const order = ['putih-oranye', 'oranye', 'putih-hijau', 'biru', 'putih-biru', 'hijau', 'putih-cokelat', 'cokelat'];
+        const connect = (end, target) => {
+            if (end !== target) return;
+            change(() => { sharedPhysical.testerConnections = { ...connections, [target]: !connections[target] }; sharedPhysical.tested = false; }); selectedTesterEnd = ''; renderPhysical();
+        };
+        for (const [side, end] of [['main', 'A'], ['remote', 'B']]) {
+            devices.append(element('span', 'tester-bench__device-label tester-bench__device-label--' + side, side.toUpperCase()));
+            const hardware = element('div', 'tester-hardware-leds tester-hardware-leds--' + side);
+            for (let index = 0; index < 8; index++) {
+                const light = element('i', 'certification-pin-light'), on = sharedPhysical.tested && ['a', 'b'].every((key) => sharedPhysical.wires[key][index] === order[index]);
+                light.style.animationDelay = (index * 0.42) + 's';
+                light.classList.toggle('is-on', on); light.setAttribute('aria-label', side.toUpperCase() + ' pin ' + (index + 1) + (on ? ' menyala' : ' mati')); hardware.append(light);
+            }
+            const port = button('', () => { if (connections[side] || selectedTesterEnd) connect(selectedTesterEnd || side, side); }, 'tester-port tester-port--' + side);
+            port.setAttribute('aria-label', 'Port ' + side.toUpperCase()); port.classList.toggle('is-connected', Boolean(connections[side])); port.append(element('span', '', connections[side] ? 'TERPASANG' : 'UJUNG ' + end));
+            port.addEventListener('dragover', (event) => event.preventDefault()); port.addEventListener('drop', (event) => { event.preventDefault(); connect(event.dataTransfer.getData('text/plain'), side); });
+            const connector = button('', () => { selectedTesterEnd = side; renderPhysical(); }, 'tester-cable-end'), plug = element('img'); plug.src = assets + '/asset/alat/rj45-single-hd.png'; plug.alt = ''; connector.append(plug, element('span', '', 'UJUNG ' + end)); connector.draggable = true; connector.disabled = Boolean(connections[side]); connector.classList.toggle('is-selected', selectedTesterEnd === side); connector.classList.toggle('is-connected', Boolean(connections[side])); connector.setAttribute('aria-label', 'Ujung ' + end + ' ke tester');
+            connector.addEventListener('dragstart', (event) => event.dataTransfer.setData('text/plain', side)); cableEnds.append(connector);
+            if (connections[side]) devices.append(element('span', 'tester-inserted tester-inserted--' + side + ' is-visible', end));
+            devices.append(hardware, port);
+        }
+        devices.append(cableEnds); bench.append(devices);
+        const power = button('Tes kabel', () => { if (!connections.main || !connections.remote) return; change(() => { sharedPhysical.tested = true; }); renderPhysical(); }, 'lab-button lab-button--primary'); power.disabled = !connections.main || !connections.remote;
+        instructions.append(element('span', '', 'LAN TESTER'), element('h2', '', 'Hubungkan kedua ujung kabel'), element('p', '', 'Seret Ujung A ke MAIN dan Ujung B ke REMOTE. Pada layar sentuh, ketuk konektor lalu ketuk port. Amati lampu pin saat tester dijalankan.'), power);
+        layout.append(bench, instructions); physical.append(layout);
+    };
     const renderPhysical = () => {
+        if (certification) {
+            if (!certificationCableAssembled()) physicalTab = 'wiring';
+            if (physicalTab === 'wiring') return renderCertificationCable();
+            if (physicalTab === 'tester') return renderCertificationTester();
+            if (physicalTab === 'pcLan') return renderCertificationPcLan();
+            return renderCertificationPorts();
+        }
+        if (certification && physicalTab !== 'wiring') return renderCertificationPorts();
         physical.replaceChildren();
-        const header = element('header'); header.append(element('span', '', 'LAB FISIK · PRACTICE MODE'), element('h2', '', scenario.type === 'wiring' ? 'Rakit dan uji kabel LAN' : 'Sambungan perangkat'), element('p', '', 'Gunakan kebutuhan pada studi kasus. Perubahan diperiksa setelah jawaban dikumpulkan.')); physical.append(header);
-        if (scenario.type === 'wiring') {
+        if (certification) physical.append(certificationTabs());
+        const header = element('header'); header.append(element('span', '', certification ? 'LAB FISIK · CERTIFICATION MODE' : 'LAB FISIK · PRACTICE MODE'), element('h2', '', (scenario.type === 'wiring' || certification) ? 'Rakit dan uji kabel LAN' : 'Sambungan perangkat'), element('p', '', 'Gunakan kebutuhan pada studi kasus. Perubahan diperiksa setelah jawaban dikumpulkan.')); physical.append(header);
+        if (scenario.type === 'wiring' || certification) {
             const ends = element('div', 'practice-wire-ends');
             for (const end of ['a', 'b']) {
                 const board = element('section', 'practice-wire-end'), pins = element('div', 'practice-wire-pins'), colors = element('div', 'practice-wire-colors');
@@ -518,7 +810,17 @@
                 }
                 const tools = element('div', 'practice-wire-tools'); tools.append(button(engine.state.physical.crimp[end] ? 'Sudah di-crimp' : 'Crimp ujung ' + end.toUpperCase(), () => { if (engine.state.physical.wires[end].length !== 8) return notice('Masukkan delapan inti sebelum crimping.'); change(() => { engine.state.physical.crimp[end] = true; }); renderPhysical(); }), button('Kosongkan', () => { change(() => { engine.state.physical.wires[end] = []; engine.state.physical.crimp[end] = false; engine.state.physical.tested = false; }); renderPhysical(); })); board.append(tools); ends.append(board);
             }
-            const tester = button('Nyalakan LAN tester', () => { if (!engine.state.physical.crimp.a || !engine.state.physical.crimp.b) return notice('Hubungkan kedua ujung kabel yang sudah di-crimp.'); change(() => { engine.state.physical.tested = true; }); const a = engine.state.physical.wires.a, b = engine.state.physical.wires.b; notice('MAIN: 1 2 3 4 5 6 7 8 · REMOTE: ' + a.map((color) => { const index = b.indexOf(color); return index < 0 ? '—' : index + 1; }).join(' ')); }, 'ch2-task-button'); physical.append(ends, tester); return;
+            const tester = button('Nyalakan LAN tester', () => { if (!engine.state.physical.crimp.a || !engine.state.physical.crimp.b) return notice('Hubungkan kedua ujung kabel yang sudah di-crimp.'); change(() => { engine.state.physical.tested = true; }); if (certification) { renderPhysical(); return; } const a = engine.state.physical.wires.a, b = engine.state.physical.wires.b; notice('MAIN: 1 2 3 4 5 6 7 8 · REMOTE: ' + a.map((color) => { const index = b.indexOf(color); return index < 0 ? '—' : index + 1; }).join(' ')); }, 'ch2-task-button'); physical.append(ends, tester);
+            if (certification && engine.state.physical.tested) {
+                const testerPanel = element('div', 'certification-tester'); testerPanel.append(element('h3', '', 'LAN TESTER'));
+                const order = ['putih-oranye', 'oranye', 'putih-hijau', 'biru', 'putih-biru', 'hijau', 'putih-cokelat', 'cokelat'];
+                for (const end of ['a', 'b']) {
+                    const row = element('div', 'certification-tester-row'); row.append(element('b', '', end === 'a' ? 'MAIN' : 'REMOTE'));
+                    order.forEach((color, index) => { const light = element('span', 'certification-tester-light', String(index + 1)); const on = ['a', 'b'].every((side) => engine.state.physical.wires[side][index] === color); light.classList.toggle('is-on', on); light.setAttribute('aria-label', 'Pin ' + (index + 1) + (on ? ' menyala' : ' mati')); light.style.animationDelay = (index * .15) + 's'; row.append(light); }); testerPanel.append(row);
+                }
+                physical.append(testerPanel);
+            }
+            return;
         }
         const layout = element('div', 'ch5-cabling-layout'), device = element('div', 'ch5-hex-device'), image = element('img'), actions = element('div', 'ch5-cabling-actions');
         const switchTest = scenario.type === 'switch-test', hex = switchTest || engine.state.device === 'hEX lite';
@@ -583,7 +885,7 @@
                 } else {
                     portal.append(element('p', '', 'Please log on to use the internet hotspot service'));
                     const username = element('input'), password = element('input'), errorNode = element('p'); username.placeholder = 'Username'; username.setAttribute('aria-label', 'Username HotSpot'); password.type = 'password'; password.placeholder = 'Password'; password.setAttribute('aria-label', 'Password HotSpot');
-                    portal.append(username, password, button('Connect', () => { const name = username.value, pass = password.value; load('Memuat halaman…', () => { try { change(() => engine.loginPhone(name, pass)); renderPhone(); } catch (error) { renderPhone(); notice(error.message); } }); }), errorNode);
+                    portal.append(username, password, button('Connect', () => { const name = username.value, pass = password.value; load('Memuat halaman…', () => { try { change(() => { engine.loginPhone(name, pass); if (certification) { engine.state.tests.portalUsers ||= {}; engine.state.tests.portalUsers[engine.state.phone.authenticatedUser.toLowerCase()] = true; } }); renderPhone(); } catch (error) { renderPhone(); notice(error.message); } }); }), errorNode);
                 }
                 portal.append(element('small', '', 'Powered by MikroTik RouterOS')); content.append(portal);
             }
@@ -592,18 +894,25 @@
     };
     root.querySelector('[data-pc-toolbar]').hidden = false;
     const taskbar = root.querySelector('[data-pc-toolbar]');
-    const cableTask = button('⇄ Kabel PC', () => showView('physical')), phoneTask = button('▯ HP uji', () => { phoneScreen = 'home'; showView('phone'); }); taskbar.insertBefore(cableTask, taskbar.querySelector('.lab-pc-tray')); taskbar.insertBefore(phoneTask, taskbar.querySelector('.lab-pc-tray'));
+    if (certification) {
+        for (const [key, label] of [['hap', 'Router hAP'], ['hex', 'Switch hEX']]) {
+            const control = button(label, () => switchCertificationDevice(key)); certificationDeviceControls.push(control);
+            taskbar.insertBefore(control, taskbar.querySelector('.lab-pc-tray'));
+        }
+        refreshCertificationAccess();
+    }
+    const cableTask = button('⇄ Kabel PC', () => showView('physical')), phoneTask = button('▯ HP uji', () => { if (certification && activeDevice !== 'hap') switchCertificationDevice('hap'); phoneScreen = 'home'; showView('phone'); }); taskbar.insertBefore(cableTask, taskbar.querySelector('.lab-pc-tray')); taskbar.insertBefore(phoneTask, taskbar.querySelector('.lab-pc-tray'));
     root.querySelector('[data-pc-home]').addEventListener('click', () => showView('desktop'));
     root.querySelector('[data-pc-open-winbox]').addEventListener('click', () => showView('winbox'));
     root.querySelector('[data-pc-task-winbox]').addEventListener('click', () => showView('winbox'));
     root.querySelectorAll('[data-open-client-cmd]').forEach((control) => control.addEventListener('click', () => showView('cmd')));
     root.querySelector('[data-close-client-cmd]').addEventListener('click', () => showView('desktop'));
-    root.querySelector('[data-client-command-form]').addEventListener('submit', (event) => { event.preventDefault(); const input = root.querySelector('[data-client-command]'), text = input.value.trim(), output = root.querySelector('[data-client-terminal]'); if (!text) return; input.value = ''; if (/^cls$/i.test(text)) { output.textContent = ''; return; } change(() => { output.textContent += 'C:\\Users\\Lab> ' + text + '\n' + engine.command(text, 'pc') + '\n'; }); output.parentElement.scrollTop = output.parentElement.scrollHeight; });
+    root.querySelector('[data-client-command-form]').addEventListener('submit', (event) => { event.preventDefault(); const input = root.querySelector('[data-client-command]'), text = input.value.trim(), output = root.querySelector('[data-client-terminal]'); if (!text) return; input.value = ''; if (/^cls$/i.test(text)) { output.textContent = ''; return; } change(() => { output.textContent += 'C:\\Users\\Lab> ' + text + '\n' + engine.command(text, 'pc') + '\n'; if (certification && activeDevice === 'hex' && /^ipconfig/i.test(text) && engine.network().address !== '0.0.0.0') { engine.state.tests.ports ||= {}; engine.state.tests.ports[sharedPhysical.pcPort] = engine.network().address; } }); output.parentElement.scrollTop = output.parentElement.scrollHeight; });
     root.querySelector('[data-app-minimize]').addEventListener('click', () => showView('desktop'));
     root.querySelector('[data-app-restore]').addEventListener('click', () => { app.classList.toggle('is-restored'); pcDesktop.hidden = !app.classList.contains('is-restored'); pcCommand.hidden = true; });
     root.querySelector('[data-session-exit]').addEventListener('click', disconnectSession);
-    root.querySelector('[data-undo]').addEventListener('click', () => { if (!undo.length) return; redo.push(engine.snapshot()); engine = simulator.create(undo.pop()); saveLocal(); refreshAll(); });
-    root.querySelector('[data-redo]').addEventListener('click', () => { if (!redo.length) return; undo.push(engine.snapshot()); engine = simulator.create(redo.pop()); saveLocal(); refreshAll(); });
+    root.querySelector('[data-undo]').addEventListener('click', () => { if (!undo.length) return; redo.push(engine.snapshot()); restoreEngine(undo.pop()); saveLocal(); refreshAll(); });
+    root.querySelector('[data-redo]').addEventListener('click', () => { if (!redo.length) return; undo.push(engine.snapshot()); restoreEngine(redo.pop()); saveLocal(); refreshAll(); });
     root.querySelector('[data-safe-mode]').addEventListener('click', (event) => { safeSnapshot = safeSnapshot ? null : engine.snapshot(); event.currentTarget.classList.toggle('is-active', Boolean(safeSnapshot)); });
     const caseDialog = document.querySelector('[data-case-dialog]'), confirmDialog = document.querySelector('[data-submit-confirm]'), resultDialog = document.querySelector('[data-practice-result]');
     const briefing = scenario.briefing || { context: scenario.description || '', initial: 'Baca kondisi perangkat dan rincian tugas sebelum mulai.', assignment: scenario.description || '', requirements: scenario.clues || [], outcome: 'Penuhi seluruh kebutuhan yang tercantum pada tugas.', submission: 'Simpan konfigurasi, lalu tekan Selesaikan jawaban dan konfirmasi untuk memperoleh hasil pemeriksaan.' };
@@ -640,19 +949,25 @@
         if (briefingIndex < briefingScenes.length - 1) { briefingIndex++; paintBriefing(); } else caseDialog.close();
     };
     const openBriefing = () => { briefingIndex = 0; paintBriefing(); if (!caseDialog.open) caseDialog.showModal(); document.querySelector('[data-case-start]').focus(); };
-    root.querySelector('[data-case-open]').addEventListener('click', openBriefing);
-    document.querySelector('[data-case-previous]').addEventListener('click', (event) => { event.stopPropagation(); if (briefingIndex > 0) { briefingIndex--; paintBriefing(); } });
+    root.querySelector('[data-case-open]').addEventListener('click', certification ? () => caseDialog.showModal() : openBriefing);
+    if (!certification) {
+        document.querySelector('[data-case-previous]').addEventListener('click', (event) => { event.stopPropagation(); if (briefingIndex > 0) { briefingIndex--; paintBriefing(); } });
     document.querySelector('[data-case-start]').addEventListener('click', (event) => { event.stopPropagation(); continueBriefing(); });
     caseDialog.addEventListener('click', continueBriefing);
     caseDialog.addEventListener('keydown', (event) => { if (event.repeat || event.target.closest('[data-case-previous]')) return; if (['Enter', ' '].includes(event.key)) { event.preventDefault(); event.stopPropagation(); continueBriefing(); } });
     caseDialog.addEventListener('cancel', (event) => event.preventDefault());
+    }
+    if (certification) {
+        document.querySelectorAll('[data-certification-detail-close]').forEach((control) => control.addEventListener('click', () => caseDialog.close()));
+        root.querySelector('[data-certification-submit]').addEventListener('click', () => { if (!submitted) confirmDialog.showModal(); });
+    }
     submitControl.addEventListener('click', () => { if (configurationStarted && !submitted) confirmDialog.showModal(); });
     document.querySelector('[data-submit-cancel]').addEventListener('click', () => confirmDialog.close());
     const showResult = (result) => {
         submitted = true; submitControl.hidden = true; root.inert = true; window.clearTimeout(phoneTimer);
         resultDialog.classList.toggle('is-correct', result.correct);
-        document.querySelector('[data-result-title]').textContent = result.correct ? 'Benar! Misi selesai.' : 'Konfigurasi belum sesuai.';
-        document.querySelector('[data-result-description]').textContent = result.correct ? 'Kebutuhan studi kasus sudah terpenuhi. Kamu bisa melanjutkan dengan soal acak yang berbeda.' : 'Berikut bagian yang perlu diperbaiki. Coba lagi untuk mengerjakan studi kasus baru.';
+        document.querySelector('[data-result-title]').textContent = certification ? (result.correct ? 'Benar! Seluruh konfigurasi sesuai.' : result.errors.length + ' kesalahan ditemukan.') : result.correct ? 'Benar! Misi selesai.' : 'Konfigurasi belum sesuai.';
+        document.querySelector('[data-result-description]').textContent = certification ? (result.correct ? 'Seluruh kebutuhan jaringan Kantor Nusantara dan pengujian telah terpenuhi.' : 'Periksa rincian setiap bagian berikut. Jumlah kesalahan: ' + result.errors.length + '.') : result.correct ? 'Kebutuhan studi kasus sudah terpenuhi. Kamu bisa melanjutkan dengan soal acak yang berbeda.' : 'Berikut bagian yang perlu diperbaiki. Coba lagi untuk mengerjakan studi kasus baru.';
         const list = document.querySelector('[data-result-errors]'); list.hidden = result.correct; list.replaceChildren(...result.errors.map((message) => element('li', '', message)));
         confirmDialog.close(); if (!resultDialog.open) resultDialog.showModal();
     };
@@ -660,7 +975,7 @@
         if (submitted) return;
         const control = event.currentTarget; control.disabled = true; document.querySelector('[data-submit-error]').textContent = '';
         try {
-            const response = await fetch(root.dataset.checkUrl, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }, body: JSON.stringify({ state: engine.snapshot() }) });
+            const response = await fetch(root.dataset.checkUrl, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }, body: JSON.stringify({ state: certification ? certificationState() : engine.snapshot() }) });
             const result = await response.json(); if (!response.ok) throw new Error(result.message || 'Jawaban belum berhasil dikirim.'); showResult(result);
         } catch (error) { document.querySelector('[data-submit-error]').textContent = error.message; } finally { control.disabled = false; }
     });
@@ -668,5 +983,6 @@
     document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeMenu(); host.querySelector('.practice-file-menu')?.remove(); } });
     renderDesktopFile(); updateTitle(); showView(view);
     if (scenario.result) showResult(scenario.result);
+    else if (certification) caseDialog.showModal();
     else openBriefing();
 })();

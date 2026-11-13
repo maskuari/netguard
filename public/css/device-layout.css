@@ -1,0 +1,181 @@
+.device-fullscreen { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 38px; height: 38px; padding: 8px; border: 1px solid #a9d7ff; border-radius: 10px; background: #edf8ff; color: #006bed; cursor: pointer; }
+.device-fullscreen[hidden], .device-layout-notice[hidden] { display: none !important; }
+.device-fullscreen svg { width: 21px; height: 21px; }
+.device-layout-notice { position: fixed; z-index: 5000; left: 50%; bottom: max(18px, env(safe-area-inset-bottom)); width: min(440px, calc(100% - 28px)); padding: 14px 18px; border: 1px solid #a9d7ff; border-radius: 13px; color: #143965; background: #f5fbff; box-shadow: 0 8px 30px #02172a50; font: 14px/1.5 'Segoe UI', sans-serif; transform: translateX(-50%); }
+:fullscreen { background: #091a35; }
+@media (orientation: portrait) and (max-width: 900px) {
+    .academy-scene { position: relative; top: auto; left: auto; width: 100%; height: 100dvh; transform: none; }
+    .information-dialog { width: min(540px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); transform: translate(-50%, -50%); padding: 22px; }
+    .information-dialog[open] { animation-name: dialog-reveal; }
+    .welcome-scene .hero { top: 48%; width: min(94vw, 620px); }
+    .auth-stage { top: 80px; bottom: 20px; left: 14px; right: 14px; }
+    .auth-brand { display: none; }
+    .auth-card, .auth-scene[data-mode="register"] .auth-card { top: 0; left: 0; width: 100%; height: 100%; transform: none; }
+    .auth-pane { inset: 5% 7%; }
+}
+
+@media (max-width: 1180px) {
+    .chapter-one-scene .lab-scroll { display: flex; flex-direction: column; padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); }
+    .chapter-one-scene .chapter-navbar.lab-header { min-height: 58px; gap: 7px; padding: 6px 9px; border-radius: 14px; }
+    .chapter-one-scene .chapter-navbar .lab-logo { display: none; }
+    .chapter-one-scene .chapter-navbar .lab-heading strong { font-size: 19px; }
+    .chapter-one-scene .chapter-navbar .lab-heading small { font-size: 11px; }
+    .chapter-one-scene .chapter-navbar .lab-hud { display: block; min-width: 85px; padding: 5px 7px; }
+    .chapter-one-scene .chapter-navbar .lab-hud progress { width: 80px; }
+    .chapter-navbar .chapter-step-back__label, .chapter-navbar .lab-save-progress__label { display: none; }
+    .chapter-one-scene .lab-main { width: 100%; margin-top: 8px; }
+    .chapter-one-scene .lab-layout, .chapter-one-scene .ch2-workspace, .ch5-scene .ch5-workspace, .practice-scene .practice-layout { grid-template-columns: minmax(0, 1fr) 245px !important; gap: 8px; }
+    .chapter-one-scene .lab-guide { min-width: 0; padding: 10px; }
+    .chapter-one-scene .lab-guide__header { gap: 8px; padding-bottom: 9px; }
+    .chapter-one-scene .lab-guide__header h2 { font-size: 20px; }
+    .chapter-one-scene .lab-guide__header > span { width: 32px; height: 32px; font-size: 22px; }
+    .chapter-one-scene .lab-guide [data-guide-list] > .chapter-guide-step { padding: 11px; font-size: 14px; line-height: 1.5; }
+    .chapter-one-scene .lab-guide .chapter-guide-branches > li { font-size: 14px; line-height: 1.5; }
+    .chapter-one-scene .lab-board, .chapter-one-scene .ch2-workbench { min-width: 0; min-height: 0; }
+    .chapter-one-scene .ch2-monitor .routeros { min-width: 0 !important; }
+    .chapter-one-scene .ch2-monitor .simulation-monitor__screen { min-height: 0 !important; height: 100%; }
+    .chapter-one-scene .ch2-monitor .routeros, .chapter-one-scene .ch2-monitor .routeros__body, .chapter-one-scene .ch2-monitor .routeros__content { min-height: 0 !important; }
+    .chapter-one-scene .ch2-monitor .ch2-window--small, .chapter-one-scene .ch2-monitor .ch2-window--medium, .chapter-one-scene .ch2-monitor [data-window="vlan-edit"], .chapter-one-scene .ch2-monitor [data-window="edit"], .chapter-one-scene .ch5-editor, .practice-scene .practice-editor { left: 8px; top: 8px; min-width: 0; width: calc(100% - 16px); max-width: 630px; max-height: calc(100% - 16px); }
+    .chapter-one-scene .ch2-window-content, .chapter-one-scene .ch5-editor-main { min-height: 0; overflow: auto; }
+    .ch5-scene .ch5-editor { inset: 8px auto auto 8px !important; width: calc(100% - 16px) !important; max-height: calc(100% - 16px) !important; transform: none !important; }
+    .practice-scene .practice-editor-main { overflow: auto; }
+    .chapter-one-scene .ch2-monitor .ch2-window--small:not(.is-maximized), .chapter-one-scene .ch2-monitor .ch2-window--medium:not(.is-maximized), .chapter-one-scene .ch2-monitor .ch2-window[data-window="address-edit"]:not(.is-maximized), .chapter-one-scene .ch2-monitor .ch2-window[data-window="vlan-edit"]:not(.is-maximized), .chapter-one-scene .ch2-monitor .ch2-window[data-window="dhcp-setup"]:not(.is-maximized), .chapter-one-scene .ch2-monitor .ch2-window[data-window="wan-edit"]:not(.is-maximized) { top: 8px !important; left: 8px !important; width: calc(100% - 16px) !important; max-width: 630px; max-height: calc(100% - 16px) !important; overflow: auto; transform: none !important; }
+    .chapter-one-scene .routeros__title { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .chapter-one-scene .ch2-window-tabs, .chapter-one-scene .winbox-child__tabs, .chapter-one-scene .ch5-tabs { flex-wrap: nowrap; overflow-x: auto; flex-shrink: 0; }
+    .chapter-one-scene .ch2-window-tabs > *, .chapter-one-scene .winbox-child__tabs > *, .chapter-one-scene .ch5-tabs > * { flex-shrink: 0; white-space: nowrap; }
+    .chapter-one-scene .lab-pc-toolbar { overflow-x: auto; scrollbar-width: thin; }
+    .lab-pc-toolbar > button, .lab-pc-tray { flex-shrink: 0; }
+    .chapter-one-scene .ch5-connection-stage { overflow: auto; }
+    .chapter-one-scene .ch5-cabling-layout, .chapter-one-scene .pc-lan-workbench { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+    .chapter-one-scene .ch5-cabling-layout > *, .chapter-one-scene .pc-lan-workbench > * { min-width: 0; max-width: 100%; }
+    .chapter-one-scene .ch4-phone, .practice-phone { max-width: 100%; }
+    .homepage-scroll { overflow-y: auto; overscroll-behavior: contain; }
+    .homepage-canvas { min-height: 100%; height: auto; overflow: visible; }
+    .homepage-canvas main { display: block; height: auto; }
+    .homepage-hero { min-height: 510px; }
+    .homepage-copy { top: 140px; width: 57%; }
+    .homepage-title { font-size: clamp(32px, 4.8vw, 56px); }
+    .homepage-description { font-size: 18px; }
+    .homepage-modes { padding: 14px 20px 24px; }
+    .mode-grid { height: auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; overflow: visible; }
+    .mode-card { min-width: 0; min-height: 220px; }
+    .mode-card__title { font-size: clamp(20px, 2.2vw, 28px); }
+    .mode-card__description { font-size: 14px; }
+    .game-navbar { gap: 8px; }
+    .game-navbar .brand__name { font-size: 21px; }
+    .game-navbar .brand__tagline { font-size: 12px; }
+    .game-navbar .nav-link { min-height: 38px; font-size: 12px; }
+    .game-navbar .homepage-account { flex-basis: auto; min-width: 0; }
+}
+
+@media (max-width: 1100px) and (orientation: portrait) {
+    .chapter-one-scene .lab-scroll { overflow-y: auto; }
+    .chapter-one-scene .lab-main { flex: none; overflow: visible; }
+    .chapter-one-scene .lab-layout, .chapter-one-scene .ch2-workspace, .ch5-scene .ch5-workspace, .practice-scene .practice-layout { display: grid; grid-template-columns: minmax(0, 1fr) !important; grid-template-rows: auto auto !important; flex: none; }
+    .chapter-one-scene .lab-board, .chapter-one-scene .ch2-workbench, .chapter-one-scene .ch5-workbench, .practice-host { height: max(460px, 65dvh); min-height: 0; }
+    .chapter-one-scene .lab-guide, .chapter-one-scene .lab-layout.is-device-stage .lab-guide { height: auto; max-height: 390px; min-height: 190px; }
+    .chapter-one-scene .lab-guide .chapter-guide-scroll, .chapter-one-scene .lab-guide [data-guide-list] { max-height: 240px; overflow-y: auto; }
+    .chapter-one-scene.is-material-stage .lab-layout { display: flex; }
+    .chapter-one-scene.is-material-stage .lab-board { height: calc(100dvh - 95px); }
+    .chapter-one-scene .chapter-navbar .lab-hud { display: none; }
+    .chapter-one-scene .chapter-navbar .lab-heading strong { font-size: 16px; }
+    .chapter-one-scene .chapter-navbar .lab-heading small, .chapter-one-scene .chapter-navbar .lab-avatar { display: none; }
+    .chapter-one-scene .chapter-navbar .lab-settings { display: block; }
+    .chapter-one-scene .chapter-navbar .lab-back, .chapter-one-scene .chapter-navbar .lab-save-progress, .chapter-one-scene .chapter-navbar .chapter-step-back { min-width: 34px; width: 34px; padding: 6px; }
+    .chapter-one-scene .practice-navbar [data-case-open] { width: auto; min-width: 70px; font-size: 11px; }
+    .practice-case-badge { display: none; }
+    .practice-router-body { grid-template-columns: 104px minmax(0, 1fr); }
+    .chapter-one-scene .ch2-nav, .chapter-one-scene .ch5-nav { width: auto; min-width: 0; }
+    .chapter-one-scene .routeros__body { grid-template-columns: 105px minmax(0, 1fr); }
+    .chapter-one-scene .lab-pc-tray { display: none; }
+    .homepage-hero { min-height: 490px; }
+    .homepage-copy { left: 6%; top: 118px; width: 88%; }
+    .homepage-title { font-size: 37px; }
+    .homepage-description { font-size: 17px; }
+    .mode-card__title { font-size: 26px; }
+    .mode-card__description { font-size: 16px; }
+    .homepage-hero::before { background: linear-gradient(90deg, #f3fcfff5, #f3fcffb8); }
+    .mode-grid { grid-template-columns: minmax(0, 1fr); }
+    .mode-card { min-height: 215px; width: 100%; }
+}
+
+@media (pointer: coarse) and (max-height: 599px) and (orientation: landscape) {
+    .chapter-one-scene .chapter-navbar.lab-header { min-height: 45px; padding: 3px 7px; }
+    .chapter-one-scene .chapter-navbar .lab-heading strong { font-size: 15px; }
+    .chapter-one-scene .chapter-navbar .lab-heading > span, .chapter-one-scene .chapter-navbar .lab-heading small, .chapter-one-scene .chapter-navbar .lab-avatar, .chapter-one-scene .chapter-navbar .lab-hud > span { display: none; }
+    .chapter-one-scene .chapter-navbar .lab-back, .chapter-one-scene .chapter-navbar .lab-save-progress, .chapter-one-scene .chapter-navbar .chapter-step-back, .chapter-one-scene .chapter-navbar .lab-settings summary, .device-fullscreen { min-width: 33px; width: 33px; height: 33px; min-height: 33px; padding: 6px; }
+    .chapter-one-scene .lab-layout, .chapter-one-scene .ch2-workspace, .ch5-scene .ch5-workspace, .practice-scene .practice-layout { grid-template-columns: minmax(0, 1fr) 215px !important; grid-template-rows: minmax(0, 1fr) !important; }
+    .chapter-one-scene .lab-scroll { padding: 5px max(6px, env(safe-area-inset-right)) 4px max(6px, env(safe-area-inset-left)); }
+    .chapter-one-scene .lab-main { margin-top: 5px; }
+    .chapter-one-scene .lab-board__header { padding: 7px 12px; }
+    .chapter-one-scene .lab-board__header h1 { font-size: 18px; }
+    .chapter-one-scene .lab-board__header p, .chapter-one-scene .lab-footer { display: none; }
+    .chapter-one-scene .lab-guide { padding: 7px; }
+    .chapter-one-scene .lab-guide__header { padding-bottom: 5px; }
+    .chapter-one-scene .lab-guide__header h2 { font-size: 17px; }
+    .chapter-one-scene .lab-guide__header small { font-size: 9px; }
+    .chapter-one-scene .lab-guide [data-guide-list] > .chapter-guide-step { padding: 8px; }
+    .chapter-one-scene .lab-guide__feedback { font-size: 11px; margin: 5px 0; }
+    .chapter-one-scene .lab-guide__continue, .chapter-one-scene .ch2-task-button { min-height: 32px; padding: 6px; font-size: 12px; }
+    .chapter-one-scene .ch2-monitor .ch2-window { min-width: 0; }
+    .chapter-one-scene .ch2-monitor .ch2-window--small, .chapter-one-scene .ch2-monitor .ch2-window--medium, .chapter-one-scene .ch5-editor, .practice-editor { max-height: calc(100% - 8px); top: 4px; }
+    .chapter-one-scene .lab-board__body { padding: 7px; }
+    .chapter-one-scene.is-material-stage .lab-layout { display: flex; }
+    .chapter-one-scene .lab-material-actions { padding: 7px 12px; }
+    .chapter-one-scene .lab-material-actions button { min-height: 32px; padding: 6px 12px; }
+    .homepage-hero { min-height: 360px; }
+    .homepage-copy { top: 98px; }
+}
+
+@media (max-width: 1180px) {
+    .game-navbar { top: max(8px, env(safe-area-inset-top)); left: max(8px, env(safe-area-inset-left)); right: max(8px, env(safe-area-inset-right)); height: auto; min-height: 58px; padding: 7px 10px; }
+    .game-navbar.navbar { flex-wrap: nowrap; }
+    .game-navbar .brand__mascot { width: 42px; height: 42px; }
+    .game-navbar .nav-links { order: initial; flex: 1; min-width: 0; height: auto; margin-left: auto; justify-content: center; gap: 3px; }
+    .game-navbar .nav-link { padding: 7px; }
+    .game-navbar .nav-link .icon { display: block; width: 20px; height: 20px; }
+    .game-navbar .homepage-account__avatar { width: 36px; height: 36px; }
+    .game-navbar .homepage-account__toggle { min-width: 0; font-size: 12px; }
+    .adventure-main { padding-top: 95px; }
+}
+@media (max-width: 700px) {
+    .game-navbar .brand__copy, .game-navbar .nav-link > span, .game-navbar .homepage-account__name, .game-navbar .homepage-account__chevron { display: none; }
+    .game-navbar .homepage-account { flex: none; padding-left: 4px; }
+    .game-navbar .nav-link { min-width: 33px; min-height: 36px; padding: 7px; }
+    .game-navbar .brand__mascot { width: 33px; height: 37px; }
+    .game-navbar .homepage-account__avatar { width: 31px; height: 31px; }
+    .game-navbar .nav-links { justify-content: space-evenly; }
+    .adventure-intro h1 { font-size: 30px; }
+    .adventure-intro p { font-size: 14px; }
+}
+
+/* Phones keep a landscape canvas even when the physical screen is portrait. */
+@media (pointer: coarse) and (max-width: 599px) and (orientation: portrait) {
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    .academy-scene { position: fixed !important; inset: 0 auto auto 100%; width: 100dvh !important; height: 100dvw !important; max-width: none; transform-origin: top left; transform: rotate(90deg) !important; }
+    .chapter-one-scene .lab-scroll { height: 100%; overflow: auto; padding: 5px; }
+    .chapter-one-scene .chapter-navbar.lab-header { min-height: 45px; padding: 3px 7px; }
+    .chapter-one-scene .lab-main { flex: 1; min-height: 0; overflow: hidden; margin-top: 5px; }
+    .chapter-one-scene .lab-layout, .chapter-one-scene .ch2-workspace, .ch5-scene .ch5-workspace, .practice-scene .practice-layout { display: grid; grid-template-columns: minmax(0, 1fr) 210px !important; grid-template-rows: minmax(0, 1fr) !important; flex: 1; height: 100%; min-height: 0; }
+    .chapter-one-scene .lab-board, .chapter-one-scene .ch2-workbench, .chapter-one-scene .ch5-workbench, .practice-host { height: 100%; min-height: 0; }
+    .chapter-one-scene .lab-guide, .chapter-one-scene .lab-layout.is-device-stage .lab-guide { height: 100%; min-height: 0; max-height: none; }
+    .chapter-one-scene .lab-guide .chapter-guide-scroll, .chapter-one-scene .lab-guide [data-guide-list] { max-height: none; min-height: 0; overflow-y: auto; }
+    .chapter-one-scene .lab-guide__header h2 { font-size: 17px; }
+    .chapter-one-scene .lab-footer { display: none; }
+    .chapter-one-scene.is-material-stage .lab-layout { display: flex; }
+    .chapter-one-scene.is-material-stage .lab-board { height: 100%; }
+    .chapter-one-scene .lab-board__header { padding: 7px 12px; }
+    .chapter-one-scene .lab-board__header h1 { font-size: 18px; }
+    .chapter-one-scene .lab-board__header p { display: none; }
+    .homepage-copy { top: 95px; width: 57%; }
+    .homepage-hero { min-height: 345px; }
+    .homepage-title { font-size: 34px; }
+    .mode-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .mode-card__title { font-size: 21px; }
+    .mode-card__description { font-size: 14px; }
+    .auth-stage { top: 65px; bottom: 10px; }
+    .auth-pane { inset: 3% 7%; overflow-y: auto; }
+    .welcome-scene .hero { width: min(90dvh, 620px); }
+    .information-dialog { width: min(540px, 88dvh); max-height: 90dvw; transform: translate(-50%, -50%) rotate(90deg); }
+    .information-dialog[open] { animation-name: dialog-reveal-rotated; }
+}

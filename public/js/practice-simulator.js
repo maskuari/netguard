@@ -75,6 +75,7 @@
     };
     const create = (initial) => {
         const state = clone(initial);
+        const same = (first, second) => state.caseInsensitive ? String(first ?? '').toLowerCase() === String(second ?? '').toLowerCase() : first === second;
         for (const table of Object.keys(schemas)) if (!schemas[table].singleton) state.tables[table] ||= [];
         state.tables.hotspotProfiles ||= [];
         if (!state.tables.hotspotProfiles.length && state.tables.hotspot.length) state.tables.hotspotProfiles.push({ name: 'default', dnsName: state.tables.hotspot[0].dnsName, htmlDirectory: 'hotspot', disabled: false });
@@ -160,17 +161,29 @@
         };
         const network = () => {
             const port = active('interfaces').find((row) => row.defaultName === state.physical.pcPort || row.name === state.physical.pcPort);
-            const linked = state.physical.pcLan && state.physical.pcPort && port;
+            const linked = state.physical.pcLan && state.physical.pcPort && port && (!state.caseInsensitive || state.physical.pcDevice === (state.device === 'hEX lite' ? 'hex' : 'hap'));
             let sourceInterface = port?.name;
             if (state.device === 'hEX lite' && linked) {
                 const accessPort = active('switchPorts').find((row) => row.name === state.physical.pcPort && row.mode === 'secure');
                 const vlan = active('switchVlans').find((row) => Number(row.vlanId) === Number(accessPort?.vlanId) && row.ports?.includes(state.physical.pcPort) && row.ports.includes('ether1'));
                 if (!accessPort || !vlan || !active('bridgePorts').some((row) => row.interface === state.physical.pcPort)) sourceInterface = null;
             }
-            const server = active('dhcp').find((row) => row.interface === sourceInterface);
-            const pool = active('pools').find((row) => row.name === server?.pool);
-            const config = active('networks').find((row) => subnet(row.address) === subnet(String(pool?.ranges).split('-')[0]));
-            const gatewayReady = config && active('addresses').some((row) => row.interface === sourceInterface && row.address.split('/')[0] === config.gateway);
+            let provider = state;
+            if (state.upstream && linked) {
+                const accessPort = active('switchPorts').find((row) => row.name === state.physical.pcPort && row.mode === 'secure');
+                const uplink = active('switchPorts').find((row) => row.name === 'ether1' && row.mode === 'secure' && row.header === 'add if missing');
+                const connected = state.physical.hexUplink === 'ether1' && state.physical.connections.switch === 'ether2';
+                const bridge = active('bridgePorts').find((row) => row.interface === state.physical.pcPort);
+                const vlan = sourceInterface && connected && uplink && bridge && active('bridgePorts').some((row) => row.interface === 'ether1' && same(row.bridge, bridge.bridge)) && accessPort.header === 'always strip'
+                    ? (state.upstream.tables.vlans || []).find((row) => !row.disabled && Number(row.vlanId) === Number(accessPort.vlanId) && same(row.interface, state.upstream.tables.interfaces.find((item) => item.defaultName === 'ether2')?.name)) : null;
+                sourceInterface = vlan?.name;
+                provider = state.upstream;
+            }
+            const providerRows = (table) => (provider.tables[table] || []).filter((row) => !row.disabled);
+            const server = providerRows('dhcp').find((row) => sourceInterface && same(row.interface, sourceInterface));
+            const pool = providerRows('pools').find((row) => same(row.name, server?.pool));
+            const config = providerRows('networks').find((row) => subnet(row.address) === subnet(String(pool?.ranges).split('-')[0]));
+            const gatewayReady = config && providerRows('addresses').some((row) => same(row.interface, sourceInterface) && row.address.split('/')[0] === config.gateway);
             return { linked: Boolean(linked), address: linked && pool && gatewayReady ? pool.ranges.split('-')[0] : '0.0.0.0', gateway: linked && gatewayReady ? config.gateway : '0.0.0.0', mask: linked && gatewayReady ? '255.255.255.0' : '0.0.0.0' };
         };
         const routerReachable = (target) => {
@@ -196,17 +209,17 @@
             return source === 'router' ? 'bad command name\n' : "'" + commandTextTrimmed + "' is not recognized as an internal or external command.\n";
         };
         const connectPhone = (ssid, password) => {
-            const wifi = active('wireless').find((row) => row.ssid === ssid && ['ap bridge', 'bridge'].includes(row.mode));
+            const wifi = active('wireless').find((row) => same(row.ssid, ssid) && ['ap bridge', 'bridge'].includes(row.mode));
             if (!wifi) throw new Error('Jaringan tidak tersedia.');
-            const security = active('security').find((row) => row.name === wifi.securityProfile);
-            if (security?.mode === 'dynamic keys' && security.key !== password) throw new Error('Password Wi-Fi salah.');
+            const security = active('security').find((row) => same(row.name, wifi.securityProfile));
+            if (security?.mode === 'dynamic keys' && !same(security.key, password)) throw new Error('Password Wi-Fi salah.');
             state.phone.ssid = ssid; state.phone.authenticatedUser = '';
         };
         const loginPhone = (name, password) => {
             if (!state.phone.ssid || !active('hotspot').length) throw new Error('Hubungkan Wi-Fi dan pastikan layanan HotSpot aktif.');
-            const user = active('users').find((row) => row.name === name && row.password === password);
+            const user = active('users').find((row) => same(row.name, name) && same(row.password, password));
             if (!user) throw new Error('invalid username or password');
-            state.phone.authenticatedUser = name;
+            state.phone.authenticatedUser = user.name;
         };
         return { state, options, draft, save, interfaceDetails, interfaceEntries, setupDhcp, setupHotspot, network, command, connectPhone, loginPhone,
             remove(table, index) { if (['interfaces', 'wireless', 'lte'].includes(table)) throw new Error('Interface perangkat tidak dapat dihapus.'); state.tables[table].splice(index, 1); },

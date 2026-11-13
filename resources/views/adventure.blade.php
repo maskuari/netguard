@@ -92,7 +92,8 @@
         <link rel="stylesheet" href="{{ asset('css/page-transitions.css') }}?v={{ filemtime(public_path('css/page-transitions.css')) }}">
         <script src="{{ asset('js/page-transitions.js') }}?v={{ filemtime(public_path('js/page-transitions.js')) }}"></script>
         <script src="{{ asset('js/adventure.js') }}?v={{ filemtime(public_path('js/adventure.js')) }}" defer></script>
-    </head>
+        @include('device-layout')
+</head>
     <body>
         <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>

@@ -1,8 +1,10 @@
-<dialog class="chapter-evaluation-dialog" data-quiz-dialog aria-labelledby="chapter-quiz-title">
+<dialog class="chapter-evaluation-dialog chapter-exam-screen" data-quiz-dialog aria-labelledby="chapter-quiz-title">
     <button type="button" class="chapter-evaluation-close" data-close-quiz aria-label="Tutup evaluasi">×</button>
-    <span class="chapter-evaluation-kicker">EVALUASI PEMAHAMAN · CHAPTER {{ str_pad((string) $chapterNumber, 2, '0', STR_PAD_LEFT) }}</span>
-    <h2 id="chapter-quiz-title">{{ $quizTitle }}</h2>
-    <p>Jawab lima soal berdasarkan materi modul. Semua jawaban harus tepat agar progres Chapter {{ $chapterNumber }} tersimpan di akun.</p>
+    <header class="chapter-exam-header">
+        <div class="chapter-exam-brand"><img src="{{ asset('images/logo/logo.png') }}" alt="" width="42" height="42"><div><span class="chapter-evaluation-kicker">EVALUASI PEMAHAMAN · CHAPTER {{ str_pad((string) $chapterNumber, 2, '0', STR_PAD_LEFT) }}</span><h2 id="chapter-quiz-title">{{ $quizTitle }}</h2></div></div>
+        <span class="chapter-exam-badge">5 soal pilihan ganda</span>
+    </header>
+    <p class="chapter-exam-instructions">Bacalah setiap soal dengan teliti, lalu pilih satu jawaban yang paling tepat.</p>
     @include('chapter-evaluation-result', ['resultContext' => 'quiz'])
     <p class="chapter-evaluation-feedback" data-evaluation-feedback role="alert" hidden></p>
     <form data-quiz-form>

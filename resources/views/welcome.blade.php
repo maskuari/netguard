@@ -15,7 +15,8 @@
         <link rel="prefetch" as="style" href="{{ asset('css/auth.css') }}?v={{ filemtime(public_path('css/auth.css')) }}">
         <link rel="prefetch" as="script" href="{{ asset('js/auth.js') }}?v={{ filemtime(public_path('js/auth.js')) }}">
         <script src="{{ asset('js/page-transitions.js') }}?v={{ filemtime(public_path('js/page-transitions.js')) }}"></script>
-    </head>
+        @include('device-layout')
+</head>
     <body>
         <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>

@@ -146,9 +146,9 @@
             return;
         }
 
-        if (panelName === 'practice' && trigger.dataset.practiceUrl) {
+        if (['practice', 'certification'].includes(panelName) && trigger.dataset.practiceUrl) {
             leaving = true;
-            showLoading('Menyiapkan studi kasus Practice...');
+            showLoading('Menyiapkan studi kasus...');
             window.location.assign(trigger.dataset.practiceUrl);
             return;
         }

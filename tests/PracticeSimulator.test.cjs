@@ -145,3 +145,34 @@ test('native lease shorthand is normalized and interface renaming preserves its 
     assert.equal(game.state.tables.addresses[0].interface, 'ether3-studio');
     assert.match(game.command('ipconfig'), /172\.22\.91\.60/);
 });
+
+test('Certification hEX obtains DHCP from the router only through the correct uplink VLAN and bridge', () => {
+    const hap = make();
+    hap.state.tables.dhcp = []; hap.state.tables.pools = []; hap.state.tables.networks = []; hap.state.tables.addresses = [];
+    hap.save('vlans', { name: 'VLAN-Staf', vlanId: 110, interface: 'ether2' });
+    hap.save('addresses', { address: '172.26.40.1/24', interface: 'VLAN-Staf' });
+    hap.setupDhcp({ interface: 'VLAN-Staf', network: '172.26.40.0/24', gateway: '172.26.40.1', pool: '172.26.40.50-172.26.40.99', dns: ['172.26.40.1'], leaseTime: '00:30:00' });
+    const state = initial(); state.device = 'hEX lite'; state.caseInsensitive = true; state.upstream = hap.snapshot();
+    state.physical = { powered: true, pcLan: true, pcDevice: 'hex', pcPort: 'ether2', hexUplink: 'ether1', connections: { internet: 'ether1', switch: 'ether2' } };
+    const hex = api.create(state);
+    hex.save('bridges', { name: 'bridge-kantor' });
+    hex.save('bridgePorts', { interface: 'ether1', bridge: 'bridge-kantor' });
+    hex.save('bridgePorts', { interface: 'ether2', bridge: 'bridge-kantor' });
+    hex.save('switchPorts', { name: 'ether1', mode: 'secure', header: 'add if missing', vlanId: 0 });
+    hex.save('switchPorts', { name: 'ether2', mode: 'secure', header: 'always strip', vlanId: 110 });
+    hex.save('switchVlans', { vlanId: 110, ports: ['ether1', 'ether2'] });
+    assert.equal(hex.network().address, '172.26.40.50');
+    assert.match(hex.command('ipconfig'), /172\.26\.40\.50/);
+    hex.state.physical.hexUplink = ''; assert.equal(hex.network().address, '0.0.0.0');
+    hex.state.physical.hexUplink = 'ether1'; hex.state.tables.bridgePorts[0].disabled = true;
+    assert.equal(hex.network().address, '0.0.0.0');
+});
+
+test('Certification credentials accept case variations without changing Practice credential checks', () => {
+    const state = initial(); state.caseInsensitive = true;
+    const game = api.create(state);
+    game.connectPhone('studio-baru', 'password-baru');
+    game.loginPhone('PESERTA', 'hotspot-baru');
+    assert.equal(game.state.phone.authenticatedUser, 'peserta');
+    assert.throws(() => make().connectPhone('studio-baru', 'password-baru'), /tidak tersedia/);
+});

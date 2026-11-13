@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CertificationController;
 use App\Http\Controllers\ChapterFiveController;
 use App\Http\Controllers\ChapterFourController;
 use App\Http\Controllers\ChapterOneController;
@@ -23,6 +24,8 @@ Route::post('/register', [AuthController::class, 'register'])->middleware('throt
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 Route::view('/homepage', 'homepage')->middleware(['auth', 'active'])->name('homepage');
 Route::view('/adventure', 'adventure')->middleware(['auth', 'active'])->name('adventure');
+Route::get('/certification', [CertificationController::class, 'show'])->middleware(['auth', 'active'])->name('certification');
+Route::post('/certification/{attempt}/check', [CertificationController::class, 'check'])->middleware(['auth', 'active', 'throttle:10,1'])->name('certification.check');
 Route::get('/practice', [PracticeController::class, 'show'])->middleware(['auth', 'active'])->name('practice');
 Route::post('/practice/{attempt}/check', [PracticeController::class, 'check'])->middleware(['auth', 'active', 'throttle:20,1'])->name('practice.check');
 Route::get('/adventure/chapter-1', [ChapterOneController::class, 'show'])->middleware(['auth', 'active'])->name('chapter.one');

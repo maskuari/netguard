@@ -24,7 +24,8 @@
         <link rel="stylesheet" href="{{ asset('css/page-transitions.css') }}?v={{ filemtime(public_path('css/page-transitions.css')) }}">
         <script src="{{ asset('js/page-transitions.js') }}?v={{ filemtime(public_path('js/page-transitions.js')) }}"></script>
         <script src="{{ asset('js/homepage.js') }}?v={{ filemtime(public_path('js/homepage.js')) }}" defer></script>
-    </head>
+        @include('device-layout')
+</head>
     <body>
         <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
@@ -93,7 +94,7 @@
                                     @endunless
                                     <span class="mode-card__action" aria-hidden="true"><svg class="icon"><use href="{{ $practiceUnlocked ? '#home-chevron' : '#home-lock' }}"/></svg></span>
                                 </button>
-                                <button class="mode-card mode-card--certification" type="button" data-home-panel="certification" data-mode-locked="{{ $certificationUnlocked ? 'false' : 'true' }}" aria-disabled="{{ $certificationUnlocked ? 'false' : 'true' }}" aria-haspopup="dialog" aria-controls="homepage-dialog" aria-labelledby="certification-title" aria-describedby="certification-description certification-status">
+                                <button class="mode-card mode-card--certification" type="button" data-home-panel="certification" data-practice-url="{{ route('certification') }}" data-mode-locked="{{ $certificationUnlocked ? 'false' : 'true' }}" aria-disabled="{{ $certificationUnlocked ? 'false' : 'true' }}" aria-haspopup="dialog" aria-controls="homepage-dialog" aria-labelledby="certification-title" aria-describedby="certification-description certification-status">
                                     <img class="mode-card__art" src="{{ asset('images/asset/Sertifikat.png') }}?v={{ filemtime(public_path('images/asset/Sertifikat.png')) }}" alt="" width="1254" height="1254" decoding="async" draggable="false">
                                     <span class="mode-card__copy">
                                         <span class="mode-card__title" id="certification-title">Certification Mode</span>

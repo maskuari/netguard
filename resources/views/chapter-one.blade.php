@@ -28,7 +28,8 @@
         <link rel="stylesheet" href="{{ asset('css/lab-pc-desktop.css') }}?v={{ filemtime(public_path('css/lab-pc-desktop.css')) }}">
         <script src="{{ asset('js/lab-pc-desktop.js') }}?v={{ filemtime(public_path('js/lab-pc-desktop.js')) }}" defer></script>
         <script src="{{ asset('js/chapter-one.js') }}?v={{ filemtime(public_path('js/chapter-one.js')) }}" defer></script>
-    </head>
+        @include('device-layout')
+</head>
     <body>
         <div class="academy-scene chapter-one-scene is-prologue" data-user-id="{{ $student->id }}" data-complete-url="{{ route('chapter.one.complete') }}" data-teacher-base="{{ asset('images/asset/char/guru/bapak Amat') }}" data-student-base="{{ asset(rtrim($studentPath, '/')) }}" data-student-name="{{ $student->name }}">
             <div class="chapter-prologue" data-prologue>

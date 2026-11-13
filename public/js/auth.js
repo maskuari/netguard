@@ -181,6 +181,14 @@
             ? 'Konfirmasi password belum sama.' : '');
     };
 
+    const resetFormValidation = (form) => {
+        form.classList.remove('was-validated');
+        form.querySelectorAll('input').forEach((input) => {
+            input.removeAttribute('aria-invalid');
+            input.setCustomValidity('');
+        });
+    };
+
     const submitAuthForm = async (form) => {
         const isRegistration = form.dataset.authForm === 'register';
         const submitButton = form.querySelector('[data-submit]');
@@ -222,8 +230,12 @@
 
             if (isRegistration) {
                 const email = form.elements.namedItem('email').value;
+                resetFormValidation(form);
                 form.reset();
-                panes.login.querySelector('form').reset();
+                const loginForm = panes.login.querySelector('form');
+                resetFormValidation(loginForm);
+                loginForm.reset();
+                scene.classList.remove('has-error');
                 panes.login.querySelector('[name="email"]').value = email;
                 stopLoading();
                 showToast(data.message || 'Pendaftaran berhasil! Silakan login.', 'success', 4200);

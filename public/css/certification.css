@@ -1,0 +1,98 @@
+.certification-scene .practice-layout { display: flex !important; flex: 1; min-height: 0; }
+.certification-scene .practice-host { flex: 1; width: 100%; height: 100%; }
+.certification-scene .practice-submit { display: none !important; }
+.certification-scene:not(.has-firewall) .lab-pc-network,
+.certification-scene:not(.has-firewall) .lab-pc-tray small { display: none; }
+.certification-scene .practice-winbox.is-disconnected { grid-template-rows: minmax(0, 1fr); border: 0; background: linear-gradient(145deg, #5be8ff 0%, #0c69dc 58%, #063475); }
+.certification-scene .practice-winbox.is-disconnected > header,
+.certification-scene .practice-winbox.is-disconnected > .routeros__menubar,
+.certification-scene .practice-winbox.is-disconnected > .routeros__toolbar,
+.certification-scene .practice-winbox.is-disconnected > footer,
+.certification-scene .practice-winbox.is-disconnected .ch2-nav { display: none; }
+.certification-scene .practice-winbox.is-disconnected .practice-router-body { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+.certification-scene .practice-winbox.is-disconnected .practice-desktop { background: transparent; }
+.certification-scene .practice-winbox.is-disconnected [data-practice-window="loader"] { top: 50%; left: 50%; width: min(820px, calc(100% - 32px)); height: min(540px, calc(100% - 32px)); max-height: calc(100% - 32px); transform: translate(-50%, -50%); background: #f0f0f0; }
+.certification-scene .practice-winbox .wb-loader > header { height: 27px; min-height: 27px; cursor: move; }
+.certification-scene .practice-winbox .wb-loader > header > span:first-child { display: flex; align-items: center; gap: 5px; }
+.certification-scene .practice-winbox .wb-loader > header img { width: 17px; height: 17px; object-fit: contain; }
+.certification-scene .practice-winbox .wb-loader__chrome { display: flex; align-items: center; padding: 0 7px; white-space: pre; color: #17232b; font: 13px Arial, sans-serif; }
+.certification-scene .practice-winbox .wb-loader .winbox-login { min-height: 0; }
+.certification-scene .practice-winbox .wb-loader .winbox-connect .practice-window-status:empty { display: none; }
+.certification-scene .practice-winbox .wb-loader .winbox-connect .practice-window-status { padding: 5px 82px 0; }
+.certification-scene .practice-winbox .wb-loader .winbox-credentials > label { color: #172b3b; }
+.certification-scene .practice-winbox .wb-loader .winbox-table > button[hidden],
+.certification-scene .practice-winbox .wb-loader .winbox-toolbar > button[hidden] { display: none; }
+.certification-scene .certification-submit { flex: none; min-height: 42px; padding: 8px 16px; font-size: 13px; }
+.certification-physical-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.certification-physical-tabs button { padding: 10px 16px; border: 1px solid #a7c9e5; border-radius: 8px; background: white; color: #17436e; font: 600 14px 'Segoe UI', sans-serif; cursor: pointer; }
+.certification-physical-tabs button.is-active { background: #0978e4; color: white; }
+.certification-instructions { width: min(950px, calc(100% - 28px)); height: min(88dvh, 850px); max-height: 92dvh; padding: 0; border: 1px solid #b4d8f4; border-radius: 18px; color: #203b5e; background: #f4f9ff; box-shadow: 0 20px 80px #041c4a77; font: 16px/1.75 'Segoe UI', Arial, sans-serif; }
+.certification-instructions[open] { display: flex; flex-direction: column; }
+.certification-instructions::backdrop { background: #071c3cc9; backdrop-filter: blur(5px); }
+.certification-instructions header { display: flex; align-items: start; gap: 20px; padding: 23px 28px; border-bottom: 1px solid #d1e2f1; background: white; }
+.certification-instructions header h2 { margin: 4px 0; font-size: 26px; color: #122b52; }
+.certification-instructions header p { margin: 0; font-size: 14px; color: #607992; }
+.certification-instructions header small { color: #147ad4; font-weight: 700; letter-spacing: .1em; }
+.certification-instructions header button { margin-left: auto; flex: none; border: 1px solid #bfd6ed; border-radius: 8px; width: 36px; height: 36px; background: #eff6ff; color: #24527b; font-size: 24px; cursor: pointer; }
+.certification-instructions-body { min-height: 0; flex: 1; overflow-y: auto; padding: 20px 28px; overscroll-behavior: contain; }
+.certification-instructions-body section { padding: 20px 24px; margin-bottom: 16px; border: 1px solid #d2e1ef; border-radius: 12px; background: white; }
+.certification-instructions-body h3 { margin: 0 0 13px; color: #165b9c; font-size: 19px; }
+.certification-instructions-body ul { margin: 0; padding-left: 22px; }
+.certification-instructions-body li + li { margin-top: 13px; }
+.certification-instructions footer { flex: none; display: flex; justify-content: end; padding: 15px 28px; border-top: 1px solid #d1e2f1; background: white; }
+.certification-tester { width: fit-content; max-width: 100%; margin: 24px auto; padding: 20px; border-radius: 14px; border: 2px solid #344457; background: #202b39; color: white; }
+.certification-tester h3 { margin-top: 0; color: #c8d4e3; text-align: center; letter-spacing: .15em; font-size: 14px; }
+.certification-tester-row { display: flex; align-items: center; gap: 12px; margin: 14px 0; }
+.certification-tester-row b { min-width: 70px; font-size: 12px; }
+.certification-tester-light { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #141c26; border: 1px solid #495867; color: #708195; font: 700 12px 'Segoe UI', sans-serif; }
+.certification-tester-light.is-on { background: #79ef69; color: #143b16; box-shadow: 0 0 14px #65e96999; animation: certification-lamp 1.8s ease-in-out infinite; }
+@keyframes certification-lamp { 50% { box-shadow: 0 0 4px #65e96955; } }
+.certification-scene .practice-physical { padding: 24px; }
+.certification-scene .practice-result-dialog li { line-height: 1.7; }
+@media (max-width: 1000px) { .certification-scene .chapter-navbar .lab-heading small, .certification-scene .chapter-navbar .lab-avatar { display: none; } .certification-scene .certification-submit { min-height: 34px; padding: 6px 10px; font-size: 11px; } .certification-instructions header { padding: 12px 18px; } .certification-instructions header h2 { font-size: 20px; } .certification-instructions-body { padding: 12px; } }
+@media (pointer: coarse) and (max-width: 599px) and (orientation: portrait) { .certification-instructions[open] { position: fixed; inset: 0 auto auto 100%; margin: 0; width: 100dvh; max-width: none; height: 100dvw; max-height: none; transform-origin: top left; transform: rotate(90deg); border-radius: 0; } }
+@media (prefers-reduced-motion: reduce) { .certification-tester-light.is-on { animation: none; } }
+.certification-scene .wiring-heading,
+.certification-scene .wiring-station { width: min(100%, 1320px); margin-right: auto; margin-left: auto; }
+.certification-scene .wiring-station { grid-template-columns: minmax(0, 1.05fr) minmax(300px, .95fr); gap: 16px; }
+.certification-scene .wiring-station__art { max-width: 700px; }
+.certification-scene .wiring-station__controls { justify-content: center; gap: 8px; padding: 14px; }
+.certification-scene .wire-bank { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.certification-scene .wire-chip { min-height: 44px; font-size: 12px; }
+.certification-scene .wire-chip .wire-swatch { width: 38px; height: 12px; }
+.certification-scene .wiring-station__actions .lab-button { min-height: 36px; }
+.certification-scene .wire-chip:disabled::after { content: none; }
+.certification-scene .wire-slot.is-filled::after { content: none; }
+.certification-scene .wiring-heading h2 { margin: 5px 0; font-size: clamp(21px, 1.6vw, 27px); }
+.certification-scene .tester-layout { min-height: 400px; grid-template-columns: minmax(0, 1.1fr) minmax(260px, .9fr); padding: 22px; }
+.certification-scene .tester-bench__devices { width: min(100%, 600px); }
+.certification-scene .tester-hardware-leds .certification-pin-light.is-on {
+    border-color: #a2a9a5;
+    background: radial-gradient(circle at 36% 30%, #59625e, #141a1b 70%);
+    box-shadow: 0 1px 2px #000b;
+    animation: certification-pin-sequence .35s steps(1, end) 1 both;
+}
+@keyframes certification-pin-sequence {
+    from { border-color: #a2a9a5; background: radial-gradient(circle at 36% 30%, #59625e, #141a1b 70%); box-shadow: 0 1px 2px #000b; }
+    to { border-color: #b4ffac; background: radial-gradient(circle at 35% 30%, #d2ffbb, #37ec54 50%, #0f7027); box-shadow: 0 0 8px 3px #42ff61b5; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .certification-scene .tester-hardware-leds .certification-pin-light.is-on {
+        animation: none;
+        border-color: #b4ffac;
+        background: radial-gradient(circle at 35% 30%, #d2ffbb, #37ec54 50%, #0f7027);
+        box-shadow: 0 0 8px 3px #42ff61b5;
+    }
+}
+@media (max-width: 900px) {
+    .certification-scene .wiring-station,
+    .certification-scene .tester-layout { grid-template-columns: minmax(0, 1fr); }
+    .certification-scene .wiring-station__art { width: min(100%, 620px); }
+    .certification-scene .wire-bank { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+    .certification-scene .practice-physical { padding: 12px; }
+    .certification-scene .wire-bank { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .certification-scene .tester-layout { padding: 10px; }
+}
+@media (max-height: 600px) { .certification-scene .wiring-station__controls { padding: 12px; } .certification-scene .wire-chip { min-height: 40px; font-size: 11px; } .certification-scene .tester-layout { min-height: 270px; } .certification-scene .tester-bench__devices { max-width: 350px; } }

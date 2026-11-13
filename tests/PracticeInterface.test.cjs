@@ -5,7 +5,8 @@ const path = require('node:path');
 const vm = require('node:vm');
 const { initial } = require('./PracticeFixture.cjs');
 
-const boot = ({ state = initial(), type = 'identity', surface = 'winbox', briefing = null, storage = new Map() } = {}) => {
+const boot = ({ state = initial(), type = 'identity', surface = 'winbox', briefing = null, storage = new Map(), certification = false } = {}) => {
+    if (certification) state.physical = { ...state.physical, wires: { a: [], b: [] }, crimp: { a: false, b: false }, tested: false, connections: {} };
     class Node {
         constructor(tag = 'div') { this.tagName = tag.toUpperCase(); this.children = []; this.parentElement = null; this.attributes = {}; this.dataset = {}; this.style = {}; this.listeners = {}; this.value = ''; this.hidden = false; this.disabled = false; this.readOnly = false; this.checked = false; this.open = false; this.ownText = ''; }
         get className() { return this.attributes.class || ''; }
@@ -66,11 +67,12 @@ const boot = ({ state = initial(), type = 'identity', surface = 'winbox', briefi
     for (const selector of ['[data-case-previous]', '[data-briefing-heading]', '[data-briefing-text]', '[data-briefing-count]', '[data-briefing-teacher-image]']) make(selector, caseDialog);
     for (const selector of ['[data-case-start]', '[data-submit-cancel]', '[data-result-title]', '[data-result-description]', '[data-result-errors]', '[data-submit-error]']) make(selector, body);
     make('[data-submit-send]', body);
-    const scenario = new Node('script'); scenario.setAttribute('id', 'practice-scenario'); scenario.textContent = JSON.stringify({ id: 'case', type, surface, initialState: state, briefing }); body.append(scenario);
+    if (certification) { make('[data-certification-submit]', root); make('[data-certification-detail-close]', caseDialog); }
+    const scenario = new Node('script'); scenario.setAttribute('id', 'practice-scenario'); scenario.textContent = JSON.stringify({ id: 'case', type, surface, initialState: state, briefing, ...(certification ? { mode: 'certification', devices: { hap: state, hex: { ...state, device: 'hEX lite', identity: 'Hex-Original', session: { ...state.session, mac: '48:A9:8A:CC:01:05' } } } } : {}) }); body.append(scenario);
     const meta = new Node('meta'); meta.setAttribute('name', 'csrf-token'); meta.content = 'csrf'; body.append(meta);
     const timers = new Map(); let timerId = 0;
     const requests = [];
-    const context = { window: { setTimeout(callback) { timers.set(++timerId, callback); return timerId; }, clearTimeout(id) { timers.delete(id); } }, document: { querySelector: (query) => body.querySelector(query), createElement: (tag) => new Node(tag), createElementNS: (_, tag) => new Node(tag), createTextNode: (text) => { const node = new Node('#text'); node.textContent = text; return node; }, addEventListener() {} }, localStorage: { getItem: (key) => storage.get(key) ?? null, setItem(key, value) { storage.set(key, value); } }, sessionStorage: { getItem: () => null, setItem() {} }, fetch: async (url, options) => { requests.push({ url, options }); return { ok: true, json: async () => ({ correct: false, errors: ['Identity belum sesuai.'] }) }; }, DOMParser: class { parseFromString() { return { querySelector: () => null }; } }, console };
+    const context = { window: { setTimeout(callback) { timers.set(++timerId, callback); return timerId; }, clearTimeout(id) { timers.delete(id); } }, document: { querySelector: (query) => body.querySelector(query), querySelectorAll: (query) => body.querySelectorAll(query), createElement: (tag) => new Node(tag), createElementNS: (_, tag) => new Node(tag), createTextNode: (text) => { const node = new Node('#text'); node.textContent = text; return node; }, addEventListener() {} }, localStorage: { getItem: (key) => storage.get(key) ?? null, setItem(key, value) { storage.set(key, value); } }, sessionStorage: { getItem: () => null, setItem() {} }, fetch: async (url, options) => { requests.push({ url, options }); return { ok: true, json: async () => ({ correct: false, errors: ['Identity belum sesuai.'] }) }; }, DOMParser: class { parseFromString() { return { querySelector: () => null }; } }, console };
     vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../public/js/practice-simulator.js'), 'utf8'), context);
     vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../public/js/practice.js'), 'utf8'), context);
     const findText = (parent, tag, text) => parent.querySelectorAll(tag).find((node) => node.textContent.replace(/›/g, '').trim() === text);
@@ -399,4 +401,135 @@ test('leaving an uncommitted Safe Mode session rolls back configuration changes'
     assert.match(game.all('[data-session-title]')[0].textContent, /MikroTik/);
     assert.ok(game.desktop.querySelector('[data-practice-window="loader"]'));
     assert.equal(game.all('[data-safe-mode]')[0].classList.contains('is-active'), false);
+});
+
+
+const assembleCertificationCable = (game, secondEnd = ['putih-oranye', 'oranye', 'putih-hijau', 'biru', 'putih-biru', 'hijau', 'putih-cokelat', 'cokelat']) => {
+    const order = ['putih-oranye', 'oranye', 'putih-hijau', 'biru', 'putih-biru', 'hijau', 'putih-cokelat', 'cokelat'];
+    for (const color of [...order, ...secondEnd]) game.all('.wire-chip').find((chip) => chip.getAttribute('aria-label') === color).click();
+};
+
+test('Certification hides port navigation until both cable ends are assembled', () => {
+    const game = boot({ certification: true, surface: 'physical' });
+    assert.equal(game.all('[data-case-dialog]')[0].open, true);
+    assert.equal(game.all('[data-practice-submit]')[0].hidden, true);
+    game.all('[data-certification-detail-close]')[0].click();
+    assert.equal(game.all('[data-case-dialog]')[0].open, false);
+    const physical = game.all('[data-physical]')[0];
+    assert.ok(physical.textContent.includes('Pasang inti kabel'));
+    assert.equal(game.findText(physical, 'button', 'Port router hAP'), undefined);
+    assert.equal(game.findText(physical, 'button', 'Port switch hEX'), undefined);
+    assert.equal(game.findText(game.root, 'button', 'Switch hEX').hidden, true);
+    assembleCertificationCable(game);
+    assert.ok(game.findText(physical, 'button', 'Port router hAP'));
+    assert.ok(game.findText(physical, 'button', 'Port switch hEX'));
+    assert.equal(game.findText(game.root, 'button', 'Switch hEX').hidden, false);
+    assert.match(game.all('[data-practice-notice]')[0].textContent, /Port router hAP dan switch hEX sekarang tersedia/);
+    game.clickText(game.root, 'button', 'Switch hEX');
+    assert.match(game.all('[data-session-title]')[0].textContent, /Hex-Original/);
+    game.clickText(game.root, 'button', 'Router hAP');
+    assert.match(game.all('[data-session-title]')[0].textContent, /MikroTik/);
+    game.all('[data-certification-submit]')[0].click();
+    assert.equal(game.all('[data-submit-confirm]')[0].open, true);
+    const saved = JSON.parse([...game.storage.values()][0]);
+    assert.ok(saved.devices.hap && saved.devices.hex);
+});
+
+test('Certification reveals the Ethernet taskbar indicator after Firewall NAT is configured', () => {
+    const state = initial(); state.tables.nat = [];
+    const game = boot({ certification: true, state });
+    assert.equal(game.root.classList.contains('has-firewall'), false);
+    game.clickText(game.root, 'button', 'IP');
+    game.clickText(game.desktop.querySelector('.practice-menu'), 'button', 'Firewall');
+    const list = game.desktop.querySelector('[data-practice-window="list-firewall"]');
+    game.clickText(list, 'button', 'NAT'); list.querySelector('[aria-label="Tambah"]').click();
+    const editor = game.desktop.querySelector('[data-practice-window="editor-nat-new"]');
+    game.setField('Chain', 'srcnat', editor);
+    game.clickText(editor, 'button', 'Action'); game.setField('Action', 'masquerade', editor);
+    game.clickText(editor, 'button', 'OK');
+    assert.equal(game.root.classList.contains('has-firewall'), true);
+});
+
+test('Certification requires plugging the router cable into the PC LAN socket', () => {
+    const state = initial(); state.physical.pcPort = ''; state.physical.pcLan = false;
+    const game = boot({ certification: true, state, surface: 'physical' });
+    assembleCertificationCable(game);
+    const physical = game.all('[data-physical]')[0];
+    game.clickText(physical, 'button', 'Port router hAP');
+    game.clickText(physical, 'button', 'Kabel LAN PC');
+    physical.querySelector('[aria-label="ether3"]').click();
+    assert.equal(game.findText(physical, 'button', 'Port LAN PC') !== undefined, true);
+    game.clickText(physical, 'button', 'Pasang ujung kabel ke LAN PC');
+    const socket = physical.querySelector('[aria-label="Pasang konektor RJ45 ke port LAN komputer"]');
+    socket.click();
+    assert.equal(JSON.parse([...game.storage.values()][0]).physical.pcLan, false);
+    physical.querySelector('.pc-lan-cable').click();
+    physical.querySelector('[aria-label="Pasang konektor RJ45 ke port LAN komputer"]').click();
+    assert.equal(JSON.parse([...game.storage.values()][0]).physical.pcLan, true);
+    assert.match(physical.textContent, /terhubung ke port LAN PC/);
+});
+
+test('Certification keeps the connected WinBox interface hidden until a reachable neighbor is selected', () => {
+    const state = initial(); state.session.connected = false; state.physical.pcDevice = 'hap';
+    const game = boot({ certification: true, state });
+    assert.equal(game.all('[data-practice-winbox]')[0].classList.contains('is-disconnected'), true);
+    const initialLoader = game.desktop.querySelector('[data-practice-window="loader"]');
+    assert.ok(initialLoader.classList.contains('wb-loader'));
+    assert.match(initialLoader.textContent, /MAC Address.*IP Address.*Identity.*Version.*Board.*Uptime/);
+    assert.match(initialLoader.textContent, /0 items/);
+    game.all('button').find((control) => control.textContent.includes('Kabel PC')).click();
+    assembleCertificationCable(game);
+    game.all('[aria-label="Ujung A ke tester"]')[0].click(); game.all('[aria-label="Port MAIN"]')[0].click();
+    game.all('[aria-label="Ujung B ke tester"]')[0].click(); game.all('[aria-label="Port REMOTE"]')[0].click();
+    game.clickText(game.all('[data-physical]')[0], 'button', 'Tes kabel');
+    game.all('[data-pc-task-winbox]')[0].click();
+    const loader = game.desktop.querySelector('[data-practice-window="loader"]');
+    assert.equal(loader.querySelector('[data-neighbor-row]').hidden, true);
+    game.clickText(loader, 'button', 'Refresh'); game.flush();
+    assert.equal(loader.querySelector('[data-neighbor-row]').hidden, false);
+    loader.querySelector('[data-neighbor-row]').click();
+    assert.equal(loader.querySelector('[aria-label="Connect To:"]').value, '48:A9:8A:2C:07:71');
+    game.clickText(loader, 'button', 'Connect'); game.flush();
+    assert.equal(game.all('[data-practice-winbox]')[0].classList.contains('is-disconnected'), false);
+});
+
+test('Certification LAN tester lights only the pins matching the requested wiring at both ends', () => {
+    const game = boot({ certification: true, surface: 'physical' });
+    assembleCertificationCable(game, ['oranye', 'putih-oranye', 'putih-hijau', 'biru', 'putih-biru', 'hijau', 'putih-cokelat', 'cokelat']);
+    assert.equal(game.findText(game.all('[data-physical]')[0], 'button', 'Crimp ujung A'), undefined);
+    game.all('[aria-label="Ujung A ke tester"]')[0].click(); game.all('[aria-label="Port MAIN"]')[0].click();
+    game.all('[aria-label="Ujung B ke tester"]')[0].click(); game.all('[aria-label="Port REMOTE"]')[0].click();
+    game.clickText(game.all('[data-physical]')[0], 'button', 'Tes kabel');
+    const lights = game.all('.certification-pin-light');
+    assert.equal(lights.length, 16);
+    assert.equal(lights[0].classList.contains('is-on'), false);
+    assert.equal(lights[1].classList.contains('is-on'), false);
+    assert.equal(lights[8].classList.contains('is-on'), false);
+    assert.equal(lights.filter((light) => light.classList.contains('is-on')).length, 12);
+    assert.equal(lights[2].style.animationDelay, '0.84s');
+    assert.equal(lights[10].style.animationDelay, '0.84s');
+});
+
+test('Certification submits both independent device configurations and shared cabling, including after refresh', async () => {
+    const game = boot({ certification: true });
+    game.all('button').find((control) => control.textContent.includes('Kabel PC')).click(); assembleCertificationCable(game);
+    const identity = (name) => {
+        game.clickText(game.root, 'button', 'System');
+        game.clickText(game.desktop.querySelector('.practice-menu'), 'button', 'Identity');
+        const editor = game.desktop.querySelector('[data-practice-window="editor-identity-new"]');
+        game.setField('Identity', name, editor); game.clickText(editor, 'button', 'OK');
+    };
+    identity('Router-Nusantara');
+    game.clickText(game.root, 'button', 'Switch hEX'); identity('Switch-Nusantara');
+    game.clickText(game.root, 'button', 'Router hAP');
+    assert.match(game.all('[data-session-title]')[0].textContent, /Router-Nusantara/);
+    const restored = boot({ certification: true, storage: game.storage });
+    restored.all('[data-certification-submit]')[0].click();
+    await restored.all('[data-submit-send]')[0].click();
+    assert.equal(restored.requests.length, 1);
+    const state = JSON.parse(restored.requests[0].options.body).state;
+    assert.equal(state.devices.hap.identity, 'Router-Nusantara');
+    assert.equal(state.devices.hex.identity, 'Switch-Nusantara');
+    assert.ok(state.physical.wires);
+    assert.equal(restored.all('[data-result-title]')[0].textContent, '1 kesalahan ditemukan.');
 });
