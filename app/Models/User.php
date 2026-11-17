@@ -35,6 +35,7 @@ class User extends Authenticatable
             'last_login_at' => 'datetime',
             'practice_score' => 'integer',
             'certification_score' => 'integer',
+            'certification_completed_at' => 'datetime',
         ];
     }
 
@@ -68,5 +69,10 @@ class User extends Authenticatable
     public function isCertificationUnlocked(): bool
     {
         return $this->completedAdventureChapters() === self::ADVENTURE_CHAPTER_COUNT;
+    }
+
+    public function isCertificationCompleted(): bool
+    {
+        return $this->certification_completed_at !== null;
     }
 }

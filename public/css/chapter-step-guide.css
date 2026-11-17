@@ -105,5 +105,7 @@ dialog:is(.ch1-learning-dialog, .ch2-learning-dialog) button:focus-visible { out
     .chapter-one-scene .ch2-workbench { height: auto; }
 }
 .chapter-one-scene :is(.routeros, .winbox-window) .chapter-guide-target { position: relative; outline: 3px solid #ffbf36 !important; outline-offset: 2px; background-color: #fff0bd !important; color: #193555 !important; box-shadow: 0 0 0 5px #ffc34330, 0 0 18px #ffc34366 !important; animation: chapter-guide-target-glow 1.6s ease-in-out infinite; }
+/* Native select menus inherit the control background in some browsers; keep their options unhighlighted. */
+.chapter-one-scene :is(.routeros, .winbox-window) select.chapter-guide-target { background-color: initial !important; }
 @keyframes chapter-guide-target-glow { 50% { outline-color: #f39812; box-shadow: 0 0 0 7px #ffc34322, 0 0 22px #ffc34388; } }
 @media (prefers-reduced-motion: reduce) { .chapter-one-scene :is(.routeros, .winbox-window) .chapter-guide-target { animation: none; } }

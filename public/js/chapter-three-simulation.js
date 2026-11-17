@@ -8,7 +8,7 @@
         if (!state.wan.bound) return { ok: false, reason: 'wan' };
         if (!state.wan.defaultRoute) return { ok: false, reason: 'route' };
         if (target === '8.8.8.8') return { ok: true, kind: 'ip', address: target };
-        if (target !== 'google.com') return { ok: false, reason: 'target' };
+        if (String(target).trim().toLocaleLowerCase('id') !== 'google.com') return { ok: false, reason: 'target' };
         if (!dnsValid(state)) return { ok: false, reason: 'dns' };
         return { ok: true, kind: 'domain', address: '198.51.100.10' };
     };
@@ -25,7 +25,7 @@
         if (!clientNetworkReady(state, group)) return { ok: false, reason: 'lan' };
         const router = routerTest(state, target);
         if (!router.ok) return router;
-        if (target === 'google.com' && !state.dns.remote) return { ok: false, reason: 'remote' };
+        if (String(target).trim().toLocaleLowerCase('id') === 'google.com' && !state.dns.remote) return { ok: false, reason: 'remote' };
         if (!natValid(state)) return { ok: false, reason: 'nat' };
         return { ok: true, address: lan.address, gateway: lan.gateway, dns: lan.gateway, targetAddress: router.address, kind: router.kind };
     };

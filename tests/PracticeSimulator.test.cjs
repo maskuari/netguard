@@ -168,11 +168,14 @@ test('Certification hEX obtains DHCP from the router only through the correct up
     assert.equal(hex.network().address, '0.0.0.0');
 });
 
-test('Certification credentials accept case variations without changing Practice credential checks', () => {
+test('Certification and Practice credentials accept case variations', () => {
     const state = initial(); state.caseInsensitive = true;
     const game = api.create(state);
     game.connectPhone('studio-baru', 'password-baru');
     game.loginPhone('PESERTA', 'hotspot-baru');
     assert.equal(game.state.phone.authenticatedUser, 'peserta');
-    assert.throws(() => make().connectPhone('studio-baru', 'password-baru'), /tidak tersedia/);
+    const practice = make();
+    practice.connectPhone('studio-baru', 'password-baru');
+    practice.loginPhone('PESERTA', 'hotspot-baru');
+    assert.equal(practice.state.phone.authenticatedUser, 'peserta');
 });

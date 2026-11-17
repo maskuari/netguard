@@ -7,7 +7,7 @@ const vm = require('node:vm');
 const source = fs.readFileSync(path.join(__dirname, '../public/js/chapter-five-workbench.js'), 'utf8');
 const boot = (savedState = null, completed = false) => {
     const nodes = new Map(), collections = new Map(), timers = new Map(), storage = new Map();
-    let sequence = 0, guideOptions, guideRefreshes = 0, previous;
+    let sequence = 0, guideOptions, guideRefreshes = 0, previous, missionOptions;
     class Element {
         constructor() {
             this.dataset = {}; this.hidden = false; this.disabled = false; this.inert = false;
@@ -65,7 +65,11 @@ const boot = (savedState = null, completed = false) => {
     get('[data-ch5-system-menu]').hidden = true;
     storage.set('netguard.chapter-one.v1.test', JSON.stringify({ identitySaved: true, interfaceNames: { ether2: 'ether2-vlan' } }));
     storage.set('netguard.chapter-two.v2.test', JSON.stringify({ vlan: { student: true, teacher: true }, addresses: { student: true, teacher: true }, pools: { student: '192.168.40.10-192.168.40.50', teacher: '192.168.60.10-192.168.60.50' } }));
-    if (savedState) storage.set('netguard.chapter-five.v1.test', JSON.stringify(savedState));
+    if (savedState) storage.set('netguard.chapter-five.v1.test', JSON.stringify({
+        learningVersion: 1,
+        explainedStages: ['connect-switch', 'switch-session', 'identity', 'bridge', 'ports', 'switch-ports', 'vlans', 'test'],
+        ...savedState,
+    }));
     const context = {
         document: { querySelector: get, querySelectorAll: all, createElement: () => new Element(), addEventListener() {} },
         localStorage: { getItem: (key) => storage.get(key) || null, setItem: (key, value) => storage.set(key, value) },
@@ -73,12 +77,12 @@ const boot = (savedState = null, completed = false) => {
             addEventListener() {}, matchMedia: () => ({ matches: true }), setInterval() {}, clearInterval() {},
             setTimeout(callback) { const id = ++sequence; timers.set(id, callback); return id; }, clearTimeout(id) { timers.delete(id); },
             NetGuardStepGuide: { create(options) { guideOptions = options; return { refresh() { guideRefreshes++; }, reset() { guideRefreshes++; } }; } },
-            NetGuardChapterNavbar: { bindPrevious(callback) { previous = callback; } }, NetGuardEvaluation: { clear() {}, showResult() {}, showError() {} },
+            NetGuardChapterNavbar: { bindPrevious(callback) { previous = callback; }, bindMissions(options) { missionOptions = options; } }, NetGuardEvaluation: { clear() {}, showResult() {}, showError() {} },
         }, console,
     };
     vm.runInNewContext(source, context);
     return {
-        get, all, storage, guideOptions, refreshCount: () => guideRefreshes, previous: () => previous(),
+        get, all, storage, guideOptions, refreshCount: () => guideRefreshes, previous: () => previous(), replayMission: (stage) => missionOptions.replay(stage),
         flush() { while (timers.size) { const [id, callback] = timers.entries().next().value; timers.delete(id); callback(); } },
         submit(selector) { get(selector).emit('submit'); },
         command(value) { get('[data-terminal-input]').value = value; get('[data-terminal-form]').emit('submit'); },
@@ -89,6 +93,48 @@ const boot = (savedState = null, completed = false) => {
 };
 
 const connected = { workflowVersion: 2, stage: 'identity', prologueComplete: true, identity: 'MikroTik', identitySaved: false, connections: { trunk: 'ether1', pcPort: 'ether5' }, migration: { exitedHap: true, neighborsLoaded: true, connectedHex: true } };
+test('each CP5 task opens its own explanation before practice and allows rereading it', () => {
+    const game = boot({ ...connected, explainedStages: [] });
+    const learning = game.get('[data-learning-dialog]');
+    assert.equal(learning.open, true);
+    assert.match(game.get('[data-learning-title]').textContent, /identitas/);
+    assert.match(game.get('[data-learning-body]').innerHTML, /Mengapa Identity/);
+    game.click('[data-learning-continue]');
+    assert.equal(learning.open, false);
+    assert.deepEqual(game.state().explainedStages, ['identity']);
+    game.click('[data-ch5-system]');
+    game.click('[data-ch5-open-identity]');
+    game.get('[data-ch5-identity]').value = 'Switch';
+    game.click('[data-save-identity]');
+    assert.equal(learning.open, true);
+    assert.match(game.get('[data-learning-title]').textContent, /membuat Bridge/);
+    game.click('[data-learning-continue]');
+    const reloaded = boot(game.state());
+    assert.equal(reloaded.get('[data-learning-dialog]').open, false);
+    reloaded.click('[data-reread-learning]');
+    assert.equal(reloaded.get('[data-learning-dialog]').open, true);
+    assert.match(reloaded.get('[data-learning-body]').innerHTML, /Apa fungsi Bridge/);
+});
+
+test('old saves show the current lesson and all configuration stages have specific material', () => {
+    for (const stage of ['switch-session', 'identity', 'bridge', 'ports', 'switch-ports', 'vlans', 'test']) {
+        const game = boot({ ...connected, stage, identitySaved: stage !== 'identity' && stage !== 'switch-session', learningVersion: 0 });
+        assert.equal(game.get('[data-learning-dialog]').open, true, stage);
+        assert.match(game.get('[data-learning-body]').innerHTML, /<h3>/, stage);
+        assert.match(game.get('[data-learning-continue]').textContent, /Mulai/, stage);
+    }
+});
+test('the cable lesson appears after the opening dialogue, before connecting to ether5', () => {
+    const game = boot();
+    assert.equal(game.get('[data-learning-dialog]').open, false);
+    for (let index = 0; index < 5; index++) game.click('[data-ch5-prologue]');
+    assert.equal(game.get('[data-ch5-dialogue]').hidden, false);
+    for (let index = 0; index < 3; index++) game.click('[data-ch5-dialogue]');
+    assert.equal(game.get('[data-learning-dialog]').open, true);
+    assert.match(game.get('[data-learning-title]').textContent, /menghubungkan PC/);
+    assert.match(game.get('[data-learning-body]').innerHTML, /Mengapa kabel PC dipindahkan/);
+    assert.equal(game.state().connections.pcPort, null);
+});
 const target = (game, selector) => game.get(selector).classList.contains('ch5-action-target');
 const assignIdentity = (game) => { game.click('[data-ch5-system]'); game.click('[data-ch5-open-identity]'); game.get('[data-ch5-identity]').value = 'Switch'; game.click('[data-save-identity]'); };
 const configure = (game) => {
@@ -194,6 +240,21 @@ test('previous from Bridge restarts the entire Identity mission and clears all d
     assert.deepEqual(game.state().ports, {});
     assert.equal(game.get('[data-window="bridge-edit"]').hidden, true);
     assert.equal(game.pending()[2], '[data-ch5-system]');
+});
+
+test('choosing Bridge from Misi resets that mission and later tasks and reopens its material', () => {
+    const game = boot(connected);
+    configure(game);
+    game.replayMission('bridge');
+    assert.equal(game.state().stage, 'bridge');
+    assert.equal(game.state().identity, 'Switch');
+    assert.equal(game.state().identitySaved, true);
+    assert.equal(game.state().bridge, null);
+    assert.deepEqual(game.state().ports, {});
+    assert.deepEqual(game.state().switchPorts, {});
+    assert.deepEqual(game.state().vlans, {});
+    assert.equal(game.get('[data-learning-dialog]').open, true);
+    assert.match(game.get('[data-learning-title]').textContent, /membuat Bridge/);
 });
 
 test('Bridge creation and Bridge Ports are one mission when going back', () => {

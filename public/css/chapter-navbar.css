@@ -1,6 +1,34 @@
-.chapter-one-scene .chapter-navbar.lab-header { display: flex; align-items: center; flex: none; gap: clamp(8px, 1vw, 16px); width: min(100%, 1820px); min-height: 84px; margin: 0 auto; padding: 10px clamp(12px, 1.2vw, 22px); border: 1px solid #b4dbff; border-radius: 22px; background: #f9fcfff2; color: #0d2b5c; box-shadow: 0 12px 35px #093f8840, inset 0 1px 0 #fff; }
+.chapter-one-scene .chapter-navbar.lab-header { --navbar-control-height: 42px; display: flex; align-items: center; flex: none; gap: clamp(8px, 1vw, 16px); width: min(100%, 1820px); min-height: 84px; margin: 0 auto; padding: 10px clamp(12px, 1.2vw, 22px); border: 1px solid #b4dbff; border-radius: 22px; background: #f9fcfff2; color: #0d2b5c; box-shadow: 0 12px 35px #093f8840, inset 0 1px 0 #fff; }
 .chapter-home-confirm[hidden] { display: none; }
-.chapter-home-confirm { position: fixed; z-index: 1000; inset: 0; display: grid; place-items: center; padding: 24px; }
+.chapter-missions-button { flex: none; min-height: 42px; padding: 9px 15px; border: 1px solid #a9d7ff; border-radius: 11px; color: #075eb9; background: #edf8ff; font: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
+.chapter-missions-button:hover { background: #dff1ff; }
+.chapter-missions-dialog { box-sizing: border-box; width: min(900px, calc(100% - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid #afd9ff; border-radius: 24px; background: #f5faff; color: #173966; overflow: auto; box-shadow: 0 24px 80px #03184166; }
+.chapter-missions-dialog::backdrop { background: #061b3dbb; backdrop-filter: blur(5px); }
+.chapter-missions-dialog > header { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 26px; background: #f9fcff; border-bottom: 1px solid #d9eafa; }
+.chapter-missions-dialog header span { color: #0879ef; font-size: 11px; font-weight: 800; letter-spacing: .1em; }
+.chapter-missions-dialog h2 { margin: 5px 0 0; font-size: 26px; color: #0d2b5c; }
+.chapter-missions-dialog header button { width: 38px; height: 38px; border: 1px solid #bddcff; border-radius: 10px; color: #285780; background: #eef7ff; font-size: 25px; cursor: pointer; }
+.chapter-missions-dialog > p { margin: 20px 26px; color: #527195; font-size: 14px; line-height: 1.6; }
+.chapter-missions-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding: 0 26px 26px; }
+.chapter-mission-card { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 20px; border: 1px solid #c8def3; border-radius: 16px; background: #fff; color: #173966; font: inherit; text-align: left; cursor: pointer; }
+.chapter-mission-card:hover:not(:disabled), .chapter-mission-card[aria-current] { border-color: #0879ef; box-shadow: 0 4px 16px #0879ef18; }
+.chapter-mission-card__number { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: #e7f3ff; color: #0879ef; font-weight: 800; }
+.chapter-mission-card strong { font-size: 17px; }
+.chapter-mission-card p { margin: 0; color: #527195; font-size: 14px; line-height: 1.6; }
+.chapter-mission-card small { margin-top: auto; color: #087451; font-size: 12px; font-weight: 700; }
+.chapter-mission-card:disabled { background: #edf0f4; border-color: #d4dbe3; color: #788494; cursor: not-allowed; }
+.chapter-mission-card:disabled :is(p, small, .chapter-mission-card__number) { color: #788494; }
+.chapter-missions-button:focus-visible, .chapter-mission-card:focus-visible { outline: 3px solid #69baff; outline-offset: 3px; }
+@media (max-height: 500px) { .chapter-missions-dialog > header { padding: 12px 20px; }.chapter-missions-grid { padding: 0 20px 20px; }.chapter-mission-card { padding: 14px; }.chapter-missions-button { min-height: 36px; padding: 7px 10px; } }
+@media (max-width: 540px) { .chapter-missions-grid { grid-template-columns: 1fr; } }
+@media (pointer: coarse) and (max-width: 599px) and (orientation: portrait) {
+    .chapter-missions-dialog { position: fixed; inset: 50% auto auto 50%; width: calc(100dvh - 24px); max-width: none; max-height: calc(100dvw - 24px); margin: 0; transform: translate(-50%, -50%) rotate(90deg); }
+    .chapter-missions-dialog > header { padding: 12px 20px; }
+    .chapter-missions-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0 20px 20px; }
+    .chapter-mission-card { padding: 14px; }
+    .chapter-missions-button { min-height: 36px; padding: 7px 10px; }
+}
+.chapter-home-confirm { position: fixed; z-index: 4000; inset: 0; display: grid; place-items: center; padding: 24px; }
 .chapter-home-confirm__backdrop { position: absolute; inset: 0; background: #061b3dcc; backdrop-filter: blur(5px); }
 .chapter-home-confirm__dialog { position: relative; width: min(100%, 470px); padding: 30px; border: 1px solid #b6ddff; border-radius: 26px; background: linear-gradient(145deg, #ffffff, #edf8ff); color: #0d2b5c; box-shadow: 0 24px 70px #03184166, inset 0 1px 0 #fff; animation: chapter-home-confirm-in .18s ease-out; }
 .chapter-home-confirm__icon { display: grid; place-items: center; width: 52px; height: 52px; margin-bottom: 16px; border-radius: 16px; color: #fff; background: linear-gradient(135deg, #087cf0, #0752be); font-size: 28px; font-weight: 900; box-shadow: 0 8px 18px #087cf044; }
@@ -20,19 +48,22 @@
 .chapter-one-scene .chapter-navbar .lab-heading > span { display: block; color: #0770cf; font-size: 10px; font-weight: 900; letter-spacing: .12em; }
 .chapter-one-scene .chapter-navbar .lab-heading strong { color: #07194a; font-size: clamp(20px, 1.7vw, 30px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chapter-one-scene .chapter-navbar .lab-heading small { display: block; margin-top: 2px; color: #506a93; font-size: clamp(11px, .85vw, 14px); }
-.chapter-one-scene .chapter-navbar .lab-hud { display: flex; flex: none; flex-direction: column; gap: 3px; min-width: 150px; padding: 8px 14px; border: 1px solid #d7eaff; border-radius: 14px; background: #eff8ff; }
+.chapter-one-scene .chapter-navbar .lab-hud { box-sizing: border-box; display: grid; flex: none; grid-template-columns: 1fr auto; align-content: center; align-items: center; gap: 4px 12px; height: var(--navbar-control-height); min-width: 150px; padding: 5px 12px; border: 1px solid #c2def7; border-radius: 11px; background: #eff8ff; }
 .chapter-one-scene .chapter-navbar .lab-hud > span { display: block; color: #0770cf; font-size: 10px; letter-spacing: .12em; }
-.chapter-one-scene .chapter-navbar .lab-hud strong { color: #0d2b5c; font-size: 19px; line-height: 1.1; }
-.chapter-one-scene .chapter-navbar .lab-hud progress { width: clamp(120px, 12vw, 210px); height: 8px; }
+.chapter-one-scene .chapter-navbar .lab-hud strong { color: #0d2b5c; font-size: 16px; line-height: 1.1; }
+.chapter-one-scene .chapter-navbar .lab-hud progress { grid-column: 1 / -1; width: clamp(120px, 10vw, 180px); height: 4px; }
 .chapter-step-back, .chapter-one-scene .chapter-navbar .lab-save-progress { display: inline-flex; flex: none; align-items: center; justify-content: center; gap: 7px; min-height: 42px; width: auto; padding: 9px 12px; border: 1px solid #a9d7ff; border-radius: 11px; color: #075eb9; background: #edf8ff; font: inherit; font-size: 12px; font-weight: 800; line-height: 1.3; cursor: pointer; }
 .chapter-step-back svg { width: 20px; height: 20px; flex: none; }
 .chapter-step-back:hover:not(:disabled), .chapter-navbar .lab-save-progress:hover { background: #dff1ff; }
 .chapter-step-back:disabled { opacity: .45; cursor: default; }
+.chapter-home-link { text-decoration: none; }
+.chapter-home-link:focus-visible { outline: 3px solid #76baff; outline-offset: 3px; }
 .chapter-one-scene .chapter-navbar .lab-save-progress__label { display: inline; font-size: 12px; }
 .chapter-one-scene .chapter-navbar .lab-settings { display: block; flex: none; }
 .chapter-one-scene .chapter-navbar .lab-settings summary { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; padding: 0; border: 1px solid #a9d7ff; border-radius: 11px; color: #006bed; background: #edf8ff; }
 .chapter-one-scene .chapter-navbar .lab-avatar { flex: none; width: 49px; height: 49px; }
-.chapter-step-back--overlay { position: absolute; z-index: 3000; top: 18px; right: 22px; box-shadow: 0 4px 16px #001a4533; }
+.chapter-overlay-navigation { position: absolute; z-index: 3000; top: 18px; right: 22px; display: flex; align-items: center; gap: 8px; }
+.chapter-overlay-navigation .chapter-step-back { box-shadow: 0 4px 16px #001a4533; }
 @media (max-width: 1100px) {
     .chapter-one-scene .chapter-navbar.lab-header { gap: 8px; padding: 8px 12px; }
     .chapter-navbar .chapter-step-back__label { display: none; }
@@ -41,7 +72,7 @@
     .chapter-one-scene .chapter-navbar .lab-hud { min-width: 120px; padding: 7px 10px; }
 }
 @media (max-width: 760px) {
-    .chapter-one-scene .chapter-navbar.lab-header { min-height: 65px; gap: 6px; padding: 7px 9px; border-radius: 15px; }
+    .chapter-one-scene .chapter-navbar.lab-header { --navbar-control-height: 38px; min-height: 65px; gap: 6px; padding: 7px 9px; border-radius: 15px; }
     .chapter-one-scene .chapter-navbar .lab-logo, .chapter-one-scene .chapter-navbar .lab-heading > span, .chapter-one-scene .chapter-navbar .lab-heading small { display: none; }
     .chapter-one-scene .chapter-navbar .lab-heading strong { font-size: 17px; }
     .chapter-one-scene .chapter-navbar .lab-save-progress__label { display: none; }
@@ -53,6 +84,13 @@
     .chapter-step-back, .chapter-one-scene .chapter-navbar .lab-save-progress { min-height: 38px; padding: 7px 8px; }
     .chapter-one-scene .chapter-navbar .lab-settings summary { width: 36px; height: 38px; }
     .chapter-one-scene .chapter-navbar .lab-avatar { width: 36px; height: 36px; }
-    .chapter-step-back--overlay { top: 10px; right: 12px; }
+    .chapter-overlay-navigation { top: 10px; right: 12px; }
 }
 @media (max-width: 420px) { .chapter-one-scene .chapter-navbar .lab-avatar { display: none; }.chapter-one-scene .chapter-navbar .lab-heading strong { font-size: 14px; } }
+.chapter-one-scene .chapter-navbar :is(.lab-back, .chapter-missions-button, .chapter-step-back, .lab-save-progress, .lab-settings summary, .device-fullscreen) { box-sizing: border-box; height: var(--navbar-control-height); min-height: var(--navbar-control-height); border-color: #0065cf; color: #fff; background: linear-gradient(180deg, #1287f5, #066bdf); box-shadow: 0 3px 8px #086bd42b, inset 0 1px 0 #ffffff30; transition: background .15s ease, box-shadow .15s ease; }
+.chapter-one-scene .chapter-navbar :is(.lab-back, .lab-settings summary) { width: var(--navbar-control-height); min-width: var(--navbar-control-height); }
+.chapter-one-scene .chapter-navbar :is(.lab-back, .chapter-missions-button, .chapter-step-back, .lab-save-progress, .lab-settings summary, .device-fullscreen):hover:not(:disabled) { background: linear-gradient(180deg, #0875dc, #055abe); box-shadow: 0 4px 10px #086bd440; }
+.chapter-one-scene .chapter-navbar :is(.lab-back, .chapter-missions-button, .chapter-step-back, .lab-save-progress, .lab-settings summary, .device-fullscreen):focus-visible { outline: 3px solid #76baff; outline-offset: 3px; }
+.chapter-one-scene .chapter-navbar :is(.chapter-step-back, .lab-save-progress):disabled { border-color: #c0cedd; color: #6b7d91; background: #e1e8f0; box-shadow: none; opacity: 1; }
+@media (pointer: coarse) and (max-height: 599px) and (orientation: landscape) { .chapter-one-scene .chapter-navbar.lab-header { --navbar-control-height: 33px; } }
+@media (pointer: coarse) and (max-width: 599px) and (orientation: portrait) { .chapter-one-scene .chapter-navbar.lab-header { --navbar-control-height: 33px; } }

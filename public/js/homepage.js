@@ -146,6 +146,13 @@
             return;
         }
 
+        if (trigger.dataset.certificationCompleted === 'true' && trigger.dataset.certificateUrl) {
+            leaving = true;
+            showLoading('Menyiapkan sertifikat...');
+            window.location.assign(trigger.dataset.certificateUrl);
+            return;
+        }
+
         if (['practice', 'certification'].includes(panelName) && trigger.dataset.practiceUrl) {
             leaving = true;
             showLoading('Menyiapkan studi kasus...');

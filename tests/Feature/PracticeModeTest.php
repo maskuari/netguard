@@ -13,6 +13,20 @@ class PracticeModeTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_text_answers_ignore_letter_case_but_keep_other_values_exact(): void
+    {
+        $scenario = ['type' => 'identity', 'rules' => [
+            ['path' => 'identity', 'expected' => 'Router-Internet', 'label' => 'Identity'],
+            ['table' => 'wireless', 'where' => ['name' => 'wlan1'], 'fields' => ['ssid' => 'Internet-Sekolah', 'disabled' => false], 'label' => 'Wi-Fi'],
+        ]];
+        $state = ['identity' => 'ROUTER-internet', 'tables' => ['wireless' => [['name' => 'WLAN1', 'ssid' => 'internet-sekolah', 'disabled' => false]]]];
+
+        $this->assertTrue(app(PracticeEvaluator::class)->evaluate($scenario, $state)['correct']);
+
+        $state['tables']['wireless'][0]['ssid'] = 'internet-lain';
+        $this->assertFalse(app(PracticeEvaluator::class)->evaluate($scenario, $state)['correct']);
+    }
+
     public function test_practice_requires_login_and_chapter_three_completion(): void
     {
         $this->get(route('practice'))->assertRedirect(route('login'));

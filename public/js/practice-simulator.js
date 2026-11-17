@@ -23,7 +23,7 @@
             field('fullDuplex', 'Full Duplex', 'checkbox', { tab: 'Status', readonly: true }), field('activeTxFlowControl', 'Tx Flow Control', 'checkbox', { tab: 'Status', readonly: true }), field('activeRxFlowControl', 'Rx Flow Control', 'checkbox', { tab: 'Status', readonly: true }),
             field('advertising', 'Advertising', 'text', { tab: 'Status', readonly: true }), field('linkPartnerAdvertising', 'Link Partner Advertising', 'text', { tab: 'Status', readonly: true }), ...trafficFields(),
         ] },
-        vlans: { title: 'Interface List', editTitle: 'New Interface', columns: ['name', 'vlanId', 'interface', 'mtu'], fields: [nameField(), field('mtu', 'MTU', 'number', { default: 1500 }), field('vlanId', 'VLAN ID', 'number', { min: 1, max: 4094 }), interfaceField(), field('useServiceTag', 'Use Service Tag', 'checkbox'), field('arp', 'ARP', 'select', { options: ['enabled', 'disabled', 'proxy-arp', 'reply-only'], default: 'enabled' })] },
+        vlans: { title: 'Interface List', editTitle: 'New Interface VLAN', columns: ['name', 'type', 'mtu', 'actualMtu', 'l2Mtu', 'vlanId', 'interface', 'tx', 'rx', 'fpTx', 'fpRx'], fields: [field('name', 'Name', 'text', { default: 'vlan1' }), field('type', 'Type', 'text', { default: 'VLAN' }), field('mtu', 'MTU', 'number', { default: 1500, min: 68, max: 2028 }), field('actualMtu', 'Actual MTU', 'number', { default: 1500, min: 68, max: 2028 }), field('l2Mtu', 'L2 MTU', 'number', { default: 1598, min: 1500, max: 2028 }), field('vlanId', 'VLAN ID', 'number', { min: 1, max: 4094, default: 1 }), interfaceField(), field('useServiceTag', 'Use Service Tag', 'checkbox'), field('arp', 'ARP', 'select', { options: ['enabled', 'disabled', 'proxy-arp', 'reply-only'], default: 'enabled' }), field('running', 'Running', 'checkbox', { tab: 'Status', readonly: true }), field('linkStatus', 'Status', 'text', { tab: 'Status', readonly: true }), ...trafficFields()] },
         addresses: { title: 'Address List', editTitle: 'New Address', columns: ['address', 'network', 'interface'], fields: [field('address', 'Address', 'cidr'), field('network', 'Network', 'ip'), interfaceField()] },
         wan: { title: 'DHCP Client', editTitle: 'New DHCP Client', columns: ['interface', 'usePeerDns', 'addDefaultRoute', 'status', 'address'], fields: [interfaceField(), field('usePeerDns', 'Use Peer DNS', 'checkbox', { default: true }), field('usePeerNtp', 'Use Peer NTP', 'checkbox', { default: true }), field('addDefaultRoute', 'Add Default Route', 'checkbox', { default: true }), field('defaultRouteDistance', 'Default Route Distance', 'number', { default: 1 }), field('status', 'Status', 'text', { readonly: true, tab: 'Status' }), field('address', 'Address', 'text', { readonly: true, tab: 'Status' })] },
         dhcp: { title: 'DHCP Server', editTitle: 'New DHCP Server', columns: ['name', 'interface', 'leaseTime', 'pool'], fields: [nameField(), interfaceField(), field('leaseTime', 'Lease Time', 'text', { default: '00:10:00' }), field('pool', 'Address Pool', 'select', { source: 'pools' }), field('addArp', 'Add ARP For Leases', 'checkbox'), field('authoritative', 'Authoritative', 'select', { options: ['yes', 'no', 'after-2sec-delay', 'after-10sec-delay'], default: 'yes' })] },
@@ -75,7 +75,9 @@
     };
     const create = (initial) => {
         const state = clone(initial);
-        const same = (first, second) => state.caseInsensitive ? String(first ?? '').toLowerCase() === String(second ?? '').toLowerCase() : first === second;
+        const same = (first, second) => typeof first === 'string' && typeof second === 'string'
+            ? first.trim().toLocaleLowerCase('id') === second.trim().toLocaleLowerCase('id')
+            : first === second;
         for (const table of Object.keys(schemas)) if (!schemas[table].singleton) state.tables[table] ||= [];
         state.tables.hotspotProfiles ||= [];
         if (!state.tables.hotspotProfiles.length && state.tables.hotspot.length) state.tables.hotspotProfiles.push({ name: 'default', dnsName: state.tables.hotspot[0].dnsName, htmlDirectory: 'hotspot', disabled: false });
@@ -89,14 +91,14 @@
             const connectedPorts = [state.physical.pcLan ? state.physical.pcPort : '', ...Object.values(state.physical.connections || {})];
             let running = !row.disabled && (table === 'interfaces' ? connectedPorts.some((port) => port === hardwareName || port === row.name) : table === 'wireless' ? ['ap bridge', 'bridge'].includes(row.mode) : table === 'bridges' ? state.tables.bridgePorts.some((port) => port.bridge === row.name && !port.disabled) : row.running === true);
             if (table === 'vlans') {
-                const parent = state.tables.interfaces.find((port) => port.name === row.interface);
+                const parent = state.tables.interfaces.find((port) => same(port.name, row.interface));
                 running = !row.disabled && Boolean(parent && !parent.disabled && connectedPorts.includes(parent.defaultName || parent.name));
-                base.l2Mtu = 1594;
+                base.l2Mtu = row.l2Mtu ?? 1598;
             }
             const slave = state.tables.bridgePorts.some((port) => port.interface === row.name && !port.disabled);
             const macParts = String(state.session.mac).split(':');
             macParts[5] = ((parseInt(macParts[5] || '0', 16) + index) % 256).toString(16).padStart(2, '0').toUpperCase();
-            return { ...base, mac: row.mac || macParts.join(':'), actualMtu: base.mtu === 'auto' ? 1500 : base.mtu, running, flags: row.disabled ? 'X' : (running ? 'R' : '') + (slave ? 'S' : ''),
+            return { ...base, mac: row.mac || macParts.join(':'), actualMtu: table === 'vlans' ? row.actualMtu ?? (base.mtu === 'auto' ? 1500 : base.mtu) : base.mtu === 'auto' ? 1500 : base.mtu, running, flags: row.disabled ? 'X' : (running ? 'R' : '') + (slave ? 'S' : ''),
                 linkStatus: running ? 'link ok' : 'no link', negotiationStatus: running ? row.autoNegotiation === false ? 'disabled' : 'done' : '',
                 rate: running ? String(row.speed || '100M-baseT-full').startsWith('10M-') ? '10 Mbps' : '100 Mbps' : '', fullDuplex: running && !(row.speed || '').endsWith('-half'),
                 advertising: (row.advertise || ethernetModes).join(', '), linkPartnerAdvertising: running ? ethernetModes.join(', ') : '',
@@ -126,7 +128,7 @@
             }
             if (table === 'identity') { if (!data.identity.trim()) throw new Error('Identity tidak boleh kosong.'); state.identity = data.identity.trim(); return null; }
             if (table === 'dns') { if (data.servers.some((ip) => !isIp(ip))) throw new Error('Servers: alamat DNS tidak valid.'); state.dns = data; return null; }
-            if (data.name && (interfaceTables[table] ? Object.keys(interfaceTables).some((key) => state.tables[key].some((row, rowIndex) => (key !== table || rowIndex !== index) && row.name === data.name)) : state.tables[table].some((row, rowIndex) => rowIndex !== index && row.name === data.name))) throw new Error('Name: nama sudah digunakan.');
+            if (data.name && (interfaceTables[table] ? Object.keys(interfaceTables).some((key) => state.tables[key].some((row, rowIndex) => (key !== table || rowIndex !== index) && same(row.name, data.name))) : state.tables[table].some((row, rowIndex) => rowIndex !== index && same(row.name, data.name)))) throw new Error('Name: nama sudah digunakan.');
             data.disabled = Boolean(data.disabled);
             if (table === 'addresses' && !data.network) data.network = subnet(data.address) + '.0';
             if (table === 'wan') { data.status = data.disabled ? 'stopped' : 'bound'; data.address = data.disabled ? '' : '203.0.113.2/24'; }
@@ -135,8 +137,8 @@
             if (previousName && data.name && previousName !== data.name) {
                 const references = interfaceTables[table] ? ['interface', 'inInterface', 'outInterface', 'bridge', 'ports', 'tagged', 'untagged', 'slaves', 'primary'] : table === 'security' ? ['securityProfile'] : table === 'profiles' || table === 'hotspotProfiles' ? ['profile'] : table === 'pools' ? ['pool', 'addressPool'] : [];
                 for (const rows of Object.values(state.tables)) for (const row of rows) for (const key of references) {
-                    if (row[key] === previousName) row[key] = data.name;
-                    else if (Array.isArray(row[key])) row[key] = row[key].map((value) => value === previousName ? data.name : value);
+                    if (same(row[key], previousName)) row[key] = data.name;
+                    else if (Array.isArray(row[key])) row[key] = row[key].map((value) => same(value, previousName) ? data.name : value);
                 }
             }
             return index;
@@ -160,7 +162,7 @@
             if (values.masquerade) save('nat', { chain: 'srcnat', srcAddress: subnet(values.localAddress) + '.0/24', action: 'masquerade' });
         };
         const network = () => {
-            const port = active('interfaces').find((row) => row.defaultName === state.physical.pcPort || row.name === state.physical.pcPort);
+            const port = active('interfaces').find((row) => same(row.defaultName, state.physical.pcPort) || same(row.name, state.physical.pcPort));
             const linked = state.physical.pcLan && state.physical.pcPort && port && (!state.caseInsensitive || state.physical.pcDevice === (state.device === 'hEX lite' ? 'hex' : 'hap'));
             let sourceInterface = port?.name;
             if (state.device === 'hEX lite' && linked) {

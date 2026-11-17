@@ -226,7 +226,7 @@
             getPlan: () => {
                 const plan = guidePlan();
                 if (plan.length) return plan;
-                const text = state.stage === 'intro' ? 'Kita mulai dari pengaturan DNS. Ikuti percakapan Pak Amat, lalu klik Mulai praktik pada penjelasan yang muncul.' : state.stage === 'quiz' ? 'Jawab semua soal pada evaluasi, lalu klik Simpan hasil Chapter 3.' : 'Chapter selesai. Lihat hasil evaluasi atau kembali ke peta chapter melalui panah kiri pada navbar.';
+                const text = state.stage === 'intro' ? 'Kita mulai dari pengaturan DNS. Ikuti percakapan Pak Amat, lalu klik Mulai praktik pada penjelasan yang muncul.' : state.stage === 'quiz' ? 'Jawab semua soal pada evaluasi, lalu klik Selesai.' : 'Chapter selesai. Lihat hasil evaluasi atau kembali ke peta chapter melalui panah kiri pada navbar.';
                 return [[text, state.stage === 'finish']];
             },
             root: scene,
@@ -382,7 +382,6 @@
     };
     navbar.bindPrevious(goToPreviousStep);
     document.querySelector('[data-previous]').addEventListener('click', goToPreviousStep);
-    document.querySelector('[data-save]').addEventListener('click', () => message(persist() ? 'Progres latihan tersimpan. Hasil evaluasi disimpan ke akun setelah semua jawaban benar.' : 'Penyimpanan browser tidak tersedia. Hasil evaluasi tetap dapat disimpan ke akun.', 'success'));
     const inspectWan = (part) => {
         if (state.stage !== 'router') return;
         if (!state.wan.link) return explainError(reasonText.link);
@@ -517,7 +516,7 @@
             } });
         }, 250);
     }));
-    document.querySelector('[data-close-quiz]').addEventListener('click', () => quiz.close()); document.querySelector('[data-close-finish]').addEventListener('click', () => finish.close());
+    document.querySelector('[data-close-quiz]').addEventListener('click', () => quiz.close()); document.querySelector('[data-close-finish]').addEventListener('click', () => quiz.close());
     document.querySelector('[data-quiz-form]').addEventListener('change', () => { evaluation.clear(); state.evaluationResult = null; persist(); });
     document.querySelector('[data-quiz-form]').addEventListener('submit', async (event) => {
         event.preventDefault(); const answers = [1, 2, 3, 4, 5].map((n) => document.querySelector('[name="answer-' + n + '"]:checked'));
@@ -527,7 +526,7 @@
             const response = await fetch(scene.dataset.completeUrl, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }, body: JSON.stringify({ answers: answers.map((node) => Number(node.value)) }) });
             const result = await response.json(); const summary = evaluation.showResult(result); if (summary) { state.evaluationResult = summary; persist(); }
             if (!response.ok) { if (!summary) evaluation.showError(result.message || 'Hasil belum dapat disimpan.'); quiz.scrollTo({ top: 0 }); return; }
-            scene.dataset.completed = 'true'; quiz.close(); setStage('finish'); finish.showModal(); message('Chapter 3 selesai. Progres tersimpan ke akun.', 'success');
+            scene.dataset.completed = 'true'; setStage('finish'); evaluation.showFinish(); message('Chapter 3 selesai. Progres tersimpan ke akun.', 'success');
         } catch { evaluation.showError('Koneksi terputus. Coba simpan hasil sekali lagi.'); } finally { button.disabled = false; }
     });
     const scenes = [
@@ -577,5 +576,24 @@
     (saved?.answers || []).forEach((answer, index) => { const node = document.querySelector('[name="answer-' + (index + 1) + '"][value="' + answer + '"]'); if (node) node.checked = true; });
     evaluation.showResult(state.evaluationResult || (completed ? { correctAnswers: 5, totalQuestions: 5 } : null));
     render();
-    if (!state.prologueComplete && state.stage === 'intro') startPrologue(); else { prologue.hidden = true; scene.classList.remove('is-prologue'); if (state.stage === 'finish') finish.showModal(); else if (state.stage === 'intro') teach('dns'); else if (state.stage === 'quiz') quiz.showModal(); else render(); }
+    if (!state.prologueComplete && state.stage === 'intro') startPrologue(); else { prologue.hidden = true; scene.classList.remove('is-prologue'); if (state.stage === 'intro') teach('dns'); else if (state.stage === 'quiz') quiz.showModal(); else render(); }
+    navbar.bindAutosave?.(persist);
+    navbar.bindMissions?.({
+        storageKey: key, completed, getCurrent: () => ['quiz', 'finish'].includes(state.stage) ? stageNames.length - 1 : stageNames.indexOf(state.stage),
+        isComplete: () => state.stage === 'finish',
+        getUnlocked: () => state.highest,
+        missions: [
+            { stage: 'dns', title: 'DNS router', description: 'Atur DNS dan izinkan permintaan DNS dari jaringan lokal.' },
+            { stage: 'nat', title: 'Firewall NAT', description: 'Buat aturan masquerade untuk akses internet melalui WAN.' },
+            { stage: 'router', title: 'Uji koneksi router', description: 'Periksa DHCP Client dan route, lalu uji IP internet serta nama domain.' },
+            { stage: 'clients', title: 'Uji internet dari PC', description: 'Periksa alamat IP komputer dan uji koneksi internet melalui CMD.' },
+        ],
+        replay(destination) {
+            document.querySelectorAll('dialog[open]').forEach((node) => node.close());
+            window.clearInterval(dialogueTimer); dialogueTimer = null; dialogueCallback = null;
+            overlay.hidden = true; prologue.hidden = true; surface.inert = false; scene.classList.remove('is-prologue');
+            nextLesson = null; windows.forEach((node, name) => closeWindow(name));
+            resetFromStage(destination); setStage(destination); teach(destination);
+        },
+    });
 })();

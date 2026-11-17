@@ -124,3 +124,116 @@
 @media (pointer: coarse) and (max-width: 599px) and (orientation: portrait) {
     .chapter-exam-screen[open] { inset: 0 auto auto 100%; width: 100dvh; height: 100dvw; transform-origin: top left; transform: rotate(90deg); }
 }
+
+/* Solid-color exam design shared by Chapters 1–5. */
+.chapter-exam-screen[open] { background: #e8eef5; }
+.chapter-exam-screen .chapter-exam-header {
+    min-height: 94px;
+    border-bottom: 5px solid #f1c75b;
+    background: #102b4d;
+    box-shadow: 0 4px 0 #bed0e2;
+}
+.chapter-exam-screen .chapter-exam-brand img {
+    width: 52px;
+    height: 52px;
+    padding: 5px;
+    border-radius: 12px;
+    background: #fff;
+}
+.chapter-exam-screen .chapter-exam-header .chapter-evaluation-kicker { color: #f1c75b; letter-spacing: .11em; }
+.chapter-exam-screen .chapter-exam-header h2 { color: #fff; font-weight: 800; }
+.chapter-exam-screen .chapter-exam-badge { border: 1px solid #5f86ae; border-radius: 7px; background: #23456b; color: #fff; font-weight: 700; }
+.chapter-exam-screen .chapter-evaluation-close { z-index: 3; border-color: #6f8daf; background: #23456b; color: #fff; }
+.chapter-exam-screen .chapter-evaluation-close:hover { background: #365c82; }
+.chapter-exam-screen > .chapter-exam-instructions {
+    padding: 14px 32px;
+    border-bottom: 1px solid #cbd8e5;
+    background: #f8f6ef;
+    color: #3d5168;
+    font-weight: 600;
+}
+.chapter-exam-screen .chapter-exam { gap: 22px; }
+.chapter-exam-screen .chapter-exam-paper {
+    border: 1px solid #c4d2df;
+    border-radius: 12px;
+    background: #fdfcf8;
+    box-shadow: 5px 5px 0 #c9d7e3;
+}
+.chapter-exam-screen .chapter-exam-paper::before {
+    align-self: flex-start;
+    margin: 0 0 22px;
+    padding: 7px 11px;
+    border-left: 4px solid #d29d27;
+    background: #f9edc9;
+    color: #6c4d0d;
+    font-weight: 900;
+    letter-spacing: .1em;
+}
+.chapter-exam-screen legend { color: #172e4a; font-size: clamp(19px, 1.55vw, 24px); font-weight: 800; line-height: 1.4; }
+.chapter-exam-screen fieldset > div { gap: 12px; }
+.chapter-exam-screen label {
+    min-height: 56px;
+    padding: 13px 17px;
+    border: 1px solid #c5d1dc;
+    border-left: 4px solid #8ca4bb;
+    border-radius: 7px;
+    background: #f3f6f8;
+    color: #233a54;
+    font-weight: 600;
+    transition: background .15s, border-color .15s, transform .15s;
+}
+.chapter-exam-screen label:hover { transform: translateX(3px); border-color: #5982ab; background: #e8f0f8; }
+.chapter-exam-screen label:has(input:checked) { border-color: #2773bb; border-left-color: #d29d27; background: #e2edf8; color: #123e6d; }
+.chapter-exam-screen label:focus-within { outline: 3px solid #e7b845; outline-offset: 2px; }
+.chapter-exam-screen input[type="radio"] { width: 18px; height: 18px; accent-color: #1669ad; }
+.chapter-exam-screen .chapter-exam-sidebar {
+    border: 1px solid #b5c7d8;
+    border-top: 5px solid #1b5d9b;
+    border-radius: 12px;
+    background: #e3ebf2;
+    box-shadow: 5px 5px 0 #c9d7e3;
+}
+.chapter-exam-screen .chapter-exam-sidebar h3 { padding-bottom: 14px; border-bottom-color: #bccbd9; color: #17304d; font-size: 20px; }
+.chapter-exam-screen .chapter-exam-progress { margin: 20px 0 16px; color: #365875; font-weight: 700; }
+.chapter-exam-screen .chapter-exam-numbers { gap: 9px; }
+.chapter-exam-screen .chapter-exam-numbers button { min-height: 40px; border: 1px solid #ca8491; border-radius: 6px; background: #fae9eb; color: #9c3344; font-weight: 900; }
+.chapter-exam-screen .chapter-exam-numbers button.is-confirmed { border-color: #76b295; background: #dff0e6; color: #166b47; }
+.chapter-exam-screen .chapter-exam-numbers button[aria-current="true"] { outline: 3px solid #d7a831; outline-offset: 2px; }
+.chapter-exam-screen .chapter-exam-sidebar > p:last-child { border-top-color: #bccbd9; color: #49657c; }
+.chapter-exam-screen .chapter-exam-navigation { border-top-color: #cbd8e5; }
+.chapter-exam-screen .chapter-exam-navigation button { min-height: 44px; border-radius: 7px; font-weight: 800; }
+.chapter-exam-screen .chapter-exam-navigation button:last-child { border-color: #145f9f; background: #176eaf; color: #fff; }
+.chapter-exam-screen .chapter-exam-navigation button:last-child:hover { background: #0c568e; }
+.chapter-exam-screen .chapter-exam-paper > button { border-radius: 7px; font-weight: 800; }
+.chapter-exam-screen .chapter-evaluation-primary { border-color: #145f9f; background: #176eaf; color: #fff; }
+.chapter-exam-screen .chapter-evaluation-secondary { border-color: #a9c5df; background: #e8f1f8; color: #155b93; }
+.chapter-exam-screen .chapter-evaluation-result { border-color: #abc3d6; background: #e9f0f4; }
+@media (max-width: 900px), (max-height: 600px) {
+    .chapter-exam-screen .chapter-exam-header { min-height: 62px; }
+    .chapter-exam-screen .chapter-exam-brand img { width: 36px; height: 36px; }
+    .chapter-exam-screen label { min-height: 42px; padding: 9px; }
+}
+@media (max-width: 620px) {
+    .chapter-exam-screen .chapter-exam { grid-template-columns: minmax(0, 1fr) 122px; gap: 8px; }
+    .chapter-exam-screen .chapter-exam-sidebar { padding: 10px; }
+    .chapter-exam-screen .chapter-exam-sidebar h3 { font-size: 15px; }
+    .chapter-exam-screen .chapter-exam-numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .chapter-exam-screen .chapter-exam-numbers button { min-height: 35px; }
+}
+@media (prefers-reduced-motion: reduce) { .chapter-exam-screen label { transition: none; } }
+.chapter-exam-screen [hidden] { display: none !important; }
+.chapter-exam-screen .chapter-exam-finish { width: min(860px, calc(100% - 40px)); max-height: calc(100dvh - 195px); overflow: visible; align-self: center; flex: none; margin: auto; padding: 16px 32px; box-sizing: border-box; border: 1px solid #b6c9d9; border-top: 6px solid #d7a831; border-radius: 12px; background: #fdfcf8; color: #17304d; text-align: center; box-shadow: 6px 6px 0 #c9d7e3; }
+.chapter-exam-finish > img { width: 86px; height: 88px; object-fit: contain; }
+.chapter-exam-finish > h2 { margin: 5px 0 7px; font-size: clamp(25px, 2.5vw, 34px); line-height: 1.12; color: #102b4d; }
+.chapter-exam-finish > p { max-width: 720px; margin: 0 auto 10px; line-height: 1.35; color: #365875; }
+.chapter-exam-score { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 10px; max-width: 600px; margin: 10px auto; text-align: left; }
+.chapter-exam-score__grade { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: 5px; padding: 10px 14px; border: 1px solid #acc8df; border-left: 5px solid #176eaf; border-radius: 8px; background: #e8f1f8; color: #102b4d; }
+.chapter-exam-score__grade strong { font-size: 32px; line-height: 1; }
+.chapter-exam-score__grade > span { font-size: 17px; font-weight: 700; }
+.chapter-exam-score__grade small { flex-basis: 100%; margin-top: 5px; color: #365875; font-size: 12px; font-weight: 700; }
+.chapter-exam-score__counts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.chapter-exam-score__counts span { display: grid; align-content: center; gap: 3px; padding: 8px; border: 1px solid #acc8df; border-radius: 8px; background: #f1f6fa; color: #365875; text-align: center; font-size: 12px; font-weight: 700; }
+.chapter-exam-score__counts strong { color: #102b4d; font-size: 23px; line-height: 1; }
+.chapter-exam-finish .chapter-evaluation-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 8px; }
+@media (max-width: 620px) { .chapter-exam-score { grid-template-columns: 1fr; } }
+@media (max-height: 650px) { .chapter-exam-screen .chapter-exam-finish { max-height: calc(100dvh - 145px); padding: 16px 22px; } .chapter-exam-finish > img { width: 76px; height: 78px; } }

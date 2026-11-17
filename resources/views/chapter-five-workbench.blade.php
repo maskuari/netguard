@@ -25,6 +25,7 @@
     <script src="{{ asset('js/chapter-evaluation.js') }}?v={{ filemtime(public_path('js/chapter-evaluation.js')) }}" defer></script>
     <script src="{{ asset('js/chapter-navbar.js') }}?v={{ filemtime(public_path('js/chapter-navbar.js')) }}" defer></script>
     <script src="{{ asset('js/chapter-step-guide.js') }}?v={{ filemtime(public_path('js/chapter-step-guide.js')) }}" defer></script>
+    <script src="{{ asset('js/winbox-enter-ok.js') }}?v={{ filemtime(public_path('js/winbox-enter-ok.js')) }}" defer></script>
     <script src="{{ asset('js/chapter-five-workbench.js') }}?v={{ filemtime(public_path('js/chapter-five-workbench.js')) }}" defer></script>
     @include('device-layout')
 </head>
@@ -37,10 +38,10 @@
             <div class="chapter-prologue__character"><span class="chapter-prologue__character-glow"></span><img data-ch5-prologue-avatar src="{{ asset($teacherPath.'menugaskan.png') }}" alt="Pak Amat, guru TKJ" decoding="async"><span class="chapter-prologue__character-name">PAK AMAT <i>·</i> GURU TKJ</span></div>
             <div class="chapter-prologue__story" data-ch5-prologue-story>
                 <span class="chapter-prologue__eyebrow"><i></i><b data-ch5-prologue-kicker>PROLOG · 01</b></span>
-                <h1 id="ch5-prologue-title" data-ch5-prologue-title>Berpindah dari hAP ke MikroTik hEX</h1>
-                <p data-ch5-prologue-text>Pindahkan satu kabel PC dari ether3 hAP ke ether5 hEX, login ulang, lalu ubah Identity menjadi Switch. Kabel PC yang sama dipakai untuk menguji ether2, ether3, dan ether4.</p>
+                <h1 id="ch5-prologue-title" data-ch5-prologue-title>Jaringan siswa dan guru harus terpisah</h1>
+                <p data-ch5-prologue-text>VLAN 10 dan VLAN 20 dari Chapter 2 sudah memisahkan jaringan siswa dan guru. Di Chapter 5, kamu akan mengatur switch hEX agar trunk meneruskan kedua VLAN dan setiap port access mengarah ke jaringan yang tepat.</p>
                 <div class="chapter-prologue__progress"><span data-ch5-prologue-progress></span></div>
-                <div class="chapter-prologue__controls"><small data-ch5-prologue-count>ADEGAN 01 / 04</small><small class="chapter-prologue__click-hint">KLIK DI MANA SAJA UNTUK LANJUT</small></div>
+                <div class="chapter-prologue__controls"><small data-ch5-prologue-count>ADEGAN 01 / 05</small><small class="chapter-prologue__click-hint">KLIK DI MANA SAJA UNTUK LANJUT</small></div>
             </div>
         </div>
     </section>

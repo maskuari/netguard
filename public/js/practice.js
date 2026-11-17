@@ -110,7 +110,7 @@
         const control = (value = '') => {
             const node = element(definition.type === 'select' || definition.source ? 'select' : definition.type === 'textarea' ? 'textarea' : 'input');
             if (node.tagName === 'SELECT') {
-                for (const item of ['', ...engine.options(definition)]) { const option = element('option', '', String(item)); option.value = item; node.append(option); }
+                for (const item of ['', ...engine.options(definition)]) { const option = element('option', '', item === '' && definition.key === 'interface' ? 'Pilih interface' : String(item)); option.value = item; node.append(option); }
                 if (value && ![...node.options].some((option) => option.value === String(value))) { const option = element('option', '', String(value)); option.value = value; node.append(option); }
             } else node.type = definition.type === 'number' ? 'number' : definition.type === 'password' ? 'password' : definition.type === 'checkbox' ? 'checkbox' : 'text';
             if (definition.type === 'checkbox') node.checked = Boolean(value); else node.value = value ?? '';
@@ -156,9 +156,11 @@
         if (!schema.singleton && index === null) beginConfiguration();
         let values = { ...engine.draft(table, index), ...initialValues }, currentIndex = index;
         const win = makeWindow(id, schema.singleton ? schema.title : index === null ? schema.editTitle : schema.editTitle.replace(/^New /, '') + (values.name ? ' <' + values.name + '>' : ''), true);
+        if (certification && table === 'vlans') { win.classList.add('ch2-window', 'certification-vlan-editor'); win.dataset.window = 'vlan-edit'; }
         const layout = element('div', 'practice-editor-layout'), main = element('div', 'practice-editor-main'), actions = element('div', 'practice-editor-actions'), status = element('div', 'practice-window-status'), footer = element('footer');
         const tabs = [...new Set(schema.fields.map((item) => item.tab))];
         const fields = element('div', 'practice-form');
+        if (certification && table === 'vlans') { layout.classList.add('ch2-vlan-edit-layout'); main.classList.add('ch2-vlan-edit-main'); actions.classList.add('ch2-vlan-edit-actions'); fields.classList.add('ch2-window-content'); }
         let activeTab = tabs[0];
         const paintFields = () => {
             if (currentIndex !== null && ['interfaces', 'wireless', 'vlans', 'bridges'].includes(table)) {
@@ -180,8 +182,8 @@
             }
         };
         if (tabs.length > 1) {
-            const nav = element('div', 'practice-tabs');
-            tabs.forEach((tab) => { const control = button(tab, () => { activeTab = tab; [...nav.children].forEach((child) => child.classList.toggle('is-active', child === control)); paintFields(); }); control.classList.toggle('is-active', tab === activeTab); nav.append(control); });
+            const nav = element('div', certification && table === 'vlans' ? 'practice-tabs ch2-window-tabs' : 'practice-tabs');
+            tabs.forEach((tab) => { const control = button(tab, () => { activeTab = tab; [...nav.children].forEach((child) => { child.classList.toggle('is-active', child === control); child.setAttribute('aria-selected', String(child === control)); }); paintFields(); }); control.classList.toggle('is-active', tab === activeTab); control.setAttribute('aria-selected', String(tab === activeTab)); nav.append(control); });
             main.append(nav);
         }
         const apply = (close) => {
@@ -212,7 +214,7 @@
         }
         paintFields(); main.append(fields); layout.append(main, actions); footer.textContent = values.disabled ? 'disabled' : 'enabled'; win.append(layout, status, footer);
         refreshers.set(id, () => { if (currentIndex !== null && !engine.state.tables[table]?.[currentIndex]) win.closePractice(); else if (['Status', 'Traffic'].includes(activeTab)) paintFields(); });
-        win.addEventListener('keydown', (event) => { if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') { event.preventDefault(); apply(true); } });
+        win.addEventListener('keydown', (event) => { if (event.key === 'Enter' && !event.repeat && event.target.matches('input:not([type="checkbox"]):not([type="radio"]), select')) { event.preventDefault(); apply(true); } });
         fields.querySelector('input:not([readonly]), select')?.focus();
     };
     const groups = {
@@ -537,7 +539,7 @@
         const romon = button('Connect To RoMON', () => {}, 'winbox-control'); romon.disabled = true;
         actions.append(romon, button('Connect', () => {
             if (!certificationCableReady() || sharedPhysical.pcDevice !== activeDevice || !sharedPhysical.pcPort || !sharedPhysical.pcLan || !sharedPhysical.powered) { error.textContent = 'ERROR: perangkat tidak terjangkau. Periksa kabel, LAN PC, dan daya.'; return; }
-            if (values.address.toLowerCase() !== engine.state.session.mac.toLowerCase() || values.login !== 'admin' || values.password !== '') { error.textContent = 'ERROR: could not connect / invalid username or password'; return; }
+            if (values.address.toLowerCase() !== engine.state.session.mac.toLowerCase() || values.login.trim().toLocaleLowerCase('id') !== 'admin' || values.password !== '') { error.textContent = 'ERROR: could not connect / invalid username or password'; return; }
             error.textContent = 'Connecting…';
             window.setTimeout(() => { if (submitted) return; change(() => { engine.state.session.connected = true; engine.state.session.connectedMac = values.address; }); win.closePractice(); }, 650);
         }, 'winbox-control'));
@@ -556,7 +558,7 @@
         const rows = element('div', 'practice-table-scroll'), status = element('div', 'practice-window-status');
         form.append(button('Connect', () => {
             if (certification && (!certificationCableReady() || sharedPhysical.pcDevice !== activeDevice || !sharedPhysical.pcPort || !sharedPhysical.pcLan || !sharedPhysical.powered)) { status.textContent = 'ERROR: perangkat tidak terjangkau. Periksa kabel, LAN PC, dan daya.'; return; }
-            if (values.address.toLowerCase() !== engine.state.session.mac.toLowerCase() || values.login !== 'admin' || values.password !== '') { status.textContent = 'ERROR: could not connect / invalid username or password'; return; }
+            if (values.address.toLowerCase() !== engine.state.session.mac.toLowerCase() || values.login.trim().toLocaleLowerCase('id') !== 'admin' || values.password !== '') { status.textContent = 'ERROR: could not connect / invalid username or password'; return; }
             status.textContent = 'Connecting…';
             window.setTimeout(() => { if (submitted) return; change(() => { engine.state.session.connected = true; engine.state.session.connectedMac = values.address; }); win.closePractice(); }, 650);
         }));
@@ -959,6 +961,7 @@
     }
     if (certification) {
         document.querySelectorAll('[data-certification-detail-close]').forEach((control) => control.addEventListener('click', () => caseDialog.close()));
+        caseDialog.addEventListener('click', (event) => { if (event.target === caseDialog) caseDialog.close(); });
         root.querySelector('[data-certification-submit]').addEventListener('click', () => { if (!submitted) confirmDialog.showModal(); });
     }
     submitControl.addEventListener('click', () => { if (configurationStarted && !submitted) confirmDialog.showModal(); });
@@ -969,6 +972,7 @@
         document.querySelector('[data-result-title]').textContent = certification ? (result.correct ? 'Benar! Seluruh konfigurasi sesuai.' : result.errors.length + ' kesalahan ditemukan.') : result.correct ? 'Benar! Misi selesai.' : 'Konfigurasi belum sesuai.';
         document.querySelector('[data-result-description]').textContent = certification ? (result.correct ? 'Seluruh kebutuhan jaringan Kantor Nusantara dan pengujian telah terpenuhi.' : 'Periksa rincian setiap bagian berikut. Jumlah kesalahan: ' + result.errors.length + '.') : result.correct ? 'Kebutuhan studi kasus sudah terpenuhi. Kamu bisa melanjutkan dengan soal acak yang berbeda.' : 'Berikut bagian yang perlu diperbaiki. Coba lagi untuk mengerjakan studi kasus baru.';
         const list = document.querySelector('[data-result-errors]'); list.hidden = result.correct; list.replaceChildren(...result.errors.map((message) => element('li', '', message)));
+        const certificateLink = document.querySelector('[data-certification-print]'); if (certificateLink) certificateLink.hidden = !result.correct;
         confirmDialog.close(); if (!resultDialog.open) resultDialog.showModal();
     };
     document.querySelector('[data-submit-send]').addEventListener('click', async (event) => {

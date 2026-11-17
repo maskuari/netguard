@@ -5,3 +5,12 @@
 .chapter-card__completion{position:absolute;z-index:3;top:70px;left:17px;display:inline-flex;align-items:center;gap:6px;margin:0;padding:7px 11px;border:1px solid #fff;border-radius:99px;color:#fff;background:#09845b;box-shadow:0 3px 10px #054d4533;font-size:12px;font-weight:900;line-height:1;white-space:nowrap}.chapter-card__completion .icon{width:16px;height:16px;stroke-width:3}.chapter-card.is-completed .chapter-card__badge{background:#09845b}.chapter-card.is-completed .chapter-card__progress span{width:100%;background:#11a579}.chapter-card:not([data-position="0"]) .chapter-card__completion{top:65px;padding:6px 9px;font-size:11px}.chapter-card:is([data-position="-2"],[data-position="2"]) .chapter-card__completion{top:55px;font-size:10px}
 
 .adventure-watermark{color:#e0efff;text-shadow:0 1px 5px #03132b;}
+
+.chapter-card.is-locked .chapter-card__visual img{filter:grayscale(1) saturate(.12)}
+.chapter-card.is-locked .chapter-card__badge{background:#667386;box-shadow:0 3px 7px #34415455}
+.chapter-card.is-locked .chapter-card__content{background:#e7ebf0f5}
+.chapter-card.is-locked .chapter-card__content strong{color:#566273}
+.chapter-card.is-locked .chapter-card__content>span:nth-child(2){color:#788392}
+.chapter-card__locked{position:absolute;z-index:4;top:34%;left:50%;display:grid;place-items:center;width:56px;height:56px;border:1px solid #ffffffb8;border-radius:50%;color:#fff;background:#566273d9;box-shadow:0 4px 14px #1d293b55;transform:translate(-50%,-50%);pointer-events:none}
+.chapter-card__locked .icon{width:27px;height:27px;stroke-width:2.2}
+.chapter-card.is-locked .chapter-card__action button:disabled{border:1px solid #8d98a6;color:#fff;background:#7e8997;box-shadow:0 4px 9px #46536740}

@@ -22,6 +22,24 @@
 .certification-scene .practice-winbox .wb-loader .winbox-credentials > label { color: #172b3b; }
 .certification-scene .practice-winbox .wb-loader .winbox-table > button[hidden],
 .certification-scene .practice-winbox .wb-loader .winbox-toolbar > button[hidden] { display: none; }
+.certification-scene .practice-winbox .certification-vlan-editor { top: 50%; left: 50%; width: min(540px, calc(100% - 36px)); height: auto; max-height: calc(100% - 32px); overflow: hidden; transform: translate(-50%, -50%); border-color: #5a83ad; box-shadow: 0 8px 20px #0005; }
+.certification-scene .practice-winbox .certification-vlan-editor > header { min-height: 28px; background: linear-gradient(#3184d5, #1765b6); }
+.certification-scene .practice-winbox .ch2-vlan-edit-layout { grid-template-columns: minmax(0, 1fr) 82px; gap: 9px; padding: 0 8px 9px; background: #e9eef2; }
+.certification-scene .practice-winbox .ch2-vlan-edit-main { min-width: 0; border: 0; background: transparent; }
+.certification-scene .practice-winbox .ch2-vlan-edit-main .ch2-window-tabs { min-height: 28px; padding: 3px 6px 0; border-bottom: 1px solid #b5c4cf; background: #e6e6e6; }
+.certification-scene .practice-winbox .ch2-vlan-edit-main .ch2-window-tabs > button { min-height: 25px; padding: 3px 11px; border: 0; border-right: 1px solid #d4dde4; border-radius: 0; color: #263b49; background: transparent; font: 11px Tahoma, sans-serif; }
+.certification-scene .practice-winbox .ch2-vlan-edit-main .ch2-window-tabs > button[aria-selected="true"] { border-bottom: 2px solid #0078c9; background: #f9fbfc; }
+.certification-scene .practice-winbox .ch2-vlan-edit-main .ch2-window-content { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 5px; min-height: 0; padding: 10px 2px; }
+.certification-scene .practice-winbox .ch2-vlan-edit-main .ch2-window-content > label { display: grid; grid-template-columns: 87px minmax(0, 1fr); grid-column: 1; gap: 7px; min-height: 25px; color: #0876bb; font: 12px/1.2 Tahoma, 'Segoe UI', Arial, sans-serif; text-align: right; }
+.certification-scene .practice-winbox .certification-vlan-editor .ch2-window-content > label > input[type="checkbox"] { justify-self: start; align-self: center; box-sizing: border-box; width: 14px; min-width: 14px; height: 14px; min-height: 14px; margin: 0; padding: 0; }
+.certification-scene .practice-winbox .ch2-vlan-edit-main .ch2-window-content input,
+.certification-scene .practice-winbox .ch2-vlan-edit-main .ch2-window-content select { box-sizing: border-box; width: 100%; height: 25px; min-height: 25px; padding: 3px 5px; border: 1px solid #a8bdcc; border-radius: 1px; color: #1e3545; background: #fff; font: 12px Tahoma, sans-serif; }
+.certification-scene .practice-winbox .ch2-vlan-edit-main .ch2-window-content input[readonly] { color: #647582; border-color: #c5d1da; background: #edf1f4; }
+.certification-scene .practice-winbox .ch2-vlan-edit-actions { display: flex; flex-direction: column; gap: 5px; padding-top: 3px; }
+.certification-scene .practice-winbox .ch2-vlan-edit-actions button { min-height: 27px; padding: 3px 6px; border: 1px solid #999; border-radius: 1px; color: #222; background: linear-gradient(#fff, #ddd); font: 12px Arial, sans-serif; }
+.certification-scene .practice-winbox .ch2-vlan-edit-actions button:first-child { border-color: #6c9cdd; outline: 1px solid #c1d5f6; outline-offset: -3px; background: linear-gradient(#f8fcff, #cfe4fb); }
+.certification-scene .practice-winbox .ch2-vlan-edit-actions button:hover { border-color: #4c8acb; background: #dceafa; }
+.certification-scene .practice-winbox .certification-vlan-editor > footer { min-height: 22px; padding: 4px 9px; border-top: 1px solid #c2ced7; color: #526a7c; background: #edf2f6; font-size: 11px; }
 .certification-scene .certification-submit { flex: none; min-height: 42px; padding: 8px 16px; font-size: 13px; }
 .certification-physical-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
 .certification-physical-tabs button { padding: 10px 16px; border: 1px solid #a7c9e5; border-radius: 8px; background: white; color: #17436e; font: 600 14px 'Segoe UI', sans-serif; cursor: pointer; }
@@ -38,6 +56,8 @@
 .certification-instructions-body section { padding: 20px 24px; margin-bottom: 16px; border: 1px solid #d2e1ef; border-radius: 12px; background: white; }
 .certification-instructions-body h3 { margin: 0 0 13px; color: #165b9c; font-size: 19px; }
 .certification-instructions-body ul { margin: 0; padding-left: 22px; }
+.certification-instructions-body ol { margin: 0; padding-left: 24px; }
+.certification-instructions-body ol li::marker { color: #147ad4; font-weight: 700; }
 .certification-instructions-body li + li { margin-top: 13px; }
 .certification-instructions footer { flex: none; display: flex; justify-content: end; padding: 15px 28px; border-top: 1px solid #d1e2f1; background: white; }
 .certification-tester { width: fit-content; max-width: 100%; margin: 24px auto; padding: 20px; border-radius: 14px; border: 2px solid #344457; background: #202b39; color: white; }

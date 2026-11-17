@@ -861,6 +861,12 @@
     }
 }
 
+/* Scale down all rotating equipment illustrations while preserving character sizing. */
+.chapter-dialogue .chapter-dialogue__equipment { width: min(82vw, 1000px) !important; height: min(48vh, 470px) !important; }
+@media (max-width: 680px) {
+    .chapter-dialogue .chapter-dialogue__equipment { width: 82vw !important; height: 34vh !important; }
+}
+
 /* Hide the extra stage navigation; the mission board already shows the active task. */
 .lab-mission-track { display: none !important; }
 .lab-stage[hidden] { display: none !important; }
@@ -942,6 +948,15 @@
 .lab-stage[data-stage="prep"] .prep-tools button { flex-direction: row; min-height: 78px; padding: 7px 10px; font-size: 14px; text-align: left; }
 .lab-stage[data-stage="prep"] .prep-tools button img { flex: 0 0 64px; width: 64px; height: 58px; }
 .lab-stage[data-stage="prep"] .prep-tools button span { max-width: 150px; line-height: 1.25; }
+.lab-stage[data-stage="prep"] .prep-tools button { position: relative; border-color: #c9d9e8; background: #eaf0f6; color: #657b91; box-shadow: none; }
+.lab-stage[data-stage="prep"] .prep-tools button .prep-action-copy { display: flex; flex-direction: column; gap: 6px; max-width: none; }
+.prep-action-copy b { font-size: 14px; line-height: 1.3; }
+.prep-action-copy small { font-size: 11px; font-weight: 600; line-height: 1.4; }
+.lab-stage[data-stage="prep"] .prep-tools button.is-current { border-color: #006bdc; background: linear-gradient(145deg, #138df7, #0069da); color: #fff; cursor: pointer; box-shadow: 0 4px 0 #0454af, 0 7px 16px #0879ef30; }
+.lab-stage[data-stage="prep"] .prep-tools button.is-current:hover { background: linear-gradient(145deg, #087be6, #0059bd); transform: translateY(-2px); }
+.lab-stage[data-stage="prep"] .prep-tools button.is-current:active { transform: translateY(2px); box-shadow: 0 2px 0 #0454af; }
+.lab-stage[data-stage="prep"] .prep-tools button:focus-visible { outline: 3px solid #ffbf36; outline-offset: 4px; }
+.lab-stage[data-stage="prep"] .prep-tools button.is-done { border-color: #68d8a8; background: #ddf8eb; color: #087655; opacity: 1; }
 .lab-stage[data-stage="prep"] .prep-tools + .lab-callout { margin-top: 10px; margin-bottom: 0; padding: 9px 12px; }
 
 @keyframes cable-cut-flash { 0%,100% { opacity: 0; transform: rotate(35deg) scaleY(0); } 42% { opacity: 1; transform: rotate(35deg) scaleY(1); } 58% { opacity: .8; transform: rotate(35deg) scaleY(.7); } }
@@ -1049,7 +1064,18 @@
 .lab-stage[data-stage="terminate"] .terminate-visual { display: flex; flex-direction: column; width: 100%; height: auto; overflow: visible; gap: 12px; background: #f0f8ff; border-radius: 18px; padding: 12px; }
 
 .terminate-frame-caption { display: block; padding: 8px 18px; color: #124c80; background: #fff; border-radius: 20px; font-size: 14px; font-weight: 700; text-align: center; }
-.topology-workbench { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 270px); align-items: center; gap: 18px; max-width: 1100px; margin: 10px auto 0; }
+.topology-workbench { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 270px); align-items: center; gap: 18px; max-width: 1100px; margin: 10px auto 0; }
+.topology-drag-cue[hidden] { display: none; }
+.topology-drag-cue { position: absolute; z-index: 5; inset: 0; pointer-events: none; }
+.topology-drag-cue__path { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.topology-drag-cue__path > path { fill: none; stroke: #087cf0; stroke-width: 3; stroke-dasharray: 7 7; }
+.topology-drag-cue__path marker path { fill: none; stroke: #087cf0; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.topology-drag-cue__path circle { fill: #e7f5ff80; stroke: #087cf0; stroke-width: 2; stroke-dasharray: 4 4; }
+.topology-drag-cue__hand { position: absolute; width: 44px; height: 44px; animation: topology-drag-hand 3.4s ease-in-out infinite; }
+.topology-drag-cue__hand svg { position: absolute; top: -8px; left: -16px; width: 44px; height: 44px; overflow: visible; fill: #fff; stroke: #155bb1; stroke-width: 2; stroke-linejoin: round; filter: drop-shadow(0 3px 4px #134b7b50); }
+.topology-drag-cue__label { position: absolute; padding: 6px 10px; border: 1px solid #8dc8ff; border-radius: 16px; color: #0757a4; background: #f5fbff; box-shadow: 0 3px 9px #164c7c20; font-size: 11px; font-weight: 800; transform: translateX(-50%); white-space: nowrap; }
+@keyframes topology-drag-hand { 0%, 8% { opacity: 0; transform: translate(0, 0) scale(1.1); } 15%, 25% { opacity: 1; transform: translate(0, 0) scale(.95); } 70%, 80% { opacity: 1; transform: translate(var(--topology-drag-x), var(--topology-drag-y)) scale(.95); } 90%, 100% { opacity: 0; transform: translate(var(--topology-drag-x), var(--topology-drag-y)) scale(1.1); } }
+@media (prefers-reduced-motion: reduce) { .topology-drag-cue__hand { animation: none; } }
 .topology-hap { position: relative; width: min(100%, 690px); margin: 0 auto 20px; }
 .topology-hap > img { display: block; width: 100%; height: auto; }
 .topology-socket { position: absolute; top: 64%; width: 10%; height: 16%; padding: 0; border: 2px dashed #7bd2ff; border-radius: 5px; background: #009dff12; cursor: pointer; transition: border-color .2s ease, background .2s ease, box-shadow .2s ease; }
@@ -1063,12 +1089,16 @@
 .topology-socket.is-connected > b { color: #08704d; background: #e5fff3; transform: translate(-50%, 22px); }
 .topology-socket.is-wrong { border-color: #ff5252; box-shadow: 0 0 0 3px #ff525244; }
 .topology-actions { display: grid; gap: 12px; align-content: center; }
+.topology-drag-hint { margin: 0; padding: 10px 12px; border: 1px solid #7bc4ff; border-radius: 10px; color: #0757a4; background: #e7f5ff; font-size: 12px; font-weight: 800; line-height: 1.4; }
 .topology-actions > .lab-button { width: 100%; justify-content: center; }
 .topology-cables { display: grid; gap: 9px; }
-.topology-cables button { display: grid; grid-template-columns: 48px minmax(0, 1fr); grid-template-rows: auto auto; align-items: center; gap: 0 9px; min-height: 68px; padding: 7px 10px; border: 2px solid #c0dff5; border-radius: 12px; color: #153b65; background: #fff; font: inherit; text-align: left; cursor: grab; touch-action: manipulation; }
-.topology-cables button:active { cursor: grabbing; }.topology-cables button.is-selected { border-color: #0079ed; background: #e8f6ff; }.topology-cables button.is-connected { border-color: #73cc9a; background: #f4fff8; }
+.topology-cables button { display: grid; grid-template-columns: 48px minmax(0, 1fr); grid-template-rows: auto auto; align-items: center; gap: 0 9px; min-height: 68px; padding: 7px 10px; border: 2px solid #064998; border-radius: 12px; color: #fff; background: #086bd8; box-shadow: 0 4px 0 #064998, 0 7px 10px #0737642e; font: inherit; text-align: left; cursor: grab; touch-action: manipulation; }
+.topology-cables button:active { cursor: grabbing; transform: translateY(3px); box-shadow: 0 1px 0 #064998; }.topology-cables button.is-selected { border-color: #fff; }.topology-cables button.is-connected { border-color: #064998; }
+.topology-cables button { position: relative; transition: border-color .2s, box-shadow .2s, transform .2s; }
+.topology-cables button:hover:not(.is-connected), .topology-cables button:focus-visible { border-color: #fff; box-shadow: 0 5px 0 #064998, 0 8px 12px #0737643d; transform: translateY(-1px); }
+.topology-cables button.is-hint-source { border-color: #fff; box-shadow: 0 4px 0 #064998, 0 7px 10px #0737642e; }
 .topology-cables img { grid-row: 1 / 3; width: 48px; height: 48px; object-fit: contain; pointer-events: none; }
-.topology-cables span { align-self: end; font-size: 13px; font-weight: 800; }.topology-cables small { align-self: start; color: #5a7490; font-size: 10px; }
+.topology-cables span { align-self: end; font-size: 13px; font-weight: 800; }.topology-cables small { align-self: start; color: #fff; font-size: 10px; }
 @container (max-width: 800px) { .topology-workbench { grid-template-columns: 1fr; gap: 4px; }.topology-hap { width: min(100%, 560px); margin-bottom: 16px; }.topology-cables { grid-template-columns: repeat(3, minmax(0, 1fr)); }.topology-cables button { grid-template-columns: 1fr; justify-items: center; padding: 6px 4px; text-align: center; }.topology-cables img { grid-row: auto; width: 36px; height: 34px; }.topology-cables span { font-size: 11px; }.topology-cables small { font-size: 9px; } }
 .pc-screen__desktop button img { width: 56px; height: 56px; object-fit: contain; }
 .winbox-login__logo img { width: 74px; height: 74px; object-fit: contain; margin: 10px auto; }
@@ -1553,6 +1583,7 @@
 .topology-socket__connector::after { content: ''; position: absolute; top: 75%; left: 32%; width: 36%; height: 140%; border-radius: 0 0 8px 8px; background: linear-gradient(90deg, #0060ac, #22a7fa 42%, #087ac7 75%, #005c9c); box-shadow: 1px 2px 2px #002b5540; }
 .topology-socket.is-connected .topology-socket__connector { opacity: 1; transform: translateY(0); }
 .topology-socket.is-connected { border-style: solid; border-color: #65b8e7; background: transparent; box-shadow: 0 0 0 1px #d9efff; }
+.topology-socket.is-hint-target { border: 3px solid #0086ff; background: #48b8ff55; box-shadow: 0 0 0 5px #75caff88, 0 0 18px #0086ff; }
 .topology-socket.is-correct { border-color: #18be79; box-shadow: 0 0 0 1px #d9fff0; }
 .topology-socket.is-connected > b { transform: translate(-50%, 28px); }
 .lab-guide ol.is-preparation-checklist .topology-checklist__instruction { font-size: 12px; font-weight: 500; color: #42638f; background: #edf7ff; }
@@ -1641,11 +1672,26 @@
 .simulation-monitor--classic .routeros nav .winbox-ip-menu, .ch2-scene .ch2-monitor .ch2-nav .winbox-ip-menu { top: 6px; width: 210px; max-height: calc(100% - 12px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 .simulation-monitor--classic .routeros nav .winbox-ip-menu > *, .ch2-scene .ch2-monitor .ch2-nav .winbox-ip-menu > * { display: flex; align-items: center; gap: 7px; height: 22px; min-height: 22px; padding: 2px 8px; color: #273d4b; font: 12px Tahoma, sans-serif; }
 /* Complete the PC end of the router cable before powering on. */
-.pc-lan-workbench { display: grid; grid-template-columns: minmax(240px, .9fr) minmax(260px, 1fr); align-items: center; gap: clamp(24px, 4vw, 64px); width: min(920px, 100%); margin: 0 auto; padding: 8px 20px 24px; }
+.pc-lan-workbench { position: relative; display: grid; grid-template-columns: minmax(240px, .9fr) minmax(260px, 1fr); align-items: center; gap: clamp(24px, 4vw, 64px); width: min(920px, 100%); margin: 0 auto; padding: 8px 20px 24px; }
 .pc-lan-computer { display: grid; justify-items: center; gap: 10px; }
 .pc-lan-computer__label { color: #5e7697; font-size: 11px; font-weight: 800; letter-spacing: .13em; }
-.pc-lan-computer__image { position: relative; width: min(100%, 350px, calc(66dvh - 180px)); }
+.pc-lan-computer__viewport { width: min(100%, 350px, calc(66dvh - 180px)); aspect-ratio: 2 / 3; overflow: hidden; border-radius: 18px; }
+.pc-lan-computer__image { position: relative; width: 100%; transform-origin: 34% 58%; transition: transform 1.25s cubic-bezier(.2,.75,.2,1); }
+.pc-lan-workbench.is-zoomed .pc-lan-computer__image { transform: translate(16%, -8%) scale(2.2); }
 .pc-lan-computer__image > img { display: block; width: 100%; height: auto; border-radius: 18px; }
+.pc-lan-workbench:not(.is-zoom-complete) .pc-lan-socket, .pc-lan-workbench:not(.is-zoom-complete) .pc-lan-usb { visibility: hidden; pointer-events: none; }
+.pc-lan-actions { transition: opacity .35s ease; }
+.pc-lan-workbench:not(.is-zoom-complete) .pc-lan-actions { visibility: hidden; opacity: 0; pointer-events: none; }
+.pc-lan-workbench.is-zoomed .pc-lan-socket__label { transform: scale(.58); transform-origin: left center; }
+.pc-lan-drag-cue[hidden] { display: none; }
+.pc-lan-drag-cue { position: absolute; z-index: 5; inset: 0; pointer-events: none; }
+.pc-lan-drag-cue__path { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.pc-lan-drag-cue__path > path { fill: none; stroke: #087cf0; stroke-width: 3; stroke-dasharray: 7 7; }
+.pc-lan-drag-cue__path marker path { fill: none; stroke: #087cf0; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.pc-lan-drag-cue__path circle { fill: #e7f5ff80; stroke: #087cf0; stroke-width: 2; stroke-dasharray: 4 4; }
+.pc-lan-drag-cue__hand { position: absolute; width: 44px; height: 44px; animation: topology-drag-hand 3.4s ease-in-out infinite; }
+.pc-lan-drag-cue__hand svg { position: absolute; top: -8px; left: -16px; width: 44px; height: 44px; overflow: visible; fill: #fff; stroke: #155bb1; stroke-width: 2; stroke-linejoin: round; filter: drop-shadow(0 3px 4px #134b7b50); }
+.pc-lan-drag-cue__label { position: absolute; padding: 6px 10px; border: 1px solid #8dc8ff; border-radius: 16px; color: #0757a4; background: #f5fbff; box-shadow: 0 3px 9px #164c7c20; font-size: 11px; font-weight: 800; transform: translateX(-50%); white-space: nowrap; }
 .pc-lan-socket { position: absolute; left: 33.8%; top: 54.6%; display: block; width: 8.6%; height: 6%; min-height: 30px; margin: 0; padding: 0; border: 2px solid #53c4ff; border-radius: 5px; background: transparent; box-shadow: 0 0 0 3px #27aaff25; cursor: pointer; }
 .pc-lan-socket__label { position: absolute; top: 10%; left: calc(100% + 12px); width: max-content; padding: 6px 10px; border: 1px solid #98d9ff; border-radius: 8px; background: #effaff; color: #0860a4; font-size: 11px; font-weight: 900; pointer-events: none; }
 .pc-lan-socket__label::before { position: absolute; top: 50%; right: 100%; width: 13px; height: 2px; background: #53c4ff; content: ''; }
@@ -1661,16 +1707,32 @@
 .pc-lan-eyebrow { color: #087bd8; font-size: 11px; font-weight: 900; letter-spacing: .1em; }
 .pc-lan-actions h3 { margin: 10px 0 14px; color: #102c59; font-size: clamp(22px, 2vw, 30px); }
 .pc-lan-actions > p { color: #496587; font-size: 16px; line-height: 1.6; }
-.pc-lan-cable { display: flex; width: 100%; align-items: center; gap: 18px; margin: 22px 0 16px; padding: 18px; border: 2px solid #b7dfff; border-radius: 18px; background: #fff; color: #153d69; text-align: left; cursor: grab; box-shadow: 0 8px 24px #134b8812; }
+.pc-lan-cable { display: flex; width: 100%; align-items: center; gap: 18px; margin: 22px 0 16px; padding: 18px; border: 2px solid #064998; border-radius: 18px; background: #086bd8; color: #fff; text-align: left; cursor: grab; box-shadow: 0 4px 0 #064998, 0 7px 10px #0737642e; }
 .pc-lan-cable img { width: 80px; height: 70px; object-fit: contain; }
 .pc-lan-cable span { display: grid; gap: 7px; }
 .pc-lan-cable b { font-size: 16px; }
-.pc-lan-cable small { color: #6284a4; font-size: 13px; line-height: 1.4; }
-.pc-lan-cable[aria-pressed="true"] { border-color: #ffbf36; background: #fff9e8; }
-.is-connected .pc-lan-cable { border-color: #6cd2a5; background: #edfcf4; cursor: default; opacity: 1; }
+.pc-lan-cable small { color: #fff; font-size: 13px; line-height: 1.4; }
+.pc-lan-cable[aria-pressed="true"] { border-color: #fff; }
+.is-connected .pc-lan-cable { border-color: #064998; cursor: default; opacity: 1; }
 .pc-lan-status { padding: 12px 16px; border: 1px solid #d7e6f3; border-radius: 12px; background: #edf5fc; }
 .is-connected .pc-lan-status { border-color: #8ddbb8; background: #e5faef; color: #08764e; }
 .pc-lan-actions .pc-lan-power-note { color: #7890a6; font-size: 13px; }
 @keyframes pc-lan-insert { from { opacity: .3; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 800px) { .pc-lan-workbench { grid-template-columns: minmax(170px, .8fr) minmax(180px, 1fr); gap: 18px; padding-inline: 0; }.pc-lan-cable { flex-direction: column; align-items: flex-start; padding: 12px; }.pc-lan-actions > p { font-size: 14px; } }
-@media (prefers-reduced-motion: reduce) { .is-connected .pc-lan-inserted { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .is-connected .pc-lan-inserted { animation: none; }.pc-lan-computer__image, .pc-lan-actions, .pc-lan-drag-cue__hand { animation: none; transition: none; } }
+
+.lab-board[data-current-stage="pc"] .lab-board__body { padding: 0; overflow: hidden; background: #101820; }
+.lab-stage[data-stage="pc"] { height: 100%; min-height: 440px; }
+.lab-stage[data-stage="pc"] .pc-scene { box-sizing: border-box; display: block; width: 100%; height: 100%; min-height: 440px; padding: 12px; background: #1d2b3e; }
+.lab-stage[data-stage="pc"] .pc-monitor { width: 100%; height: 100%; }
+.lab-stage[data-stage="pc"] .pc-screen { box-sizing: border-box; width: 100%; height: 100%; border: 12px solid #1a2533; border-bottom-width: 22px; border-radius: 15px; background: #030609; box-shadow: inset 0 0 0 2px #465a70, 0 0 0 2px #0b111b; }
+.lab-stage[data-stage="pc"] .pc-screen__off { color: #a8b5c4; font-size: clamp(18px, 2vw, 26px); font-weight: 700; letter-spacing: .2em; }
+.pc-power[hidden] { display: none !important; }
+.pc-power { display: flex; align-items: center; justify-content: center; gap: 13px; width: 100%; min-height: 74px; margin: 8px 0 16px; padding: 10px 14px; border: 2px solid #091728; border-radius: 15px; color: #fff; background: #20344c; box-shadow: 0 5px 0 #0a1725, inset 0 1px 0 #5d7188; font: inherit; font-weight: 800; cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
+.pc-power__switch { display: grid; place-items: center; flex: none; width: 48px; height: 48px; border: 2px solid #526a82; border-radius: 50%; color: #b8d5ee; background: #101d2c; box-shadow: inset 0 3px 6px #0008, 0 2px 1px #06111c; font-size: 27px; line-height: 1; }
+.pc-power .pc-power__label { font-size: 15px; }
+.pc-power:hover:not(:disabled) { border-color: #1779d0; }
+.pc-power:hover:not(:disabled) .pc-power__switch { color: #fff; border-color: #3f9aec; }
+.pc-power:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 1px 0 #0a1725, inset 0 2px 4px #0007; }
+.pc-power:focus-visible { outline: 3px solid #70baff; outline-offset: 3px; }
+.pc-power:disabled { cursor: wait; opacity: .75; }

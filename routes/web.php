@@ -25,6 +25,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->n
 Route::view('/homepage', 'homepage')->middleware(['auth', 'active'])->name('homepage');
 Route::view('/adventure', 'adventure')->middleware(['auth', 'active'])->name('adventure');
 Route::get('/certification', [CertificationController::class, 'show'])->middleware(['auth', 'active'])->name('certification');
+Route::get('/certification/sertifikat', [CertificationController::class, 'certificate'])->middleware(['auth', 'active'])->name('certification.certificate');
 Route::post('/certification/{attempt}/check', [CertificationController::class, 'check'])->middleware(['auth', 'active', 'throttle:10,1'])->name('certification.check');
 Route::get('/practice', [PracticeController::class, 'show'])->middleware(['auth', 'active'])->name('practice');
 Route::post('/practice/{attempt}/check', [PracticeController::class, 'check'])->middleware(['auth', 'active', 'throttle:20,1'])->name('practice.check');

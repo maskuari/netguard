@@ -90,6 +90,12 @@
 .ch2-vlan-edit-main .ch2-window-content { display: grid; grid-template-columns: 1fr; gap: 7px; padding: 11px 13px; }
 .ch2-vlan-edit-main .ch2-window-content label { display: grid; grid-template-columns: 94px minmax(0,1fr); grid-column: 1; gap: 7px; min-height: 27px; }
 .ch2-vlan-edit-main .ch2-window-content input,.ch2-vlan-edit-main .ch2-window-content select { min-height: 26px; }
+.ch2-scene .ch2-vlan-edit-main .ch2-window-content label.ch2-vlan-service-tag { display: grid; grid-template-columns: 87px minmax(0,1fr); align-items: center; }
+.ch2-scene .ch2-vlan-edit-main .ch2-window-content label.ch2-vlan-service-tag > span { grid-column: 1; justify-self: end; text-align: right; }
+.ch2-scene .ch2-vlan-edit-main .ch2-window-content label.ch2-vlan-service-tag > input[type="checkbox"] { grid-column: 2; justify-self: start; align-self: center; position: static; transform: none; width: 14px !important; min-width: 14px !important; height: 14px !important; min-height: 14px !important; margin: 0 !important; padding: 0 !important; accent-color: #1678c8; }
+.ch2-scene [data-window="vlan-edit"] .ch2-window-content label.ch2-vlan-service-tag { grid-column: 1 / -1; grid-template-columns: 87px minmax(0,1fr); justify-items: stretch; }
+.ch2-scene [data-window="vlan-edit"] .ch2-window-content label.ch2-vlan-service-tag > span { grid-column: 1; }
+.ch2-scene [data-window="vlan-edit"] .ch2-window-content label.ch2-vlan-service-tag > input[type="checkbox"] { grid-column: 2; }
 .ch2-vlan-edit-actions { display: flex; flex-direction: column; gap: 5px; padding-top: 7px; }
 .ch2-vlan-edit-actions button { min-height: 27px; padding: 3px 6px; border: 1px solid #999; border-radius: 1px; background: linear-gradient(#fff,#ddd); color: #222; font: 12px Arial,sans-serif; }
 .ch2-vlan-edit-actions button:first-child { border-color: #3978b7; background: linear-gradient(#f8fcff,#cfe4fb); }

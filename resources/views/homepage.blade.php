@@ -4,6 +4,7 @@
     $adventureProgress = $user->adventureProgressPercentage();
     $practiceUnlocked = $user->isPracticeUnlocked();
     $certificationUnlocked = $user->isCertificationUnlocked();
+    $certificationCompleted = $user->isCertificationCompleted();
 @endphp
 <!DOCTYPE html>
 <html lang="id" data-page="homepage">
@@ -94,17 +95,24 @@
                                     @endunless
                                     <span class="mode-card__action" aria-hidden="true"><svg class="icon"><use href="{{ $practiceUnlocked ? '#home-chevron' : '#home-lock' }}"/></svg></span>
                                 </button>
-                                <button class="mode-card mode-card--certification" type="button" data-home-panel="certification" data-practice-url="{{ route('certification') }}" data-mode-locked="{{ $certificationUnlocked ? 'false' : 'true' }}" aria-disabled="{{ $certificationUnlocked ? 'false' : 'true' }}" aria-haspopup="dialog" aria-controls="homepage-dialog" aria-labelledby="certification-title" aria-describedby="certification-description certification-status">
+                                <button class="mode-card mode-card--certification" type="button" data-home-panel="certification" data-practice-url="{{ route('certification') }}" data-certificate-url="{{ route('certification.certificate') }}" data-certification-completed="{{ $certificationCompleted ? 'true' : 'false' }}" data-mode-locked="{{ $certificationUnlocked ? 'false' : 'true' }}" aria-disabled="{{ $certificationUnlocked ? 'false' : 'true' }}" aria-haspopup="{{ $certificationUnlocked ? 'false' : 'dialog' }}" aria-controls="homepage-dialog" aria-labelledby="certification-title" aria-describedby="certification-description{{ !$certificationUnlocked || $certificationCompleted ? ' certification-status' : '' }}">
                                     <img class="mode-card__art" src="{{ asset('images/asset/Sertifikat.png') }}?v={{ filemtime(public_path('images/asset/Sertifikat.png')) }}" alt="" width="1254" height="1254" decoding="async" draggable="false">
                                     <span class="mode-card__copy">
                                         <span class="mode-card__title" id="certification-title">Certification Mode</span>
                                         <span class="mode-card__description" id="certification-description">Buktikan kemampuanmu dan raih sertifikat.</span>
                                     </span>
-                                    <span class="mode-card__availability" id="certification-status">
-                                        <span class="mode-card__status"><svg class="icon" aria-hidden="true"><use href="{{ $certificationUnlocked ? '#home-unlock' : '#home-lock' }}"/></svg>{{ $certificationUnlocked ? 'Mode terbuka' : 'Terkunci' }}</span>
-                                        <span class="mode-card__hint">{{ $certificationUnlocked ? 'Jelajahi tantangan sertifikasi' : 'Selesaikan seluruh Adventure' }}</span>
-                                    </span>
-                                    <span class="mode-card__action" aria-hidden="true"><svg class="icon"><use href="{{ $certificationUnlocked ? '#home-chevron' : '#home-lock' }}"/></svg></span>
+                                    @if (!$certificationUnlocked)
+                                        <span class="mode-card__availability" id="certification-status">
+                                            <span class="mode-card__status"><svg class="icon" aria-hidden="true"><use href="#home-lock"/></svg>Terkunci</span>
+                                            <span class="mode-card__hint">Selesaikan seluruh Adventure</span>
+                                        </span>
+                                    @elseif ($certificationCompleted)
+                                        <span class="mode-card__availability" id="certification-status">
+                                            <span class="mode-card__status"><svg class="icon" aria-hidden="true"><use href="#home-check"/></svg>Certification Mode selesai</span>
+                                            <span class="mode-card__hint">Sertifikat siap dicetak</span>
+                                        </span>
+                                    @endif
+                                    <span class="mode-card__action" aria-hidden="true"><svg class="icon"><use href="{{ !$certificationUnlocked ? '#home-lock' : ($certificationCompleted ? '#home-check' : '#home-chevron') }}"/></svg></span>
                                 </button>
                             </div>
                             <div class="mode-carousel__controls" aria-label="Geser mode belajar">
@@ -136,9 +144,9 @@
         <template id="home-panel-about"><div class="about-note"><span class="note-number">BELAJAR JARINGAN, SELANGKAH DEMI SELANGKAH</span><p>NetGuard Academy mengajakmu mengenal jaringan dan konfigurasi MikroTik melalui petualangan, latihan, dan tantangan.</p></div><div class="topic-tags"><span>Routing</span><span>Firewall</span><span>Hotspot</span><span>VLAN &amp; QoS</span></div></template>
         <template id="home-panel-resources"><ol class="resource-list"><li><span>01</span><div><h3>Dasar Jaringan</h3><p>Mengenal perangkat, alamat IP, dan topologi jaringan.</p></div></li><li><span>02</span><div><h3>Konfigurasi MikroTik</h3><p>Memahami antarmuka, DHCP, dan koneksi internet.</p></div></li><li><span>03</span><div><h3>Routing &amp; Firewall</h3><p>Mengenal pengaturan rute dan keamanan jaringan.</p></div></li><li><span>04</span><div><h3>Wireless &amp; Hotspot</h3><p>Mengenal jaringan nirkabel dan akses hotspot.</p></div></li></ol><button class="button button--outline homepage-resource-link" type="button" data-home-panel="leaderboard">Lihat Leaderboard</button></template>
         <template id="home-panel-leaderboard"><div class="about-note"><span class="note-number">PETUALANGAN AKAN SEGERA DIMULAI</span><p>Belum ada peringkat untuk ditampilkan. Leaderboard akan tersedia saat misi dan penilaian sudah dibuka.</p></div></template>
-        <template id="home-panel-help"><div class="help-list"><details open><summary>Bagaimana cara memilih mode?</summary><p>Pilih Adventure Mode untuk melihat lima chapter. Pilih Practice untuk mengerjakan studi kasus acak setelah mode terbuka. Kartu Certification menampilkan informasi sertifikasi.</p></details><details><summary>Apakah misi sudah bisa dimainkan?</summary><p>Adventure berisi praktik per chapter. Practice terbuka setelah Chapter 3 dan langsung menampilkan satu kasus acak. Certification masih disiapkan.</p></details><details><summary>Bagaimana tampilan di HP?</summary><p>Tampilan menyesuaikan ke posisi landscape. Pilih kartu mode di bagian bawah untuk melihat rinciannya.</p></details></div></template>
+        <template id="home-panel-help"><div class="help-list"><details open><summary>Bagaimana cara memilih mode?</summary><p>Pilih Adventure Mode untuk melihat lima chapter. Pilih Practice untuk mengerjakan studi kasus acak setelah mode terbuka. Certification berisi ujian konfigurasi jaringan lengkap.</p></details><details><summary>Apakah misi sudah bisa dimainkan?</summary><p>Adventure berisi praktik per chapter. Practice terbuka setelah Chapter 3. Certification terbuka setelah seluruh Adventure selesai dan sertifikat dapat dicetak setelah konfigurasi dinyatakan benar.</p></details><details><summary>Bagaimana tampilan di HP?</summary><p>Tampilan menyesuaikan ke posisi landscape. Pilih kartu mode di bagian bawah untuk melihat rinciannya.</p></details></div></template>
         <template id="home-panel-practice"><div class="about-note"><span class="note-number">PRACTICE MODE · SATU KASUS ACAK</span><p>Kerjakan satu studi kasus acak dari Chapter 1–5. Susun konfigurasi, kumpulkan jawaban, lalu lihat hasil dan daftar koreksinya.</p></div><div class="topic-tags"><span>Konfigurasi IP</span><span>DHCP</span><span>Routing</span></div></template>
-        <template id="home-panel-certification"><div class="about-note"><span class="note-number">CERTIFICATION MODE · SEGERA HADIR</span><p>Uji pemahaman dan keterampilan konfigurasi melalui tantangan khusus. Ujian dan penerbitan sertifikat belum dibuka.</p></div><div class="topic-tags"><span>Uji kemampuan</span><span>Tantangan khusus</span><span>Sertifikat</span></div></template>
+        <template id="home-panel-certification"><div class="about-note"><span class="note-number">CERTIFICATION MODE · UJIAN KONFIGURASI LENGKAP</span><p>Bangun jaringan kantor dari perakitan kabel, pengujian LAN, hingga konfigurasi hAP dan hEX. Jika seluruh kebutuhan studi kasus terpenuhi, sertifikat penyelesaian tersedia untuk dicetak.</p></div><div class="topic-tags"><span>Perakitan kabel</span><span>Konfigurasi MikroTik</span><span>Sertifikat</span></div></template>
         <template id="home-panel-practice-locked"><div class="about-note"><span class="note-number">SELESAIKAN CHAPTER 3</span><p>Practice Mode terbuka setelah kamu menyelesaikan tiga chapter pertama Adventure. Progres saat ini: {{ $completedChapters }} dari 5 chapter selesai.</p></div><a class="button button--outline homepage-resource-link" href="{{ route('adventure') }}" data-page-link="adventure">Lanjutkan Adventure</a></template>
         <template id="home-panel-certification-locked"><div class="about-note"><span class="note-number">SELESAIKAN ADVENTURE</span><p>Certification Mode terbuka setelah seluruh lima chapter Adventure selesai. Progres saat ini: {{ $completedChapters }} dari 5 chapter selesai.</p></div><a class="button button--outline homepage-resource-link" href="{{ route('adventure') }}" data-page-link="adventure">Lanjutkan Adventure</a></template>
         @include('game-music-player')

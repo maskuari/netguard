@@ -6,17 +6,27 @@ const vm = require('node:vm');
 
 const boot = (hasPracticeNotice = true) => {
     const notice = { hidden: true };
+    const scoreFields = Object.fromEntries(['[data-score-percent]', '[data-score-correct]', '[data-score-incorrect]'].map((selector) => [selector, { textContent: '' }]));
+    const scorePanel = { querySelector: (selector) => scoreFields[selector] };
     const context = {
         window: {},
         document: {
-            querySelector: (selector) => selector === '[data-practice-unlocked]' && hasPracticeNotice ? notice : null,
+            querySelector: (selector) => selector === '[data-practice-unlocked]' && hasPracticeNotice ? notice : selector === '[data-quiz-score]' ? scorePanel : null,
             querySelectorAll: () => [],
         },
     };
     vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../public/js/chapter-evaluation.js'), 'utf8'), context);
 
-    return { evaluation: context.window.NetGuardEvaluation, notice };
+    return { evaluation: context.window.NetGuardEvaluation, notice, scoreFields };
 };
+
+test('evaluation result shows percentage and the number of correct and incorrect answers', () => {
+    const game = boot();
+    game.evaluation.showResult({ correctAnswers: 4, totalQuestions: 5 });
+    assert.equal(game.scoreFields['[data-score-percent]'].textContent, '80');
+    assert.equal(game.scoreFields['[data-score-correct]'].textContent, '4');
+    assert.equal(game.scoreFields['[data-score-incorrect]'].textContent, '1');
+});
 
 test('Practice opening announcement appears only for a perfect result that newly unlocks the mode', () => {
     const game = boot();
@@ -48,31 +58,31 @@ const bootExam = () => {
         querySelectorAll(selector) { const descendants = this.children.flatMap((child) => [child, ...child.querySelectorAll('*')]); return selector === '*' ? descendants : descendants.filter((node) => selector === 'input[type="radio"]' ? node.kind === 'input' : node.kind === selector); }
         querySelector(selector) { return selector === 'input:checked' ? this.querySelectorAll('input').find((node) => node.checked) : this.querySelectorAll(selector)[0]; }
     }
-    const form = new Node(), submit = new Node();
+    const form = new Node();
     const questions = Array.from({ length: 5 }, () => { const question = new Node(); question.kind = 'fieldset'; const options = new Node(); options.kind = 'div'; question.append(options); for (let index = 0; index < 4; index++) { const label = new Node(); label.kind = 'label'; const input = new Node(); input.kind = 'input'; input.value = String(index); label.append(input); options.append(label); } return question; });
-    form.append(...questions, submit);
-    const document = { querySelector: (selector) => selector === '[data-quiz-form]' ? form : selector === '[data-submit-quiz]' ? submit : null, querySelectorAll: () => [], createElement: () => new Node() };
+    form.append(...questions);
+    const document = { querySelector: (selector) => selector === '[data-quiz-form]' ? form : null, querySelectorAll: () => [], createElement: () => new Node() };
     vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../public/js/chapter-evaluation.js'), 'utf8'), { document, window: {}, queueMicrotask });
     const paper = form.children[0], sidebar = form.children[1], numbers = sidebar.children[2].children;
-    return { form, submit, questions, numbers };
+    return { form, next: paper.children.at(-1).children[1], questions, numbers };
 };
 
 test('exam marks selected answers green immediately and allows submission only when all are answered', () => {
     const exam = bootExam();
-    assert.equal(exam.submit.hidden, true);
+    assert.equal(exam.next.textContent, 'Berikutnya →');
     assert.equal(exam.questions.filter((question) => !question.hidden).length, 1);
     exam.numbers[3].emit('click'); assert.equal(exam.questions[3].hidden, false);
     for (let index = 0; index < 5; index++) {
         exam.numbers[index].emit('click');
         const input = exam.questions[index].querySelectorAll('input')[0]; input.checked = true;
         exam.form.emit('change', input);
-        assert.equal(exam.submit.hidden, index < 4);
+        assert.equal(exam.next.textContent, index === 4 ? 'Selesai' : 'Berikutnya →');
         assert.equal(exam.numbers[index].classes.has('is-confirmed'), true);
     }
-    assert.equal(exam.submit.hidden, false);
+    assert.equal(exam.next.disabled, false);
     const input = exam.questions[2].querySelectorAll('input')[0]; exam.form.emit('change', input);
-    assert.equal(exam.submit.hidden, false); assert.equal(exam.numbers[2].classes.has('is-confirmed'), true);
+    assert.equal(exam.next.disabled, false); assert.equal(exam.numbers[2].classes.has('is-confirmed'), true);
     input.checked = false; exam.form.emit('change', input);
-    assert.equal(exam.submit.hidden, true); assert.equal(exam.numbers[2].classes.has('is-confirmed'), false);
+    assert.equal(exam.next.disabled, true); assert.equal(exam.numbers[2].classes.has('is-confirmed'), false);
     exam.questions.forEach((question) => assert.deepEqual(question.querySelectorAll('input').map((node) => node.value).sort(), ['0', '1', '2', '3']));
 });

@@ -41,7 +41,7 @@
                 if (target && Object.hasOwn(target, 'expected')) {
                     return typeof target.expected === 'boolean'
                         ? control.checked === target.expected
-                        : String(control.value).trim() === String(target.expected).trim();
+                        : normalize(control.value) === normalize(target.expected);
                 }
                 if (target?.completeWhen) return settledFields.has(control) && target.completeWhen(control);
                 if (control.type === 'checkbox') return control.checked;

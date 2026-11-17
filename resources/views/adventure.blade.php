@@ -137,10 +137,12 @@
                     <div class="chapter-track" role="tablist" aria-label="Lima chapter Adventure Mode">
                         @foreach ($chapters as $chapter)
                             @php($isChapterCompleted = $completedChapters >= (int) $chapter['number'])
-                            <article class="chapter-card{{ $loop->first ? ' is-selected' : '' }}{{ $isChapterCompleted ? ' is-completed' : '' }}" data-chapter-card="{{ $chapter['number'] }}" data-completed="{{ $isChapterCompleted ? 'true' : 'false' }}">
+                            @php($isChapterLocked = (int) $chapter['number'] > $completedChapters + 1)
+                            <article class="chapter-card{{ $loop->first ? ' is-selected' : '' }}{{ $isChapterCompleted ? ' is-completed' : '' }}{{ $isChapterLocked ? ' is-locked' : '' }}" data-chapter-card="{{ $chapter['number'] }}" data-completed="{{ $isChapterCompleted ? 'true' : 'false' }}" data-locked="{{ $isChapterLocked ? 'true' : 'false' }}">
                                 <button class="chapter-card__select" type="button" role="tab" id="chapter-tab-{{ $chapter['number'] }}" aria-controls="chapter-panel-{{ $chapter['number'] }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}" tabindex="{{ $loop->first ? '0' : '-1' }}" data-chapter="{{ $chapter['number'] }}" aria-label="Pilih Chapter {{ $chapter['number'] }}: {{ $chapter['short'] }}{{ $isChapterCompleted ? ' · Selesai' : '' }}">
                                     <span class="chapter-card__visual"><img src="{{ asset('images/asset/'.$chapter['detail_image']) }}" alt="" width="1254" height="1254" decoding="async" draggable="false"></span>
                                     <span class="chapter-card__badge">CHAPTER {{ $chapter['number'] }}</span>
+                                    @if ($isChapterLocked)<span class="chapter-card__locked" aria-hidden="true"><svg class="icon"><use href="#chapter-lock"/></svg></span>@endif
                                     @if ($isChapterCompleted)<span class="chapter-card__completion" aria-hidden="true"><svg class="icon"><use href="#chapter-check"/></svg>Selesai</span>@endif
                                     <span class="chapter-card__content"><strong>{{ $chapter['short'] }}</strong><span>{{ $chapter['summary'] }}</span><span class="chapter-card__progress" aria-hidden="true"><span></span></span></span>
                                 </button>

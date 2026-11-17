@@ -614,7 +614,7 @@
     };
     const mainAction = () => {
         if (state.stage === 'intro') return showConcept('vlan');
-        if (state.stage === 'finish') return finishDialog.showModal();
+        if (state.stage === 'finish') return evaluation.showFinish();
         if (state.stage === 'quiz') return quizDialog.showModal();
         if (isCurrentTaskDone()) {
             const following = { vlan: 'wan', wan: 'addresses', addresses: 'dhcp', dhcp: 'recap' };
@@ -691,10 +691,6 @@
     };
     navbar.bindPrevious(goToPreviousStep);
     document.querySelectorAll('[data-previous]').forEach((button) => button.addEventListener('click', goToPreviousStep));
-    document.querySelector('[data-save]').addEventListener('click', () => {
-        const savedNow = persist();
-        message(savedNow ? 'Progres tahap ini tersimpan di browser. Hasil chapter tersimpan di akun setelah evaluasi.' : 'Penyimpanan browser tidak tersedia. Selesaikan evaluasi agar hasil tersimpan di akun.', savedNow ? 'success' : 'error');
-    });
     persistedFields.forEach((field) => field.addEventListener('input', persist));
     document.querySelectorAll('.ch2-quiz-dialog input').forEach((field) => field.addEventListener('change', persist));
 
@@ -1320,7 +1316,7 @@
         } else message('Lanjutkan tahap ini melalui menu WinBox. Progresmu tetap tersimpan.', 'info');
     });
     document.querySelector('[data-close-quiz]').addEventListener('click', () => quizDialog.close());
-    document.querySelector('[data-close-finish]').addEventListener('click', () => finishDialog.close());
+    document.querySelector('[data-close-finish]').addEventListener('click', () => quizDialog.close());
     document.querySelector('[data-quiz-form]').addEventListener('submit', async (event) => {
         event.preventDefault();
         const selections = [1, 2, 3, 4, 5].map((number) => document.querySelector(`input[name="answer-${number}"]:checked`));
@@ -1338,7 +1334,7 @@
                 quizDialog.scrollTo({ top: 0, behavior: 'auto' });
                 return;
             }
-            scene.dataset.completed = 'true'; quizDialog.close(); setStage('finish', false); finishDialog.showModal();
+            scene.dataset.completed = 'true'; setStage('finish', false); evaluation.showFinish();
             message('Hebat! Chapter 2 selesai dan progres tersimpan di akun.', 'success');
         } catch { evaluation.showError('Hasil belum tersimpan. Periksa koneksi lalu coba lagi.'); }
         finally { submit.disabled = false; }
@@ -1426,8 +1422,27 @@
                 }),
             ];
         }
-        const text = state.stage === 'intro' ? 'Ikuti percakapan Pak Amat tentang jaringan sekolah. Setelah penjelasan VLAN muncul, klik Mulai praktik di WinBox.\n\nPetunjuk akan tampil satu per satu sesuai tindakanmu di menu WinBox.' : state.stage === 'quiz' ? 'Pilih satu jawaban untuk setiap soal, lalu klik Simpan hasil Chapter 2. Jika ada jawaban salah, perbaiki lalu kirim kembali.' : 'Chapter 2 selesai. Lihat hasil evaluasi atau kembali ke peta chapter melalui panah kiri pada navbar.';
+        const text = state.stage === 'intro' ? 'Ikuti percakapan Pak Amat tentang jaringan sekolah. Setelah penjelasan VLAN muncul, klik Mulai praktik di WinBox.\n\nPetunjuk akan tampil satu per satu sesuai tindakanmu di menu WinBox.' : state.stage === 'quiz' ? 'Pilih satu jawaban untuk setiap soal, lalu klik Selesai. Jika ada jawaban salah, perbaiki lalu kirim kembali.' : 'Chapter 2 selesai. Lihat hasil evaluasi atau kembali ke peta chapter melalui panah kiri pada navbar.';
         return [[text, state.stage === 'finish']];
     };
     progressiveGuide = window.NetGuardStepGuide.create({ list: document.querySelector('[data-guide-list]'), getKey: () => state.stage + ':' + resetRevision, getPlan: getChapterTwoGuidePlan, root: scene });
+    navbar.bindAutosave?.(persist);
+    navbar.bindMissions?.({
+        storageKey, completed: completionOnServer, getCurrent: () => stages.indexOf(state.stage) - 1,
+        isComplete: () => state.stage === 'finish',
+        getUnlocked: () => state.highest - 1,
+        missions: [
+            { stage: 'vlan', title: 'Membuat VLAN', description: 'Buat interface VLAN siswa dan guru pada jalur trunk router.' },
+            { stage: 'wan', title: 'DHCP Client internet', description: 'Siapkan DHCP Client untuk memperoleh konfigurasi dari ISP.' },
+            { stage: 'addresses', title: 'Alamat IP gateway', description: 'Tambahkan alamat IP untuk jaringan lokal, siswa, guru, dan Wi-Fi.' },
+            { stage: 'dhcp', title: 'DHCP Server', description: 'Siapkan pool dan DHCP Server agar setiap klien mendapat IP yang sesuai.' },
+        ],
+        replay(destination) {
+            document.querySelectorAll('dialog[open]').forEach((node) => node.close());
+            finishDialogueTyping(); dialogue.hidden = true; dialogueContinue = null;
+            chapterPrologue.hidden = true; scene.classList.remove('is-prologue'); labSurface.inert = false;
+            pendingStage = null; windows.forEach((node, name) => closeWindow(name));
+            resetFromStage(destination); setStage(destination, false); showConcept(destination);
+        },
+    });
 })();

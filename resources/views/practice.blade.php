@@ -14,6 +14,7 @@
     @endforeach
     <script src="{{ asset('js/practice-simulator.js') }}?v={{ filemtime(public_path('js/practice-simulator.js')) }}" defer></script>
     <script src="{{ asset('js/practice.js') }}?v={{ filemtime(public_path('js/practice.js')) }}" defer></script>
+    <script src="{{ asset('js/winbox-enter-ok.js') }}?v={{ filemtime(public_path('js/winbox-enter-ok.js')) }}" defer></script>
     @if ($certification)<link rel="stylesheet" href="{{ asset('css/certification.css') }}?v={{ filemtime(public_path('css/certification.css')) }}">@endif
     @include('device-layout')
 </head>
@@ -67,10 +68,18 @@
     </div>
 </dialog>
 @else
-<dialog class="certification-instructions" data-case-dialog aria-labelledby="certification-instructions-title"><header><div><small>CERTIFICATION MODE</small><h2 id="certification-instructions-title">Jaringan Kantor Nusantara</h2><p>Baca kebutuhan berikut. Urutan pengerjaan dan konfigurasi kamu tentukan sendiri.</p></div><button type="button" data-certification-detail-close aria-label="Tutup detail instruksi">&times;</button></header><div class="certification-instructions-body">@foreach ($scenario['sections'] as $section)<section><h3>{{ $loop->iteration }}. {{ $section['title'] }}</h3><ul>@foreach ($section['items'] as $item)<li>{{ $item }}</li>@endforeach</ul></section>@endforeach</div><footer><button class="ch2-task-button" type="button" data-certification-detail-close>Mulai / kembali ke konfigurasi</button></footer></dialog>
+<dialog class="certification-instructions" data-case-dialog aria-labelledby="certification-instructions-title"><header><div><small>CERTIFICATION MODE</small><h2 id="certification-instructions-title">Jaringan Kantor Nusantara</h2><p>Ikuti langkah konfigurasi secara berurutan. Nilai yang diminta mengikuti studi kasus ini.</p></div><button type="button" data-certification-detail-close aria-label="Tutup detail instruksi">&times;</button></header><div class="certification-instructions-body">
+    @foreach ($scenario['sections'] as $section)
+        @if ($loop->first)
+            <section class="certification-case-summary"><h3>Studi kasus</h3><ul>@foreach ($section['items'] as $item)<li>{{ $item }}</li>@endforeach</ul></section>
+        @else
+            <section><h3>Langkah {{ sprintf('%02d', $loop->iteration - 1) }} · {{ $section['title'] }}</h3><ol>@foreach ($section['items'] as $item)<li>{{ $item }}</li>@endforeach</ol></section>
+        @endif
+    @endforeach
+</div><footer><button class="ch2-task-button" type="button" data-certification-detail-close>Mulai / kembali ke konfigurasi</button></footer></dialog>
 @endunless
 <dialog class="practice-confirm-dialog" id="practice-submit-confirm" data-submit-confirm aria-labelledby="practice-submit-title"><h2 id="practice-submit-title">{{ $certification ? 'Selesaikan seluruh konfigurasi?' : 'Jawaban sudah selesai?' }}</h2><p>Konfigurasi yang tersimpan akan diperiksa. Setelah dikumpulkan, hasil soal ini tidak bisa diubah.</p><div class="practice-dialog-actions"><button type="button" class="ch2-task-back" data-submit-cancel>Periksa lagi</button><button type="button" class="ch2-task-button" data-submit-send>{{ $certification ? 'Ya, periksa konfigurasi' : 'Ya, selesaikan jawaban' }}</button></div><p data-submit-error role="alert"></p></dialog>
-<dialog class="practice-result-dialog" data-practice-result aria-labelledby="practice-result-title"><small>{{ $certification ? 'HASIL SERTIFIKASI' : 'HASIL PRACTICE' }}</small><h2 id="practice-result-title" data-result-title></h2><p data-result-description></p><ul data-result-errors></ul><div class="practice-dialog-actions"><a class="ch2-task-back" href="{{ route('homepage') }}">Kembali</a><a class="ch2-task-button" href="{{ route($certification ? 'certification' : 'practice', ['previous' => $scenario['id']]) }}">{{ $certification ? 'Coba lagi dari awal' : 'Coba lagi - soal baru' }}</a></div></dialog>
+<dialog class="practice-result-dialog" data-practice-result aria-labelledby="practice-result-title"><small>{{ $certification ? 'HASIL SERTIFIKASI' : 'HASIL PRACTICE' }}</small><h2 id="practice-result-title" data-result-title></h2><p data-result-description></p><ul data-result-errors></ul><div class="practice-dialog-actions"><a class="ch2-task-back" href="{{ route('homepage') }}">Kembali</a>@if ($certification)<a class="ch2-task-button certification-print-link" href="{{ route('certification.certificate') }}" data-certification-print hidden>Cetak sertifikat</a>@endif<a class="ch2-task-button" href="{{ route($certification ? 'certification' : 'practice', ['previous' => $scenario['id']]) }}">{{ $certification ? 'Coba lagi dari awal' : 'Coba lagi - soal baru' }}</a></div></dialog>
 <script type="application/json" id="practice-scenario">@json($scenario)</script>
 @include('game-music-player')
 </body>

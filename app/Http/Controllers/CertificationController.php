@@ -32,6 +32,16 @@ class CertificationController extends Controller
         return view('practice', ['scenario' => $scenario]);
     }
 
+    public function certificate(Request $request): View|RedirectResponse
+    {
+        $user = $request->user();
+        if (! $user->isCertificationCompleted()) {
+            return redirect()->route('homepage')->with('status', 'Selesaikan Certification Mode terlebih dahulu untuk mendapatkan sertifikat.');
+        }
+
+        return view('certification-certificate', ['student' => $user]);
+    }
+
     public function check(Request $request, string $attempt, CertificationEvaluator $evaluator): JsonResponse
     {
         abort_unless($request->user()->isCertificationUnlocked(), 403);
@@ -44,6 +54,13 @@ class CertificationController extends Controller
         $data = $request->validate(['state' => ['required', 'array'], 'state.devices' => ['required', 'array'], 'state.devices.hap' => ['required', 'array'], 'state.devices.hex' => ['required', 'array'], 'state.physical' => ['required', 'array']]);
         $result = $evaluator->evaluate($scenario, $data['state']);
         $request->session()->put('certification.attempts.'.$attempt.'.result', $result);
+        if ($result['correct']) {
+            $user = $request->user();
+            $user->forceFill([
+                'certification_score' => 100,
+                'certification_completed_at' => $user->certification_completed_at ?? now(),
+            ])->save();
+        }
 
         return response()->json($result);
     }

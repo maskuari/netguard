@@ -106,7 +106,14 @@
 .ch5-scene .ch2-monitor .ch5-tabs > button, .ch5-editor-main .ch2-window-tabs > button { border: 1px solid #aaa; border-bottom: 0; background: #e6e6e6; color: #111; }
 .ch5-scene .ch2-monitor .ch5-tabs > button.is-active, .ch5-editor-main .ch2-window-tabs > button.is-active { border-bottom: 2px solid #0078c9; background: #f4f4f4; }
 .ch5-editor-main .ch2-window-content > label { color: #0000c0; }
-.ch5-scene .ch5-reference, .ch5-guide > [data-reread-learning], .ch5-guide > .lab-guide__note, .ch5-guide > [data-replay-prologue] { display: none; }
+.ch5-scene .ch5-reference, .ch5-guide > .lab-guide__note { display: none; }
+.ch5-guide > [data-reread-learning] { flex: none; }
+.ch5-scene .ch2-learning-dialog h3 { margin: 20px 0 8px; font-size: 18px; color: #254d72; }
+.ch5-scene .ch2-learning-dialog p { line-height: 1.7; }
+.ch5-scene .ch2-learning-dialog table { width: 100%; margin: 18px 0; border-collapse: collapse; font-size: 14px; text-align: left; }
+.ch5-scene .ch2-learning-dialog th, .ch5-scene .ch2-learning-dialog td { padding: 12px; border: 1px solid #c9e5f5; overflow-wrap: anywhere; }
+.ch5-scene .ch2-learning-dialog th { background: #e6f6ff; color: #1762a5; }
+.ch5-scene .ch2-learning-dialog td { background: #ffffff80; }
 .ch5-connection-stage { display: flex; flex: 1; min-height: 0; flex-direction: column; overflow: auto; padding: 24px; background: linear-gradient(145deg, #f7fcff, #eaf5ff); color: #173966; }
 .ch5-connection-stage > header { flex: none; }
 .ch5-connection-stage > header > span { color: #0879ef; font-size: 12px; font-weight: 700; letter-spacing: .08em; }

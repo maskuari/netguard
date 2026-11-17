@@ -25,6 +25,7 @@
         <script src="{{ asset('js/chapter-navbar.js') }}?v={{ filemtime(public_path('js/chapter-navbar.js')) }}" defer></script>
         <link rel="stylesheet" href="{{ asset('css/chapter-step-guide.css') }}?v={{ filemtime(public_path('css/chapter-step-guide.css')) }}">
         <script src="{{ asset('js/chapter-step-guide.js') }}?v={{ filemtime(public_path('js/chapter-step-guide.js')) }}" defer></script>
+    <script src="{{ asset('js/winbox-enter-ok.js') }}?v={{ filemtime(public_path('js/winbox-enter-ok.js')) }}" defer></script>
         <link rel="stylesheet" href="{{ asset('css/lab-pc-desktop.css') }}?v={{ filemtime(public_path('css/lab-pc-desktop.css')) }}">
         <script src="{{ asset('js/lab-pc-desktop.js') }}?v={{ filemtime(public_path('js/lab-pc-desktop.js')) }}" defer></script>
         <script src="{{ asset('js/chapter-one.js') }}?v={{ filemtime(public_path('js/chapter-one.js')) }}" defer></script>
@@ -143,7 +144,7 @@
                                 </section>
 
                                 <section class="lab-stage" data-stage="prep" hidden>
-                                    <div class="task-heading"><div><span>SEBELUM MENYUSUN WARNA</span><h2>Siapkan kabel UTP</h2><p>Potong kabel, kupas jaket secukupnya, lalu luruskan inti sebelum masuk ke puzzle T568B.</p></div></div>
+                                    <div class="task-heading"><div><span>SEBELUM MENYUSUN WARNA</span><h2>Yuk, siapkan kabelnya dulu</h2><p>Klik tombol biru di bawah gambar untuk mulai. Kita potong kabel, kupas jaketnya, lalu luruskan delapan intinya.</p></div></div>
                                     <div class="prep-workbench" data-prep-workbench data-phase="coil" aria-live="polite">
                                         <div class="prep-workbench__cable-wrap">
                                             <img loading="lazy" decoding="async" class="prep-workbench__cable prep-workbench__cable--coil" src="{{ asset('images/asset/alat/utp-straight-coiled-hd.png') }}" alt="Kabel UTP biru yang masih tergulung dan belum dikupas">
@@ -157,15 +158,15 @@
                                         <div class="prep-workbench__caption"><b data-prep-visual-title>Kabel masih tergulung</b><span data-prep-visual-note>Potong kabel sesuai panjang yang dibutuhkan.</span></div>
                                     </div>
                                     <div class="prep-tools">
-                                        <button type="button" data-prep-action="cut"><img src="{{ asset('images/asset/alat/lab-scissors-real.png') }}" alt=""><span>Potong sesuai panjang</span></button>
-                                        <button type="button" data-prep-action="strip"><img src="{{ asset('images/asset/alat/lab-crimper-green.png') }}" alt=""><span>Kupas dengan bilah tang crimping</span></button>
-                                        <button type="button" data-prep-action="straighten"><img src="{{ asset('images/asset/alat/utp-prep-straight-unsorted.png') }}" alt=""><span>Urai & luruskan inti</span></button>
+                                        <button type="button" data-prep-action="cut"><img src="{{ asset('images/asset/alat/lab-scissors-real.png') }}" alt=""><span class="prep-action-copy"><b>1. Potong kabel</b><small data-prep-action-hint>Klik untuk memotong →</small></span></button>
+                                        <button type="button" data-prep-action="strip" disabled><img src="{{ asset('images/asset/alat/lab-crimper-green.png') }}" alt=""><span class="prep-action-copy"><b>2. Kupas jaket kabel</b><small data-prep-action-hint>Setelah kabel dipotong</small></span></button>
+                                        <button type="button" data-prep-action="straighten" disabled><img src="{{ asset('images/asset/alat/utp-prep-straight-unsorted.png') }}" alt=""><span class="prep-action-copy"><b>3. Luruskan inti</b><small data-prep-action-hint>Setelah jaket dikupas</small></span></button>
                                     </div>
                                     <p class="lab-callout">Hati-hati: jaket luar dikupas secukupnya tanpa melukai inti kabel.</p>
                                 </section>
 
                                 <section class="lab-stage" data-stage="wiring" data-wire-assets="{{ asset('images/asset/alat') }}" hidden>
-                                    <div class="wiring-heading"><div><span>STANDAR T568B · KABEL STRAIGHT</span><h2>Pasang inti kabel — <strong data-wire-end>Ujung A</strong></h2><p>Ikuti urutan pin 1–8. Ketuk warna sekali atau seret ke pin pada konektor.</p></div><span class="wiring-heading__badge" data-wire-count>0 / 8</span></div>
+                                    <div class="wiring-heading"><div><span>STANDAR T568B · KABEL STRAIGHT</span><h2>Susun inti kabel — <strong data-wire-end>Ujung A &amp; B</strong></h2><p>Urutan warna Ujung A dan Ujung B harus sama.</p></div><span class="wiring-heading__badge" data-wire-count>0 / 8</span></div>
                                     <div class="wiring-station">
                                         <div class="wiring-station__art">
                                             <img loading="lazy" decoding="async" src="{{ asset('images/asset/alat/rj45-wiring-board-cartoon.png') }}" alt="Ilustrasi konektor RJ45 kosong dengan delapan ruang pin di atas meja kerja">
@@ -173,7 +174,7 @@
                                             <span class="wiring-station__art-label">RJ45 · 8 PIN</span>
                                         </div>
                                         <div class="wiring-station__controls">
-                                            <div class="wiring-recall"><span>UJI INGATAN</span><b>Masih ingat urutan T568B?</b><p>Susun delapan inti sendiri. Kamu bisa mengganti warna sebelum menekan Periksa.</p></div>
+                                            <div class="wiring-recall"><span>UJUNG A = UJUNG B</span><b>Kedua ujung memakai T568B</b><p>Pada kabel straight, <strong>urutan warna Ujung A dan Ujung B harus sama</strong>. Susun delapan inti, lalu klik Periksa urutan.</p></div>
                                             <div class="wiring-station__bank-heading"><b>Pilih inti kabel</b><span data-wire-next>Ketuk warna untuk pin 1.</span></div>
                                             <div class="wire-bank" data-wire-bank aria-label="Pilihan warna inti kabel"></div>
                                             <div class="wiring-station__actions">
@@ -186,10 +187,10 @@
 
                                 <section class="lab-stage" data-stage="terminate" hidden>
                                     <div class="terminate-visual" data-terminate-visual>
-                                        <div class="terminate-frames" data-terminate-frames data-phase="trim" data-frame="0" data-frames-trim="{{ asset('images/asset/alat/rj45-trim-3d-frames-v4.png') }}" data-frames-insert="{{ asset('images/asset/alat/rj45-insert-3d-frames-v2.png') }}" data-frames-crimp="{{ asset('images/asset/alat/rj45-crimp-3d-frames-v5.png') }}" role="img" aria-label="Animasi 3D: potong rata delapan inti dengan bilah dalam tang hijau" style="background-image: url('{{ asset('images/asset/alat/rj45-trim-3d-frames-v4.png') }}')"></div>
+                                        <div class="terminate-frames" data-terminate-frames data-phase="trim" data-frame="0" data-frames-trim="{{ asset('images/asset/alat/rj45-trim-3d-frames-v5.png') }}" data-frames-insert="{{ asset('images/asset/alat/rj45-insert-3d-frames-v3.png') }}" data-frames-crimp="{{ asset('images/asset/alat/rj45-crimp-original-light-blue.png') }}" role="img" aria-label="Animasi 3D: potong rata delapan inti dengan bilah dalam tang hijau" style="background-image: url('{{ asset('images/asset/alat/rj45-trim-3d-frames-v5.png') }}')"></div>
                                         <span class="terminate-frame-caption" data-frame-caption role="status" aria-live="polite">Siap merapikan ujung kabel</span>
                                     </div>
-                                    <div class="terminate-copy"><span data-terminate-end>UJUNG A</span><h2 data-terminate-title>Rapikan dan potong rata</h2><p data-terminate-description>Potong ujung delapan inti agar panjangnya rata sebelum masuk ke konektor RJ45.</p></div>
+                                    <div class="terminate-copy"><span data-terminate-end>UJUNG A &amp; B · CARA PEMASANGAN SAMA</span><h2 data-terminate-title>Rapikan dan potong rata</h2><p data-terminate-description>Potong ujung delapan inti agar panjangnya rata sebelum masuk ke konektor RJ45.</p></div>
                                     <div class="terminate-progress"><span data-terminate-dot="0"></span><span data-terminate-dot="1"></span><span data-terminate-dot="2"></span></div>
                                     <button class="lab-button lab-button--primary" type="button" data-terminate-action>Potong rata delapan inti</button>
                                 </section>
@@ -201,7 +202,7 @@
                                 </section>
 
                                 <section class="lab-stage" data-stage="topology" hidden>
-                                    <p class="lab-callout">Seret ujung kabel ke lubang port hAP. Kamu juga bisa memilih kabel, lalu mengetuk port. Klik port yang sudah terisi untuk mencabut kabel.</p>
+                                    <p class="lab-callout">Pegang gambar RJ45 di kanan, lalu seret ke lubang ether yang menyala pada router. Di HP, ketuk kabel lalu ketuk port tujuan. Ketuk port terisi untuk melepas kabel.</p>
                                     <div class="topology-workbench">
                                         <div class="topology-hap"><img src="{{ asset('images/asset/alat/mkrotikhapport.png') }}" alt="Tampak depan MikroTik hAP dengan port Ethernet 1 sampai 4">
                                             @foreach ([1, 2, 3] as $port)
@@ -209,12 +210,18 @@
                                             @endforeach
                                         </div>
                                         <div class="topology-actions">
+                                            <p class="topology-drag-hint" data-topology-hint aria-live="polite"></p>
                                             <div class="topology-cables" aria-label="Kabel untuk dihubungkan ke router">
                                                 @foreach (['internet' => 'Internet / ISP', 'switch' => 'Port 1 hEX', 'pc' => 'PC konfigurasi'] as $cable => $label)
-                                                    <button type="button" draggable="true" data-topology-cable="{{ $cable }}" aria-pressed="false"><img src="{{ asset('images/asset/alat/rj45-single-hd.webp') }}" alt="Konektor RJ45"><span>{{ $label }}</span><small data-cable-status>Seret ke port hAP</small></button>
+                                                    <button type="button" draggable="true" data-topology-cable="{{ $cable }}" aria-pressed="false"><img src="{{ asset('images/asset/alat/rj45-single-hd.webp') }}" alt="Konektor RJ45"><span>{{ $label }}</span><small data-cable-status>Seret RJ45 ke port hAP</small></button>
                                                 @endforeach
                                             </div>
                                             <button class="lab-button lab-button--primary" type="button" data-check-topology>Periksa sambungan</button>
+                                        </div>
+                                        <div class="topology-drag-cue" data-topology-drag-cue aria-hidden="true" hidden>
+                                            <svg class="topology-drag-cue__path" data-topology-drag-path><defs><marker id="topology-drag-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M1 1 6 4 1 7"/></marker></defs><path data-topology-drag-route marker-end="url(#topology-drag-arrow)"/><circle data-topology-drag-end r="20"/></svg>
+                                            <div class="topology-drag-cue__hand" data-topology-drag-hand><svg viewBox="0 0 48 48"><path d="M17 27V9a3 3 0 0 1 6 0v13-4a3 3 0 0 1 6 0v5-3a3 3 0 0 1 6 0v5-2a3 3 0 0 1 6 0v11c0 8-5 12-12 12h-3c-5 0-8-3-11-7L7 29a3 3 0 0 1 4-4l6 5Z"/></svg></div>
+                                            <span class="topology-drag-cue__label" data-topology-drag-label></span>
                                         </div>
                                     </div>
                                 </section>
@@ -223,10 +230,12 @@
                                     <div class="pc-lan-workbench" data-pc-lan-workbench>
                                         <div class="pc-lan-computer">
                                             <span class="pc-lan-computer__label">BAGIAN BELAKANG PC</span>
-                                            <div class="pc-lan-computer__image">
-                                                <img src="{{ asset('images/asset/alat/pc-rear-lan.png') }}" alt="Bagian belakang komputer dengan soket LAN RJ45 kosong di samping port USB" width="1024" height="1536" draggable="false">
-                                                <button type="button" class="pc-lan-socket" data-pc-lan-socket aria-label="Pasang konektor RJ45 ke port LAN komputer"><span class="pc-lan-inserted" aria-hidden="true"></span><span class="pc-lan-socket__label">LAN · RJ45</span></button>
-                                                <button type="button" class="pc-lan-usb" data-pc-lan-wrong-port aria-label="Port USB komputer"></button>
+                                            <div class="pc-lan-computer__viewport">
+                                                <div class="pc-lan-computer__image">
+                                                    <img src="{{ asset('images/asset/alat/pc-rear-lan.png') }}" alt="Bagian belakang komputer dengan soket LAN RJ45 kosong di samping port USB" width="1024" height="1536" draggable="false">
+                                                    <button type="button" class="pc-lan-socket" data-pc-lan-socket aria-label="Pasang konektor RJ45 ke port LAN komputer"><span class="pc-lan-inserted" aria-hidden="true"></span><span class="pc-lan-socket__label">LAN · RJ45</span></button>
+                                                    <button type="button" class="pc-lan-usb" data-pc-lan-wrong-port aria-label="Port USB komputer"></button>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="pc-lan-actions">
@@ -237,11 +246,16 @@
                                             <p class="pc-lan-status" data-pc-lan-status role="status" aria-live="polite">Belum terhubung ke PC</p>
                                             <p class="pc-lan-power-note">Komputer masih mati. Kita nyalakan setelah kabel terpasang.</p>
                                         </div>
+                                        <div class="pc-lan-drag-cue" data-pc-lan-drag-cue aria-hidden="true" hidden>
+                                            <svg class="pc-lan-drag-cue__path" data-pc-lan-drag-path><defs><marker id="pc-lan-drag-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M1 1 6 4 1 7"/></marker></defs><path data-pc-lan-drag-route marker-end="url(#pc-lan-drag-arrow)"/><circle data-pc-lan-drag-end r="22"/></svg>
+                                            <div class="pc-lan-drag-cue__hand" data-pc-lan-drag-hand><svg viewBox="0 0 48 48"><path d="M17 27V9a3 3 0 0 1 6 0v13-4a3 3 0 0 1 6 0v5-3a3 3 0 0 1 6 0v5-2a3 3 0 0 1 6 0v11c0 8-5 12-12 12h-3c-5 0-8-3-11-7L7 29a3 3 0 0 1 4-4l6 5Z"/></svg></div>
+                                            <span class="pc-lan-drag-cue__label" data-pc-lan-drag-label>Masukkan ke port LAN</span>
+                                        </div>
                                     </div>
                                 </section>
 
                                 <section class="lab-stage" data-stage="pc" hidden>
-                                    <div class="pc-scene"><div class="pc-monitor"><div class="pc-screen" data-pc-screen><div class="pc-screen__off">LAYAR MATI</div><div class="pc-screen__boot" hidden><span class="pc-spinner"></span><b>Menyiapkan PC lab...</b></div><div class="pc-screen__desktop" hidden><div class="desktop-bar">Lab TKJ <span>● WiFi&nbsp; ▰ 09:15</span></div><div class="pc-desktop-apps"><button type="button" data-open-winbox><img src="{{ asset('images/logo/winbox.png') }}" alt=""> WinBox</button><button type="button" data-open-client-cmd="local"><span class="pc-cmd-icon" aria-hidden="true">C:\_</span>Command Prompt</button></div></div></div><span class="pc-monitor__stand"></span></div><button class="pc-power" type="button" data-power-pc>⏻ <span>Nyalakan PC</span></button></div>
+                                    <div class="pc-scene"><div class="pc-monitor"><div class="pc-screen" data-pc-screen><div class="pc-screen__off">LAYAR MATI</div><div class="pc-screen__boot" hidden><span class="pc-spinner"></span><b>Menyiapkan PC lab...</b></div><div class="pc-screen__desktop" hidden><div class="desktop-bar">Lab TKJ <span>● WiFi&nbsp; ▰ 09:15</span></div><div class="pc-desktop-apps"><button type="button" data-open-winbox><img src="{{ asset('images/logo/winbox.png') }}" alt=""> WinBox</button><button type="button" data-open-client-cmd="local"><span class="pc-cmd-icon" aria-hidden="true">C:\_</span>Command Prompt</button></div></div></div></div></div>
                                 </section>
 
                                 <section class="lab-stage" data-stage="winbox" hidden>
@@ -326,6 +340,7 @@
                             <div class="lab-guide__steps">
                                 <div class="lab-guide__header"><span>▤</span><div><small>PETUNJUK MISI</small><h2>Langkah-Langkah</h2></div></div>
                                 <ol data-guide-list tabindex="0" aria-label="Urutan langkah praktik"><li>Dengarkan tugas sekolah.</li><li>Kenali alat di lab.</li><li>Siapkan router untuk konfigurasi.</li></ol>
+                                <button class="pc-power" type="button" data-power-pc hidden><span class="pc-power__switch" aria-hidden="true">⏻</span><span class="pc-power__label" data-power-label>Nyalakan PC</span></button>
                                 <div class="lab-guide__note"><b>Materi modul</b><p data-module-section>Bab 1 · Pengantar jaringan sekolah</p></div>
                                 <button class="lab-button lab-button--primary lab-guide__lesson-next" type="button" data-lesson-next hidden>Mulai praktik kabel →</button>
                                 <p class="lab-guide__feedback" data-feedback role="status" aria-live="polite">Ikuti arahan Pak Amat untuk memulai.</p>

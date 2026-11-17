@@ -25,6 +25,7 @@
         <script src="{{ asset('js/chapter-navbar.js') }}?v={{ filemtime(public_path('js/chapter-navbar.js')) }}" defer></script>
         <link rel="stylesheet" href="{{ asset('css/chapter-step-guide.css') }}?v={{ filemtime(public_path('css/chapter-step-guide.css')) }}">
         <script src="{{ asset('js/chapter-step-guide.js') }}?v={{ filemtime(public_path('js/chapter-step-guide.js')) }}" defer></script>
+    <script src="{{ asset('js/winbox-enter-ok.js') }}?v={{ filemtime(public_path('js/winbox-enter-ok.js')) }}" defer></script>
         <link rel="stylesheet" href="{{ asset('css/lab-pc-desktop.css') }}?v={{ filemtime(public_path('css/lab-pc-desktop.css')) }}">
         <script src="{{ asset('js/lab-pc-desktop.js') }}?v={{ filemtime(public_path('js/lab-pc-desktop.js')) }}" defer></script>
         <script src="{{ asset('js/chapter-four-workbench.js') }}?v={{ filemtime(public_path('js/chapter-four-workbench.js')) }}" defer></script>

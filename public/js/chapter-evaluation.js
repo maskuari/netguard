@@ -1,7 +1,8 @@
 (() => {
     'use strict';
     const quizForm = document.querySelector('[data-quiz-form]');
-    const submitButton = document.querySelector('[data-submit-quiz]');
+    const finishPanel = document.querySelector('[data-quiz-finish]');
+    let submitButton = null;
     let retryButton = null;
     const questions = quizForm ? [...quizForm.querySelectorAll('fieldset')] : [];
     const confirmed = new Set();
@@ -18,7 +19,8 @@
         const numbers = document.createElement('div'); numbers.className = 'chapter-exam-numbers'; sidebar.append(numbers);
         const navigation = document.createElement('div'); navigation.className = 'chapter-exam-navigation';
         const previous = document.createElement('button'); previous.type = 'button'; previous.className = 'chapter-evaluation-secondary'; previous.textContent = '← Sebelumnya';
-        const next = document.createElement('button'); next.type = 'button'; next.className = 'chapter-evaluation-secondary'; next.textContent = 'Berikutnya →';
+        const next = document.createElement('button'); next.type = 'button'; next.className = 'chapter-evaluation-primary'; next.textContent = 'Berikutnya →';
+        next.dataset.submitQuiz = ''; submitButton = next;
         navigation.append(previous, next);
         const buttons = questions.map((question, index) => {
             paper.append(question);
@@ -26,7 +28,6 @@
             button.addEventListener('click', () => { currentQuestion = index; refreshExam(); }); numbers.append(button); return button;
         });
         paper.append(navigation);
-        const hint = document.createElement('p'); hint.textContent = 'Merah: belum dijawab. Hijau: sudah dijawab, belum tentu benar.'; sidebar.append(hint);
         quizForm.prepend(paper, sidebar);
         refreshExam = () => {
             const locked = quizForm.dataset.reviewLocked === 'true';
@@ -40,8 +41,10 @@
             });
             progress.textContent = confirmed.size + ' dari ' + questions.length + ' dijawab';
             paper.setAttribute('data-question-number', 'SOAL ' + (currentQuestion + 1) + ' DARI ' + questions.length);
-            previous.disabled = currentQuestion === 0; next.disabled = currentQuestion === questions.length - 1;
-            if (submitButton) submitButton.hidden = locked || confirmed.size !== questions.length;
+            previous.disabled = currentQuestion === 0;
+            next.hidden = locked;
+            next.disabled = currentQuestion === questions.length - 1 && confirmed.size !== questions.length;
+            next.textContent = currentQuestion === questions.length - 1 ? 'Selesai' : 'Berikutnya →';
         };
         shuffleOptions = () => questions.forEach((question) => {
             const container = question.querySelector('div');
@@ -53,7 +56,7 @@
             labels.forEach((label) => container.append(label));
         });
         previous.addEventListener('click', () => { currentQuestion = Math.max(0, currentQuestion - 1); refreshExam(); });
-        next.addEventListener('click', () => { currentQuestion = Math.min(questions.length - 1, currentQuestion + 1); refreshExam(); });
+        next.addEventListener('click', () => { if (currentQuestion === questions.length - 1) { quizForm.requestSubmit(); return; } currentQuestion++; refreshExam(); });
         quizForm.addEventListener('change', refreshExam);
         quizForm.addEventListener('reset', () => { confirmed.clear(); currentQuestion = 0; queueMicrotask(refreshExam); });
         shuffleOptions(); refreshExam();
@@ -82,7 +85,7 @@
                 document.querySelector('[data-quiz-dialog]')?.scrollTo({ top: 0, behavior: 'auto' });
                 quizForm.querySelector('input[type="radio"]')?.focus({ preventScroll: true });
             });
-            quizForm.append(retryButton);
+            quizForm.querySelector('.chapter-exam-navigation')?.append(retryButton);
         }
         retryButton.hidden = !incorrect;
         refreshExam();
@@ -96,8 +99,14 @@
         showResult(result) {
             const correct = result?.correctAnswers ?? result?.score;
             const total = result?.totalQuestions ?? 5;
-            if (!Number.isInteger(correct) || !Number.isInteger(total) || correct < 0 || correct > total) return null;
+            if (!Number.isInteger(correct) || !Number.isInteger(total) || total < 1 || correct < 0 || correct > total) return null;
             const summary = { correctAnswers: correct, incorrectAnswers: total - correct, totalQuestions: total, score: correct };
+            const scorePanel = document.querySelector('[data-quiz-score]');
+            if (scorePanel) {
+                scorePanel.querySelector('[data-score-percent]').textContent = String(Math.round(correct / total * 100));
+                scorePanel.querySelector('[data-score-correct]').textContent = String(correct);
+                scorePanel.querySelector('[data-score-incorrect]').textContent = String(summary.incorrectAnswers);
+            }
             const practiceNotice = document.querySelector('[data-practice-unlocked]');
             if (practiceNotice) practiceNotice.hidden = !(correct === total && result?.practiceUnlockedNow === true);
             document.querySelectorAll('[data-evaluation-result]').forEach((panel) => {
@@ -116,6 +125,30 @@
             setReviewMode(correct < total);
             window.NetGuardAudio?.play(correct === total ? 'complete' : 'error');
             return summary;
+        },
+        showFinish() {
+            if (!finishPanel || !quizForm) return;
+            quizForm.hidden = true;
+            document.querySelector('[data-evaluation-result="quiz"]').hidden = true;
+            document.querySelector('[data-evaluation-feedback]').hidden = true;
+            finishPanel.hidden = false;
+            const dialog = document.querySelector('[data-quiz-dialog]');
+            if (!dialog.open) dialog.showModal();
+            dialog.scrollTo({ top: 0, behavior: 'auto' });
+        },
+        replay() {
+            if (!quizForm) return;
+            finishPanel.hidden = true;
+            quizForm.hidden = false;
+            delete quizForm.dataset.reviewLocked;
+            quizForm.querySelectorAll('input[type="radio"]').forEach((input) => { input.disabled = false; });
+            quizForm.reset();
+            if (retryButton) retryButton.hidden = true;
+            this.clear(); shuffleOptions(); refreshExam();
+            if (submitButton) submitButton.disabled = false;
+            const dialog = document.querySelector('[data-quiz-dialog]');
+            if (!dialog.open) dialog.showModal();
+            dialog.scrollTo({ top: 0, behavior: 'auto' });
         },
         markCorrectOptions(correctOptionIndexes) {
             if (!Array.isArray(correctOptionIndexes)) return;

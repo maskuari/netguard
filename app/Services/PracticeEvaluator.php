@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Str;
+
 class PracticeEvaluator
 {
     /** @param array<string, mixed> $scenario
@@ -61,7 +63,7 @@ class PracticeEvaluator
                 $html = is_string($html) ? $html : '';
                 preg_match_all('/<h1\b[^>]*>(.*?)<\/h1>/is', $html, $headings);
                 $texts = array_map(fn (string $heading): string => trim(html_entity_decode(strip_tags($heading), ENT_QUOTES | ENT_HTML5, 'UTF-8')), $headings[1] ?? []);
-                if (! in_array($rule['heading'], $texts, true)) {
+                if (! collect($texts)->contains(fn (string $text): bool => Str::lower($text) === Str::lower((string) $rule['heading']))) {
                     $errors[] = 'Berkas hotspot/login.html pada router belum memiliki judul H1 “'.$rule['heading'].'”.';
                 }
                 if (! preg_match('/<form\b/i', $html) || ! preg_match('/name\s*=\s*["\']?username\b/i', $html) || ! preg_match('/name\s*=\s*["\']?password\b/i', $html)) {
@@ -75,8 +77,8 @@ class PracticeEvaluator
         if ($scenario['type'] === 'dhcp') {
             $servers = data_get($state, 'tables.dhcp', []);
             $pools = data_get($state, 'tables.pools', []);
-            $server = collect(is_array($servers) ? $servers : [])->first(fn (mixed $row): bool => is_array($row) && ($row['interface'] ?? '') === 'ether3' && ! ($row['disabled'] ?? false));
-            $pool = collect(is_array($pools) ? $pools : [])->first(fn (mixed $row): bool => is_array($row) && ($row['name'] ?? '') === ($server['pool'] ?? null) && ! ($row['disabled'] ?? false));
+            $server = collect(is_array($servers) ? $servers : [])->first(fn (mixed $row): bool => is_array($row) && $this->equal($row['interface'] ?? null, 'ether3') && ! ($row['disabled'] ?? false));
+            $pool = collect(is_array($pools) ? $pools : [])->first(fn (mixed $row): bool => is_array($row) && $this->equal($row['name'] ?? null, $server['pool'] ?? null) && ! ($row['disabled'] ?? false));
             $expectedPool = collect($scenario['rules'])->firstWhere('table', 'pools')['fields']['ranges'];
             if (($pool['ranges'] ?? null) !== $expectedPool) {
                 $errors[] = 'DHCP Server ether3 belum memakai Address Pool dengan rentang yang diminta.';
@@ -92,8 +94,8 @@ class PracticeEvaluator
             if (! is_array($actual)) {
                 return false;
             }
-            $actual = array_map(fn (mixed $value): string => is_scalar($value) ? trim((string) $value) : '', array_values($actual));
-            $expected = array_map(fn (mixed $value): string => trim((string) $value), array_values($expected));
+            $actual = array_map(fn (mixed $value): string => is_scalar($value) ? Str::lower(trim((string) $value)) : '', array_values($actual));
+            $expected = array_map(fn (mixed $value): string => Str::lower(trim((string) $value)), array_values($expected));
             if (! $ordered) {
                 sort($actual);
                 sort($expected);
@@ -105,7 +107,7 @@ class PracticeEvaluator
             return $actual === $expected;
         }
 
-        return is_scalar($actual) && trim((string) $actual) === trim((string) $expected);
+        return is_scalar($actual) && Str::lower(trim((string) $actual)) === Str::lower(trim((string) $expected));
     }
 
     /** @param array<string, mixed> $row

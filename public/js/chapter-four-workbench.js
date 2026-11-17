@@ -4,6 +4,7 @@
     if (!scene) return;
     const model = window.NetGuardChapterFour;
     const parameters = model.parameters;
+    const sameText = (first, second) => String(first ?? '').trim().toLocaleLowerCase('id') === String(second ?? '').trim().toLocaleLowerCase('id');
     const names = Object.keys(parameters.profiles);
     const stages = ['wireless', 'security', 'hotspot', 'connect', 'portal', 'profiles', 'users'];
     const key = 'netguard.chapter-four.v1.' + scene.dataset.userId;
@@ -376,7 +377,7 @@
             ...names.map((name) => ['Buka HP uji, lalu buka Browser. Jika akun sebelumnya masih login, klik Log out. Masuk dengan Username ' + name + ' dan Password ' + shared[name].password + ', lalu klik Connect. Pastikan detail sesi menunjukkan Profile ' + name + '.', Boolean(state.verified[name]), false]),
             ['Setelah mencoba ketiga akun, biarkan akun terakhir tetap login. Kembali ke WinBox, buka IP → Hotspot → Active, lalu klik baris akun yang sedang login. Active menampilkan sesi yang tersambung sekarang; dengan satu HP, hanya akun yang terakhir login yang muncul. Daftar semua akun ada di tab Users.', action('active:review'), !phone.hidden ? false : !open('hotspot') ? ['[data-ch2-menu="ip"]', '[data-ip-item="Hotspot"]'] : hotspotTab !== 'Active' ? ['[data-hotspot-tab="Active"]'] : ['[data-hotspot-table] [data-hotspot-record]']],
         ];
-        return [[state.stage === 'intro' ? 'Ikuti arahan Pak Amat sebelum membangun WiFi sekolah.' : state.stage === 'quiz' ? 'Jawab lima soal, lalu klik Simpan hasil Chapter 4.' : 'Chapter 4 selesai. Kembali ke peta untuk melihat progres.', state.stage === 'finish', false]];
+        return [[state.stage === 'intro' ? 'Ikuti arahan Pak Amat sebelum membangun WiFi sekolah.' : state.stage === 'quiz' ? 'Jawab lima soal, lalu klik Selesai.' : 'Chapter 4 selesai. Kembali ke peta untuk melihat progres.', state.stage === 'finish', false]];
     };
     const guide = window.NetGuardStepGuide.create({ list: document.querySelector('[data-guide-list]'), root: scene, getKey: () => state.stage + ':' + revision, getPlan: guidePlan });
     const paintHotspot = () => {
@@ -751,27 +752,27 @@
         const name = button.dataset.saveForm;
         if (name === 'wireless-edit') {
             if (!state.wireless.enabled) return explainError('wlan1 masih disabled. Tutup jendela, pilih baris wlan1 pada tab WiFi Interfaces, lalu klik centang ✓.');
-            if (value('mode') !== 'ap bridge' || !model.ssidValid(value('ssid')) || value('wlan-name') !== 'wlan1') return explainError('Pada tab Wireless, pilih Mode ap bridge dan isi SSID dengan nama WiFi pilihanmu, maksimal 32 byte. Biarkan Name wlan1 pada tab General.');
-            if (state.stage !== 'wireless' && (!model.securityValid(state) || value('security') !== state.security.name)) return explainError('Pada tab Wireless, pilih Security Profile yang sudah kamu buat agar wlan1 memakai password WiFi tersebut.');
-            if (value('security') !== 'default' && (!model.securityValid(state) || value('security') !== state.security.name)) return explainError('Security Profile pilihanmu belum tersedia. Buat dahulu melalui Wireless → Security Profiles → +.');
+            if (value('mode') !== 'ap bridge' || !model.ssidValid(value('ssid')) || !sameText(value('wlan-name'), 'wlan1')) return explainError('Pada tab Wireless, pilih Mode ap bridge dan isi SSID dengan nama WiFi pilihanmu, maksimal 32 byte. Biarkan Name wlan1 pada tab General.');
+            if (state.stage !== 'wireless' && (!model.securityValid(state) || !sameText(value('security'), state.security.name))) return explainError('Pada tab Wireless, pilih Security Profile yang sudah kamu buat agar wlan1 memakai password WiFi tersebut.');
+            if (!sameText(value('security'), 'default') && (!model.securityValid(state) || !sameText(value('security'), state.security.name))) return explainError('Security Profile pilihanmu belum tersedia. Buat dahulu melalui Wireless → Security Profiles → +.');
             if (state.wireless.ssid !== value('ssid') || state.wireless.security !== value('security')) disconnectPhone();
             state.wireless = { ...state.wireless, enabled: true, mode: value('mode'), ssid: value('ssid'), security: value('security'), options: readOptions('[data-radio-option]') };
         } else if (name === 'security-edit') {
             const security = { name: value('security-name'), mode: value('security-mode'), wpa: field('wpa').checked, wpa2: field('wpa2').checked, key: field('wpa-key').value, key2: field('wpa2-key').value };
-            if (!security.name || security.name === 'default') return explainError('Isi Name dengan nama Security Profile pilihanmu. Nama default sudah dipakai profile bawaan; pilih nama lain.');
+            if (!security.name || sameText(security.name, 'default')) return explainError('Isi Name dengan nama Security Profile pilihanmu. Nama default sudah dipakai profile bawaan; pilih nama lain.');
             if (security.mode !== 'dynamic keys' || !security.wpa || !security.wpa2) return explainError('Pilih Mode dynamic keys dan centang WPA PSK serta WPA2 PSK agar WiFi menggunakan keamanan password.');
             if (!model.passwordValid(security.key) || !model.passwordValid(security.key2)) return explainError('Password WiFi bebas kamu tentukan. Isi kedua Pre-Shared Key dengan 8–63 karakter, atau 64 digit heksadesimal. Ingat WPA2 Pre-Shared Key untuk menghubungkan HP.');
-            if (state.security && state.security.key2 !== security.key2) disconnectPhone();
-            if (state.security && state.wireless.security === state.security.name) state.wireless.security = security.name;
+            if (state.security && !sameText(state.security.key2, security.key2)) disconnectPhone();
+            if (state.security && sameText(state.wireless.security, state.security.name)) state.wireless.security = security.name;
             state.security = { ...state.security, ...security, options: readOptions('[data-security-option]') }; selectedSecurity = true;
         } else if (name === 'profile-edit') {
-            const id = value('profile-name'), target = parameters.profiles[id];
+            const id = value('profile-name').toLocaleLowerCase('id'), target = parameters.profiles[id];
             if (!target && id !== 'default') return explainError('Gunakan nama profile kepalasekolah, guru, atau siswa. Ikuti nama pada petunjuk aktif.');
-            if (target && (Number(value('shared')) !== target.shared || value('rate') !== target.rate)) return explainError('Profile ' + id + ' membutuhkan Shared Users ' + target.shared + ' dan Rate Limit ' + target.rate + '. Isi rx/tx lengkap dengan huruf k dan tanda /.');
+            if (target && (Number(value('shared')) !== target.shared || !sameText(value('rate'), target.rate))) return explainError('Profile ' + id + ' membutuhkan Shared Users ' + target.shared + ' dan Rate Limit ' + target.rate + '. Isi rx/tx lengkap dengan huruf k dan tanda /.');
             if (editingProfile && state.profiles[editingProfile] && editingProfile !== id) delete state.profiles[editingProfile];
             state.profiles[id] = { shared: Number(value('shared')), rate: value('rate'), options: readOptions('[data-profile-option]') };
         } else if (name === 'user-edit') {
-            const id = value('user-name'), target = parameters.profiles[id];
+            const id = value('user-name').toLocaleLowerCase('id'), target = parameters.profiles[id];
             if (editingInitialUser) {
                 if (!id) return explainError('Isi Name dengan username akun HotSpot pilihanmu. Password bebas kamu tentukan.');
                 if (id !== state.hotspot.user && Object.hasOwn(state.users, id)) return explainError('Username itu sudah dipakai akun HotSpot lain. Pilih username yang berbeda.');
@@ -783,7 +784,7 @@
             }
             else {
                 if (state.hotspot && id === state.hotspot.user && !state.hotspot.userRemoved) return explainError('Username ini sudah dipakai akun awal HotSpot. Pilih username lain atau ubah akun awal pada tabel Users.');
-                if (!target || field('user-password').value !== target.password || value('user-profile') !== id || !model.profileValid(state, id)) return explainError('Buat akun dengan pasangan yang tepat: kepalasekolah/123 → profile kepalasekolah; guru/456 → profile guru; siswa/789 → profile siswa. Profile harus sudah dibuat terlebih dahulu.');
+                if (!target || !sameText(field('user-password').value, target.password) || !sameText(value('user-profile'), id) || !model.profileValid(state, id)) return explainError('Buat akun dengan pasangan yang tepat: kepalasekolah/123 → profile kepalasekolah; guru/456 → profile guru; siswa/789 → profile siswa. Profile harus sudah dibuat terlebih dahulu.');
                 state.users[id] = { ...state.users[id], password: field('user-password').value, profile: id, server: value('user-server') || 'all', disabled: userDraftDisabled, options: readOptions('[data-user-option]') }; state.verified[id] = false;
             }
         }
@@ -913,12 +914,12 @@
         const ssid = state.wireless.ssid;
         startPhoneOperation('connect', 'Menghubungkan ke ' + ssid + '…', 1600, () => {
             if (!model.wifiReady(state) || state.wireless.ssid !== ssid) { render(); return; }
-            if (password !== state.security.key2) {
+            if (!sameText(password, state.security.key2)) {
                 document.querySelector('[data-wifi-connect-status]').textContent = 'Password salah. Periksa dan coba lagi.';
                 render(); document.querySelector('[data-wifi-password]').focus({ preventScroll: true }); return;
             }
             startPhoneOperation('address', 'Mendapatkan alamat IP…', 1000, () => {
-                if (!model.wifiReady(state) || state.wireless.ssid !== ssid || password !== state.security.key2) { render(); return; }
+                if (!model.wifiReady(state) || !sameText(state.wireless.ssid, ssid) || !sameText(password, state.security.key2)) { render(); return; }
                 state.phoneConnected = true;
                 document.querySelector('[data-wifi-connect]').hidden = true;
                 document.querySelector('[data-phone-status]').textContent = 'Terhubung ke ' + ssid + '\nIP: ' + phoneNetwork().address + '\nGateway/DNS: ' + phoneNetwork().gateway;
@@ -929,7 +930,7 @@
     document.querySelector('[data-phone-forget]').addEventListener('click', () => { cancelPhoneOperation(); state.phoneConnected = false; session = null; document.querySelector('[data-wifi-password]').value = ''; document.querySelector('[data-wifi-connect]').hidden = true; document.querySelector('[data-phone-status]').textContent = 'Jaringan dilupakan. Pilih SSID sekolah dan hubungkan kembali.'; persist(); scanPhoneWifi(); });
     document.querySelector('[data-phone-login]').addEventListener('submit', (event) => {
         event.preventDefault(); if (phoneOperation) return; const name = document.querySelector('[data-phone-user]').value.trim(); const password = document.querySelector('[data-phone-password]').value;
-        const result = model.authenticate(state, name, password, session?.name === name ? 1 : 0);
+        const result = model.authenticate(state, name, password, sameText(session?.name, name) ? 1 : 0);
         if (!result.ok) {
             const error = document.querySelector('[data-portal-error]');
             error.textContent = result.reason === 'credentials' ? 'invalid username or password' : result.reason === 'sessions' ? 'no more sessions are allowed for user' : 'hotspot service is not available';
@@ -938,7 +939,7 @@
             return;
         }
         document.querySelector('[data-portal-error]').hidden = true;
-        session = { name, ...result }; if (result.initial) state.initialLogin = true; else { state.verified[name] = true; state.users[name].stats = { uptime: '00:00:01', bytesIn: '0 B', bytesOut: '0 B' }; }
+        session = { name, ...result }; if (result.initial) state.initialLogin = true; else { state.verified[result.profile] = true; state.users[result.profile].stats = { uptime: '00:00:01', bytesIn: '0 B', bytesOut: '0 B' }; }
         document.querySelector('[data-session-details]').textContent = 'Login berhasil\nUser: ' + name + '\nIP: ' + phoneNetwork().address + '\nProfile: ' + result.profile + '\nShared Users: ' + result.shared + '\nRate Limit rx/tx: ' + result.rate;
         persist(); render(); message('Login HotSpot berhasil. Periksa detail sesi.', 'success');
     });
@@ -1033,13 +1034,10 @@
         } else say('Backup dan Restore menyimpan atau memulihkan konfigurasi router. Untuk mengubah halaman HotSpot sekolah, gunakan hotspot/login.html: salin ke desktop, edit di Notepad, lalu unggah kembali.');
     }));
     document.querySelector('[data-pick-login-file]').addEventListener('click', () => { document.querySelector('[data-upload-file-name]').value = 'login.html'; });
-    document.querySelector('[data-upload-file-open]').addEventListener('click', () => { if (document.querySelector('[data-upload-file-name]').value !== 'login.html' || !state.exported) return explainError('Pilih login.html yang sudah disalin ke desktop dan disimpan melalui Notepad.'); windows.get('upload-picker').hidden = true; queueLoginUpload(); });
+    document.querySelector('[data-upload-file-open]').addEventListener('click', () => { if (!sameText(document.querySelector('[data-upload-file-name]').value, 'login.html') || !state.exported) return explainError('Pilih login.html yang sudah disalin ke desktop dan disimpan melalui Notepad.'); windows.get('upload-picker').hidden = true; queueLoginUpload(); });
 
-    const previousStep = () => {
-        if (!prologue.hidden) { if (prologueIndex > 0) { prologueIndex--; paintPrologue(); } return; }
-        if (learning.open) { learning.close(); return; }
-        if (!overlay.hidden) { window.clearInterval(dialogueTimer); dialogueTimer = null; dialogueCallback = null; overlay.hidden = true; surface.inert = false; return; }
-        const order = ['intro', ...stages, 'quiz', 'finish']; const destination = order[Math.max(0, order.indexOf(state.stage) - 1)];
+    const restartMission = (destination) => {
+        const order = ['intro', ...stages, 'quiz', 'finish'];
         const resets = (name) => order.indexOf(name) >= order.indexOf(destination);
         revision++; cancelPhoneOperation(); phoneScanComplete = false; window.clearTimeout(completionTimer); announced = null; session = null; state.phoneConnected = false;
         stages.filter(resets).forEach((name) => { delete state.actions[name]; });
@@ -1054,11 +1052,17 @@
         document.querySelectorAll('[data-quiz-form] input').forEach((node) => { node.checked = false; });
         persist(); render(); if (destination === 'intro') startPrologue(); else if (info[destination]) teach(destination); else quiz.showModal();
     };
+    const previousStep = () => {
+        if (!prologue.hidden) { if (prologueIndex > 0) { prologueIndex--; paintPrologue(); } return; }
+        if (learning.open) { learning.close(); return; }
+        if (!overlay.hidden) { window.clearInterval(dialogueTimer); dialogueTimer = null; dialogueCallback = null; overlay.hidden = true; surface.inert = false; return; }
+        const order = ['intro', ...stages, 'quiz', 'finish'];
+        restartMission(order[Math.max(0, order.indexOf(state.stage) - 1)]);
+    };
     window.NetGuardChapterNavbar.bindPrevious(previousStep);
     document.querySelector('[data-previous]').addEventListener('click', previousStep);
-    document.querySelector('[data-save]').addEventListener('click', () => message(persist() ? 'Progres Chapter 4 tersimpan.' : 'Progres belum dapat disimpan di browser ini.', persist() ? 'success' : 'error'));
     document.querySelector('[data-close-quiz]').addEventListener('click', () => quiz.close());
-    document.querySelector('[data-close-finish]').addEventListener('click', () => finish.close());
+    document.querySelector('[data-close-finish]').addEventListener('click', () => quiz.close());
     document.querySelector('[data-quiz-form]').addEventListener('change', () => { evaluation.clear(); state.evaluationResult = null; persist(); });
     document.querySelector('[data-quiz-form]').addEventListener('submit', async (event) => {
         event.preventDefault(); const answers = [1, 2, 3, 4, 5].map((n) => document.querySelector('[name="answer-' + n + '"]:checked'));
@@ -1068,7 +1072,7 @@
             const response = await fetch(scene.dataset.completeUrl, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }, body: JSON.stringify({ answers: answers.map((node) => Number(node.value)) }) });
             const result = await response.json(); const summary = evaluation.showResult(result); if (summary) { state.evaluationResult = summary; persist(); }
             if (!response.ok) { if (!summary) evaluation.showError(result.message || 'Hasil belum tersimpan.'); return; }
-            state.stage = 'finish'; persist(); quiz.close(); render(); finish.showModal();
+            state.stage = 'finish'; persist(); render(); evaluation.showFinish();
         } catch { evaluation.showError('Koneksi terputus. Coba simpan hasil kembali.'); } finally { button.disabled = false; }
     });
     const scenes = [
@@ -1095,5 +1099,26 @@
     document.querySelector('[data-replay-prologue]').addEventListener('click', () => startPrologue(true));
     (saved?.answers || []).forEach((answer, index) => { const node = document.querySelector('[name="answer-' + (index + 1) + '"][value="' + answer + '"]'); if (node) node.checked = true; });
     evaluation.showResult(state.evaluationResult || null); render();
-    if (!state.prologueComplete && state.stage === 'intro') startPrologue(); else { prologue.hidden = true; scene.classList.remove('is-prologue'); if (state.stage === 'intro') teach('wireless'); else if (state.stage === 'quiz') quiz.showModal(); else if (state.stage === 'finish') finish.showModal(); else render(); }
+    if (!state.prologueComplete && state.stage === 'intro') startPrologue(); else { prologue.hidden = true; scene.classList.remove('is-prologue'); if (state.stage === 'intro') teach('wireless'); else if (state.stage === 'quiz') quiz.showModal(); else render(); }
+    window.NetGuardChapterNavbar.bindAutosave?.(persist);
+    window.NetGuardChapterNavbar.bindMissions?.({
+        storageKey: key, completed: scene.dataset.completed === 'true',
+        isComplete: () => state.stage === 'finish',
+        getCurrent: () => ['quiz', 'finish'].includes(state.stage) ? stages.length - 1 : stages.indexOf(state.stage),
+        missions: [
+            { stage: 'wireless', title: 'Wireless dan SSID', description: 'Aktifkan wlan1 sebagai access point dan tentukan nama jaringan Wi-Fi.' },
+            { stage: 'security', title: 'Keamanan Wi-Fi', description: 'Buat Security Profile dan terapkan password pada jaringan wireless.' },
+            { stage: 'hotspot', title: 'HotSpot Setup', description: 'Siapkan portal login beserta akun HotSpot awal melalui wizard.' },
+            { stage: 'connect', title: 'Koneksi dan login HP', description: 'Hubungkan HP ke Wi-Fi lalu masuk melalui portal HotSpot.' },
+            { stage: 'portal', title: 'Mengubah halaman portal', description: 'Salin login.html, ubah sambutannya, lalu unggah dan uji dari HP.' },
+            { stage: 'profiles', title: 'User Profiles', description: 'Atur Shared Users dan Rate Limit untuk setiap kelompok pengguna.' },
+            { stage: 'users', title: 'Akun dan pengujian pengguna', description: 'Buat akun kepala sekolah, guru, dan siswa, lalu uji aksesnya.' },
+        ],
+        replay(destination) {
+            document.querySelectorAll('dialog[open]').forEach((node) => node.close());
+            window.clearInterval(dialogueTimer); dialogueTimer = null; dialogueCallback = null; nextLesson = null;
+            overlay.hidden = true; prologue.hidden = true; surface.inert = false; scene.classList.remove('is-prologue');
+            restartMission(destination);
+        },
+    });
 })();

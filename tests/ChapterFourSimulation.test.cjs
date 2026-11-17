@@ -16,6 +16,9 @@ const ready = () => ({
 test('WiFi needs an enabled access point and applied security profile', () => {
     const state = ready();
     assert.equal(model.wifiReady(state), true);
+    state.wireless.security = 'USER';
+    assert.equal(model.wifiReady(state), true);
+    state.wireless.security = 'user';
     for (const [field, incorrect] of [['enabled', false], ['mode', 'station'], ['ssid', ''], ['security', 'default']]) {
         const wrong = { ...state, wireless: { ...state.wireless, [field]: incorrect } };
         assert.equal(model.wifiReady(wrong), false);

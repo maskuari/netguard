@@ -4,6 +4,280 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const path = require('node:path');
 
+test('RJ45 assembly completes in three actions and proceeds to the tester without repeating end B', async () => {
+    const source = fs.readFileSync(path.join(__dirname, '../public/js/chapter-one.js'), 'utf8');
+    let action, proceed, saves = 0;
+    const button = { disabled: false };
+    const explanations = [];
+    const context = {
+        terminateStep: 0, terminateEnd: 0, stageRevision: 1, stage: 'terminate', reducedMotion: { matches: true },
+        document: { querySelector: () => ({ addEventListener(type, callback) { action = callback; } }) },
+        window: { setTimeout(callback) { callback(); } }, setTerminateFrame() {},
+        renderTerminate() { button.disabled = false; }, setFeedback() {}, saveProgress() { saves++; },
+        openDialogue(lines, callback) { explanations.push(lines[0].text); proceed = callback; },
+        setStage(name) { context.stage = name; },
+    };
+    const start = source.indexOf("    document.querySelector('[data-terminate-action]').addEventListener");
+    const end = source.indexOf('    const renderTesterLeds', start);
+    vm.runInNewContext(source.slice(start, end), context);
+    for (let step = 0; step < 3; step++) {
+        await action({ currentTarget: button });
+        assert.equal(context.terminateStep, step + 1);
+    }
+    assert.equal(saves, 3);
+    assert.equal(context.terminateEnd, 1);
+    assert.equal(explanations.length, 1);
+    assert.match(explanations[0], /Ujung A dan Ujung B.*cara yang sama/);
+    assert.equal(context.stage, 'terminate');
+    proceed();
+    assert.equal(context.stage, 'tester');
+});
+
+test('one correct T568B arrangement applies to both cable ends and explains their identical order', () => {
+    const source = fs.readFileSync(path.join(__dirname, '../public/js/chapter-one.js'), 'utf8');
+    let check, next, saved = 0;
+    const explanations = [];
+    const colors = Array.from({ length: 8 }, (_, index) => ({ id: 'color' + index, label: 'Color ' + index }));
+    const context = {
+        colors, wireEnd: 0, wirePlacements: [colors.map((color) => color.id), Array(8).fill(null)],
+        wireHistory: [[0, 1, 2, 3, 4, 5, 6, 7], []], wireVerified: [false, false], stage: 'wiring', stageRevision: 1,
+        document: { querySelector: () => ({ addEventListener(type, callback) { check = callback; } }) },
+        saveProgress() { saved++; }, renderPreparationChecklist() {}, setFeedback() {},
+        openDialogue(lines, callback) { explanations.push(lines[0].text); next = callback; },
+        setStage(name) { context.stage = name; },
+    };
+    const start = source.indexOf("    document.querySelector('[data-check-wire]').addEventListener");
+    const end = source.indexOf('    const terminateSteps', start);
+    vm.runInNewContext(source.slice(start, end), context);
+    check();
+    assert.equal(saved, 1);
+    assert.equal(context.wireVerified.every(Boolean), true);
+    assert.equal(context.wireEnd, 0);
+    assert.deepEqual(context.wirePlacements[0], context.wirePlacements[1]);
+    assert.notStrictEqual(context.wirePlacements[0], context.wirePlacements[1]);
+    assert.match(explanations[0], /Ujung A dan Ujung B.*sama/);
+    assert.equal(context.stage, 'wiring');
+    next();
+    assert.equal(context.stage, 'terminate');
+});
+
+test('cable preparation makes only the next action clickable and marks completed actions clearly', () => {
+    const source = fs.readFileSync(path.join(__dirname, '../public/js/chapter-one.js'), 'utf8');
+    const buttons = Array.from({ length: 3 }, () => {
+        const classes = new Set(), hint = {};
+        return { classes, hint, disabled: false, attributes: {},
+            classList: { toggle(name, active) { if (active) classes.add(name); else classes.delete(name); } },
+            setAttribute(name, value) { this.attributes[name] = value; }, removeAttribute(name) { delete this.attributes[name]; },
+            querySelector: () => hint,
+        };
+    });
+    const context = { prepStep: 0, document: { querySelectorAll: () => buttons } };
+    const start = source.indexOf('    const renderPreparationActions =');
+    const end = source.indexOf('    const renderConfigurationChecklist', start);
+    vm.runInNewContext(source.slice(start, end) + '\nglobalThis.render = renderPreparationActions;', context);
+    for (let step = 0; step <= 3; step++) {
+        context.prepStep = step;
+        context.render();
+        buttons.forEach((button, index) => {
+            assert.equal(button.disabled, index !== step);
+            assert.equal(button.classes.has('is-current'), index === step);
+            assert.equal(button.classes.has('is-done'), index < step);
+            if (index === step) assert.match(button.hint.textContent, /Klik/);
+            if (index < step) assert.match(button.hint.textContent, /✓/);
+        });
+    }
+});
+
+const missionPicker = (storage = new Map(), initial = {}) => {
+    const nodes = new Map(), observers = [], documentEvents = new Map(), windowEvents = new Map(), microtasks = [];
+    class Element {
+        constructor() { this.children = []; this.listeners = {}; this.attributes = {}; this.open = false; this.disabled = false; this.classList = { remove() {} }; }
+        addEventListener(name, callback) { (this.listeners[name] ||= []).push(callback); }
+        click() { if (!this.disabled) for (const callback of this.listeners.click || []) callback({ target: this, stopPropagation() {} }); }
+        setAttribute(name, value) { this.attributes[name] = value; }
+        querySelector(selector) { return get(selector); }
+        querySelectorAll() { return []; }
+        append(...nodes) { this.children.push(...nodes); }
+        replaceChildren(...nodes) { this.children = nodes; }
+        insertBefore(node) { this.children.push(node); }
+        showModal() { this.open = true; }
+        close() { this.open = false; }
+        focus() {}
+    }
+    const get = (selector) => { if (!nodes.has(selector)) nodes.set(selector, new Element()); return nodes.get(selector); };
+    const state = { current: 0, highest: 0, ...initial };
+    const storageKey = initial.storageKey || 'netguard.chapter-two.v2.42';
+    let reloads = 0, saves = 0;
+    const replays = [];
+    const resultDialog = new Element();
+    resultDialog.open = Boolean(initial.resultOpen);
+    const context = {
+        document: { querySelector: get, querySelectorAll: (selector) => selector === 'dialog[open]' && resultDialog.open ? [resultDialog] : [], createElement: () => new Element(), body: get('body'), addEventListener(name, callback) { documentEvents.set(name, callback); } },
+        localStorage: { getItem: (key) => storage.get(key) || null, setItem: (key, value) => storage.set(key, value), removeItem: (key) => storage.delete(key) },
+        window: { location: { reload() { reloads++; } }, addEventListener(name, callback) { windowEvents.set(name, callback); } },
+        queueMicrotask: (callback) => microtasks.push(callback),
+        MutationObserver: class { constructor(callback) { observers.push(callback); } observe() {} },
+    };
+    vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../public/js/chapter-navbar.js'), 'utf8'), context);
+    if (initial.autosave) context.window.NetGuardChapterNavbar.bindAutosave(() => {
+        saves++;
+        storage.set(storageKey, JSON.stringify({ stage: state.current, fromAutosave: true }));
+    });
+    context.window.NetGuardChapterNavbar.bindMissions({
+        storageKey, completed: initial.completed,
+        isComplete: () => Boolean(state.finished),
+        getCurrent: () => state.current, getUnlocked: () => state.highest,
+        missions: ['vlan', 'wan', 'addresses', 'dhcp'].map((stage) => ({ stage, title: stage, description: 'Materi ' + stage })),
+        replay(stage) { replays.push(stage); state.current = ['vlan', 'wan', 'addresses', 'dhcp'].indexOf(stage); state.highest = state.current; },
+    });
+    const button = get('.chapter-navbar').children[0];
+    return {
+        state, storage, replays, storageKey, resultDialog, reloads: () => reloads, saves: () => saves,
+        isOpen: () => get('body').children[0].open,
+        complete() { state.finished = true; resultDialog.open = true; observers.forEach((callback) => callback()); },
+        documentEvent(name) { documentEvents.get(name)?.(); },
+        windowEvent(name) { windowEvents.get(name)?.(); },
+        hide() { context.document.visibilityState = 'hidden'; documentEvents.get('visibilitychange')(); },
+        flush() { while (microtasks.length) microtasks.shift()(); },
+        open() { button.click(); return get('.chapter-missions-grid').children; },
+        advance(index, snapshot) { state.current = index; state.highest = index; storage.set(storageKey, JSON.stringify(snapshot)); observers.forEach((callback) => callback()); },
+    };
+};
+
+test('chapter autosave captures edits and clicks, saves when hidden and before leaving', () => {
+    const game = missionPicker(new Map(), { autosave: true });
+    game.documentEvent('input');
+    game.documentEvent('change');
+    assert.equal(game.saves(), 2);
+    game.documentEvent('click');
+    assert.equal(game.saves(), 2);
+    game.flush();
+    assert.equal(game.saves(), 3);
+    game.hide();
+    game.windowEvent('pagehide');
+    assert.equal(game.saves(), 5);
+});
+
+test('autosave during a mission reload cannot overwrite the restored prerequisite checkpoint', () => {
+    const game = missionPicker(new Map([['netguard.chapter-two.v2.42', JSON.stringify({ stage: 'vlan', vlan: false })]]), { autosave: true });
+    game.advance(1, { stage: 'wan', vlan: true, wan: false });
+    game.documentEvent('click');
+    game.open()[0].click();
+    game.windowEvent('pagehide');
+    game.hide();
+    game.flush();
+    assert.equal(game.reloads(), 1);
+    assert.equal(game.saves(), 0);
+    assert.equal(JSON.parse(game.storage.get(game.storageKey)).vlan, false);
+});
+
+test('mission cards lock future tasks and unlock them as the chapter advances', () => {
+    const game = missionPicker();
+    assert.deepEqual(game.open().map((card) => card.disabled), [false, true, true, true, true]);
+    game.open()[2].click();
+    assert.equal(game.reloads(), 0);
+    assert.deepEqual(game.replays, []);
+    game.advance(1, { stage: 'wan', vlan: { student: true } });
+    assert.deepEqual(game.open().map((card) => card.disabled), [false, false, true, true, true]);
+});
+
+test('replaying an early mission retains unlocked later missions and their prerequisite checkpoints across reloads', () => {
+    const game = missionPicker(new Map([['netguard.chapter-two.v2.42', JSON.stringify({ stage: 'vlan', vlan: false })]]));
+    game.advance(1, { stage: 'wan', vlan: true, wan: false });
+    game.advance(2, { stage: 'addresses', vlan: true, wan: true, addresses: false });
+    game.open()[0].click();
+    assert.equal(game.reloads(), 1);
+    assert.equal(JSON.parse(game.storage.get(game.storageKey)).vlan, false);
+    const reloaded = missionPicker(game.storage);
+    assert.deepEqual(reloaded.replays, ['vlan']);
+    assert.deepEqual(reloaded.open().map((card) => card.disabled), [false, false, false, true, true]);
+    reloaded.open()[2].click();
+    const restored = JSON.parse(game.storage.get(game.storageKey));
+    assert.equal(restored.vlan, true);
+    assert.equal(restored.wan, true);
+    assert.equal(restored.addresses, false);
+});
+
+test('completed chapters keep every mission available and another account starts locked', () => {
+    const storage = new Map([['netguard.chapter-two.v2.42', JSON.stringify({ stage: 'finish', vlan: true, wan: true })]]);
+    const game = missionPicker(storage, { completed: true, current: 3 });
+    assert.equal(game.open().every((card) => !card.disabled), true);
+    game.open()[0].click();
+    const replaying = missionPicker(storage);
+    assert.equal(replaying.open().every((card) => !card.disabled), true);
+    replaying.open()[1].click();
+    assert.equal(JSON.parse(storage.get(game.storageKey)).vlan, true);
+    const anotherUser = missionPicker(storage, { storageKey: 'netguard.chapter-two.v2.99' });
+    assert.deepEqual(anotherUser.open().map((card) => card.disabled), [false, true, true, true, true]);
+});
+
+test('returning to a completed chapter opens Misi and dismisses the saved evaluation result', () => {
+    const game = missionPicker(new Map(), { completed: true, current: 3, resultOpen: true });
+    assert.equal(game.isOpen(), true);
+    assert.equal(game.resultDialog.open, false);
+    assert.equal(game.open().every((card) => !card.disabled), true);
+    const unfinished = missionPicker();
+    assert.equal(unfinished.isOpen(), false);
+});
+
+test('finishing keeps the result visible once and opens Misi only when revisiting', () => {
+    const game = missionPicker();
+    game.complete();
+    assert.equal(game.isOpen(), false);
+    assert.equal(game.resultDialog.open, true);
+    const returning = missionPicker(game.storage, { resultOpen: true });
+    assert.equal(returning.isOpen(), true);
+    assert.equal(returning.resultDialog.open, false);
+    returning.open()[0].click();
+    assert.equal(returning.reloads(), 0);
+});
+
+test('explicit replay selection enters that mission without reopening Misi after reload', () => {
+    const storage = new Map([['netguard.chapter-two.v2.42', JSON.stringify({ stage: 'finish', vlan: true })]]);
+    const game = missionPicker(storage, { completed: true, current: 3 });
+    game.open()[0].click();
+    const replaying = missionPicker(storage, { completed: true });
+    assert.deepEqual(replaying.replays, ['vlan']);
+    assert.equal(replaying.isOpen(), false);
+    const returning = missionPicker(storage);
+    assert.equal(returning.isOpen(), true);
+});
+
+test('CP4 mission replay keeps prior wireless settings and resets security plus every dependent task', () => {
+    const source = fs.readFileSync(path.join(__dirname, '../public/js/chapter-four-workbench.js'), 'utf8');
+    const state = {
+        wireless: { enabled: true, ssid: 'Sekolah', security: 'aman' }, security: { name: 'aman' },
+        hotspot: {}, hotspotConfirmed: true, initialLogin: true, phoneConnected: true,
+        portalHtml: 'edited', portalVerified: true, exported: true, edited: true, uploaded: true,
+        profiles: { guru: {} }, users: { guru: {} }, verified: { guru: true }, actions: { wireless: { saved: true }, security: { saved: true } },
+    };
+    const taught = [];
+    const context = {
+        state, stages: ['wireless', 'security', 'hotspot', 'connect', 'portal', 'profiles', 'users'], revision: 0,
+        phoneScanComplete: true, completionTimer: 1, announced: 'users', session: {}, setupStep: 5, setupConfirmed: true,
+        downloadedHtml: 'edited', desktopFile: {}, phone: {}, info: { security: {} },
+        fresh: () => ({ wireless: { enabled: false }, portalHtml: 'default' }),
+        cancelPhoneOperation() {}, window: { clearTimeout() {} }, evaluation: { clear() {} },
+        quiz: { close() {} }, finish: { close() {} }, windows: new Map(), document: documentStub(),
+        pc: { hideDesktop() {} }, persist() {}, render() {}, startPrologue() {}, teach: (name) => taught.push(name),
+    };
+    const start = source.indexOf('    const restartMission =');
+    const end = source.indexOf('    const previousStep =', start);
+    vm.runInNewContext(source.slice(start, end) + '\nrestartMission("security");', context);
+    assert.equal(state.stage, 'security');
+    assert.equal(state.wireless.ssid, 'Sekolah');
+    assert.equal(state.wireless.enabled, true);
+    assert.equal(state.wireless.security, 'default');
+    assert.equal(state.security, null);
+    assert.equal(state.hotspot, null);
+    assert.equal(state.portalHtml, 'default');
+    assert.equal(Object.keys(state.users).length, 0);
+    assert.equal(Object.keys(state.profiles).length, 0);
+    assert.equal(state.actions.security, undefined);
+    assert.equal(state.actions.wireless.saved, true);
+    assert.deepEqual(taught, ['security']);
+});
+
 const loadReset = (chapter, context) => {
     const file = chapter === 'one' ? 'chapter-one.js' : 'chapter-' + chapter + '-workbench.js';
     const source = fs.readFileSync(path.join(__dirname, '../public/js', file), 'utf8');

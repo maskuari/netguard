@@ -24,6 +24,7 @@
         { key: 'student', id: 10, ports: ['ether1', 'ether2', 'ether3'], label: 'VLAN siswa' },
         { key: 'teacher', id: 20, ports: ['ether1', 'ether4'], label: 'VLAN guru' },
     ];
+    const sameText = (first, second) => String(first ?? '').trim().toLocaleLowerCase('id') === String(second ?? '').trim().toLocaleLowerCase('id');
     const saved = read(storageKey) || {};
     if (saved.replaying) scene.dataset.completed = 'false';
     const legacy = saved.workflowVersion !== 2;
@@ -53,13 +54,69 @@
     const quiz = document.querySelector('[data-quiz-dialog]');
     const finish = document.querySelector('[data-finish-dialog]');
     const learning = document.querySelector('[data-learning-dialog]');
+    const explainedStages = new Set(saved.learningVersion === 1 ? saved.explainedStages || [] : []);
+    let learningStage = null;
+    const stageLessons = {
+        'connect-switch': {
+            title: 'Kita akan menghubungkan PC ke switch hEX',
+            body: '<p>Konfigurasi router hAP dari Chapter 1–4 sudah siap. Sekarang kita mengatur <b>switch hEX</b> agar jaringan siswa dan guru sampai ke port yang sesuai.</p><h3>Mengapa kabel PC dipindahkan?</h3><p>WinBox harus terhubung ke perangkat yang akan dikonfigurasi. Pasang ujung kabel PC ke <b>ether5 hEX</b>. Ujung pada LAN komputer tetap terpasang. Ether5 dipakai untuk konfigurasi agar ether1–ether4 dapat diatur untuk jalur jaringan.</p><table><thead><tr><th>Port hEX</th><th>Fungsi jalur</th></tr></thead><tbody><tr><td>ether1</td><td>Trunk ke <span data-lesson-uplink></span> hAP; tetap terpasang</td></tr><tr><td>ether2 dan ether3</td><td>Access jaringan siswa, VLAN 10</td></tr><tr><td>ether4</td><td>Access jaringan guru, VLAN 20</td></tr><tr><td>ether5</td><td>PC untuk konfigurasi switch</td></tr></tbody></table><p>Kabel trunk menghubungkan router dan switch. Kabel PC adalah kabel yang dipindahkan untuk konfigurasi dan pengujian.</p>',
+            action: 'Mulai memasang kabel PC →',
+        },
+        'switch-session': {
+            title: 'Kita akan berpindah sesi WinBox ke hEX',
+            body: '<p>Kabel PC sekarang terhubung ke <b>ether5 hEX</b>, tetapi sesi WinBox sebelumnya masih mengarah ke router hAP.</p><h3>Mengapa harus keluar dari sesi lama?</h3><p>hAP dan hEX adalah dua perangkat berbeda. Perubahan pada sesi hAP hanya mengubah router, sedangkan tahap ini membutuhkan konfigurasi pada switch hEX.</p><p>Pilih <b>Exit</b> untuk keluar dari sesi hAP. Pada jendela login, buka <b>Neighbors</b>, tekan <b>Refresh</b>, lalu pilih perangkat <b>hEX lite</b> dan hubungkan menggunakan akun admin dengan password kosong.</p><p>Periksa perangkat tujuan sebelum masuk. Konfigurasi router hAP tetap dipertahankan.</p>',
+            action: 'Mulai mengganti sesi WinBox →',
+        },
+        identity: {
+            title: 'Kita akan memberi identitas pada switch',
+            body: '<p>PC sudah terhubung ke hEX. Sebelum mengatur jaringannya, ubah <b>System → Identity</b> dari <b>MikroTik</b> menjadi <b>Switch</b>.</p><h3>Mengapa Identity perlu diubah?</h3><p>Identity adalah nama perangkat. Nama <b>Switch</b> membantu kita membedakan hEX dari router hAP pada Neighbors dan judul sesi WinBox, sehingga konfigurasi diterapkan pada perangkat yang tepat.</p><p>Identity tidak mengubah nomor port, alamat IP, atau VLAN. Setelah identitas tersimpan, kita akan membuat Bridge untuk menghubungkan port-port jaringan pada hEX.</p>',
+            action: 'Mulai mengatur Identity →',
+        },
+        bridge: {
+            title: 'Kita akan membuat Bridge pada hEX',
+            body: '<p>Identitas hEX sudah menjadi <b>Switch</b>. Berikutnya, buat <b>bridge1</b> melalui menu <b>Bridge</b>, tab <b>Bridges</b>.</p><h3>Apa fungsi Bridge?</h3><p>Bridge menggabungkan beberapa interface menjadi satu jalur switching pada lapisan Ethernet. Membuat Bridge menyiapkan wadahnya; port fisik akan dimasukkan pada tahap berikutnya.</p><p>Gunakan nama <b>bridge1</b>. Biarkan pengaturan lain pada nilai bawaan. Di chapter ini, pemisahan VLAN diatur melalui menu <b>Switch</b> setelah anggota Bridge ditambahkan.</p>',
+            action: 'Mulai membuat Bridge →',
+        },
+        ports: {
+            title: 'Kita akan memasukkan port ke Bridge',
+            body: '<p><b>bridge1</b> sudah dibuat. Tambahkan <b>ether1, ether2, ether3, dan ether4</b> satu per satu melalui tab <b>Ports</b> pada menu Bridge. Pilih <b>bridge1</b> untuk setiap port.</p><h3>Mengapa empat port ini?</h3><p><b>Ether1</b> menerima jalur trunk dari router hAP. <b>Ether2 dan ether3</b> melayani perangkat siswa, sedangkan <b>ether4</b> melayani perangkat guru. Port-port ini perlu menjadi anggota Bridge agar dapat meneruskan lalu lintas sesuai konfigurasi switch.</p><p><b>Ether5 tetap digunakan untuk PC konfigurasi</b> dan tidak dimasukkan pada latihan ini. Keanggotaan Bridge belum menentukan VLAN tiap port; peran trunk dan access diatur berikutnya.</p>',
+            action: 'Mulai menambahkan port Bridge →',
+        },
+        'switch-ports': {
+            title: 'Kita akan mengatur port trunk dan access',
+            body: '<p>Ether1–ether4 sudah menjadi anggota Bridge. Sekarang buka <b>Switch → Port</b> untuk menentukan cara tiap port menangani tag VLAN.</p><h3>Mengapa trunk dan access berbeda?</h3><p><b>Trunk</b> membawa VLAN 10 dan VLAN 20 melalui satu kabel antara hAP dan hEX. <b>Access</b> menghubungkan PC ke satu VLAN; PC menerima lalu lintas tanpa tag VLAN.</p><table><thead><tr><th>Port</th><th>VLAN Mode</th><th>VLAN Header</th><th>Default VLAN ID</th></tr></thead><tbody><tr><td>ether1 · trunk</td><td>check</td><td>add if missing</td><td>0</td></tr><tr><td>ether2 · siswa</td><td>secure</td><td>always strip</td><td>10</td></tr><tr><td>ether3 · siswa</td><td>secure</td><td>always strip</td><td>10</td></tr><tr><td>ether4 · guru</td><td>secure</td><td>always strip</td><td>20</td></tr></tbody></table><p><b>Default VLAN ID</b> menentukan VLAN untuk paket masuk tanpa tag pada port access. <b>Always strip</b> melepas tag saat paket keluar menuju PC. Setelah peran port siap, kita akan menentukan anggota setiap VLAN.</p>',
+            action: 'Mulai mengatur trunk dan access →',
+        },
+        vlans: {
+            title: 'Kita akan menentukan anggota VLAN switch',
+            body: '<p>Peran trunk dan access sudah diatur. Buka <b>Switch → VLAN</b>, lalu tambahkan dua entri pada <b>switch1</b>.</p><h3>Mengapa daftar anggota VLAN diperlukan?</h3><p>Pengaturan port menentukan cara menangani tag, sedangkan tabel VLAN menentukan port mana yang boleh meneruskan lalu lintas VLAN tersebut. Keduanya harus sesuai agar siswa dan guru masuk ke jaringan yang benar.</p><table><thead><tr><th>VLAN ID</th><th>Ports</th><th>Jaringan</th></tr></thead><tbody><tr><td>10</td><td>ether1, ether2, ether3</td><td>Siswa</td></tr><tr><td>20</td><td>ether1, ether4</td><td>Guru</td></tr></tbody></table><p><b>Ether1 ada pada kedua VLAN</b> karena menjadi trunk ke hAP. Masukkan satu port per baris pada kolom Ports. IP dan DHCP tetap disediakan router hAP dari Chapter 2.</p>',
+            action: 'Mulai menambahkan VLAN switch →',
+        },
+        test: {
+            title: 'Kita akan menguji jaringan pada setiap port',
+            body: '<p>Konfigurasi switch sudah lengkap. Kita akan memeriksa hasilnya dengan <b>satu PC dan kabel LAN yang sama</b>.</p><h3>Mengapa kabel PC dipindahkan lagi?</h3><p>Hasil konfigurasi harus diuji dari port access yang digunakan klien. Cabut ujung kabel PC dari <b>ether5</b>, lalu pasang ke <b>ether2</b>. Tunggu koneksi, buka Command Prompt, dan jalankan <b>ipconfig</b>. Ulangi pada <b>ether3</b>, kemudian <b>ether4</b>.</p><table><thead><tr><th>Port uji</th><th>Hasil yang diharapkan</th></tr></thead><tbody><tr><td>ether2 dan ether3</td><td>VLAN 10 siswa · IP 192.168.40.x</td></tr><tr><td>ether4</td><td>VLAN 20 guru · IP 192.168.60.x</td></tr></tbody></table><p>Alamat yang sesuai menunjukkan jalur access, trunk, dan DHCP di hAP bekerja bersama. Ujung LAN pada PC dan kabel trunk tetap terpasang. Sesi WinBox dapat terputus ketika kabel PC dipindahkan dari port konfigurasi.</p>',
+            action: 'Mulai menguji port access →',
+        },
+    };
+    const showStageLearning = (force = false) => {
+        const lesson = stageLessons[state.stage];
+        if (!lesson || (!force && explainedStages.has(state.stage))) return;
+        learningStage = state.stage;
+        document.querySelector('[data-learning-title]').textContent = lesson.title;
+        const body = document.querySelector('[data-learning-body]');
+        body.innerHTML = lesson.body;
+        body.querySelectorAll('[data-lesson-uplink]').forEach((node) => { node.textContent = upstreamInterface; });
+        body.scrollTop = 0;
+        document.querySelector('[data-learning-continue]').textContent = lesson.action;
+        if (!learning.open) learning.showModal();
+    };
     const prologue = document.querySelector('[data-ch5-prologue]');
     const dialogue = document.querySelector('[data-ch5-dialogue]');
     const surface = scene.querySelector('.lab-scroll');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const canConfigure = () => state.connections.pcPort === 'ether5' && state.migration.connectedHex;
     const hexReady = canConfigure;
-    const bridgeValid = () => state.bridge?.name === 'bridge1';
+    const bridgeValid = () => sameText(state.bridge?.name, 'bridge1');
     const portsValid = () => bridgeInterfaces.every((port) => state.ports[port]);
     const portValid = (port) => { const target = expectedPorts.find((item) => item.interface === port), actual = state.switchPorts[port]; return Boolean(target && actual && actual.mode === target.mode && actual.header === target.header && Number(actual.id) === target.id); };
     const rolesValid = () => expectedPorts.every((port) => portValid(port.interface));
@@ -118,9 +175,9 @@
         if (!state.prologueComplete) {
             state.prologueComplete = true;
             persist();
-            if (hexReady()) learning.showModal();
             render();
         }
+        showStageLearning();
     };
     dialogue.addEventListener('click', (event) => { if (!event.target.closest('[data-step-back]')) continueDialogue(); });
     document.addEventListener('keydown', (event) => {
@@ -128,10 +185,11 @@
     });
 
     const prologueScenes = [
-        { kicker: 'PROLOG · 01', title: 'Berpindah dari hAP ke MikroTik hEX', text: 'Chapter 1–4 memakai router hAP. Sekarang kita berpindah ke hEX untuk mengatur VLAN switch. Konfigurasi hAP tetap dipertahankan. Kita pasang kabel terlebih dahulu, baru masuk ke hEX lewat WinBox.', pose: 'menugaskan' },
-        { kicker: 'JALUR ANTARPERANGKAT · 02', title: 'Satu kabel membawa dua VLAN', text: 'Port ether1 pada switch menjadi trunk menuju ether2-vlan pada router. Kabel ini meneruskan VLAN 10 siswa dan VLAN 20 guru dengan tag masing-masing.', pose: 'ngasih_arahan' },
-        { kicker: 'PINDAHKAN PC · 03', title: 'Sambungkan PC ke ether5 hEX', text: 'Kabel PC sudah dilepas dari router hAP. Pasang ujungnya ke ether5 hEX; ujung pada LAN PC tetap terpasang. Setelah itu keluar dari sesi WinBox hAP dan pilih hEX di Neighbors. Gunakan satu kabel PC yang sama. Ether2 dan ether3 adalah akses siswa; ether4 akses guru.', pose: 'memberitahu' },
-        { kicker: 'PENGUJIAN · 04', title: 'Satu PC menguji tiga port', text: 'Setelah konfigurasi Switch selesai, cabut kabel PC dari ether5. Pindahkan bergantian ke ether2, ether3, lalu ether4. Jalankan ipconfig di PC yang sama untuk memeriksa IP setiap port.', pose: 'mantap' },
+        { kicker: 'MASALAH JARINGAN · 01', title: 'Jaringan siswa dan guru harus terpisah', text: 'Komputer siswa dan perangkat guru berbagi infrastruktur sekolah. Jika semua port dianggap satu jaringan, lalu lintas dan akses keduanya bisa tercampur. VLAN 10 dan VLAN 20 dari Chapter 2 sudah memisahkan jaringan itu; sekarang switch hEX perlu meneruskannya dengan benar.', pose: 'menugaskan' },
+        { kicker: 'TUJUAN MISI · 02', title: 'Atur hEX agar setiap port menuju jaringan yang tepat', text: 'Buat bridge dan masukkan port hEX, lalu atur VLAN switch. Ether2 dan ether3 harus masuk ke jaringan siswa; ether4 ke jaringan guru. Konfigurasi IP, DHCP, dan layanan yang sudah dibuat di hAP tetap digunakan.', pose: 'ngasih_arahan' },
+        { kicker: 'MATERI · 03', title: 'Trunk dan access punya tugas berbeda', text: 'Ether1 hEX menjadi trunk ke ' + upstreamInterface + ' di hAP. Satu kabel trunk membawa VLAN 10 dan VLAN 20 beserta tag-nya. Ether2, ether3, dan ether4 menjadi port access yang menentukan perangkat masuk ke VLAN mana.', pose: 'memberitahu' },
+        { kicker: 'MULAI MISI · 04', title: 'Pindahkan kabel PC ke ether5 hEX', text: 'Gunakan satu kabel PC yang sama. Pindahkan ujung dari ether3 hAP ke ether5 hEX, sementara ujung LAN pada PC tetap terpasang. Keluar dari sesi hAP, lalu pilih perangkat hEX pada Neighbors WinBox.', pose: 'memberitahu' },
+        { kicker: 'BUKTI HASIL · 05', title: 'Uji jaringan dari PC yang sama', text: 'Setelah konfigurasi selesai, pindahkan kabel PC dari ether5 ke ether2, ether3, lalu ether4. Jalankan ipconfig di setiap port. IP yang sesuai menunjukkan PC masuk ke jaringan VLAN yang benar.', pose: 'mantap' },
     ];
     const renderPrologue = () => {
         const story = prologueScenes[prologueIndex];
@@ -242,6 +300,7 @@
         workspace = stage === 'test' ? 'cable' : ['quiz', 'finish'].includes(stage) ? 'pc' : 'winbox';
         if (stage === 'test') currentTestPort = nextTestPort();
         persist(); render(); stepGuide.reset();
+        if (state.prologueComplete && prologue.hidden && dialogue.hidden) showStageLearning();
     };
     const requireConfigurationSession = () => {
         if (canConfigure()) return true;
@@ -300,8 +359,8 @@
     document.querySelector('[data-save-identity]').addEventListener('click', () => {
         if (!requireConfigurationSession()) return;
         const identity = document.querySelector('[data-ch5-identity]').value.trim();
-        if (identity !== 'Switch') return feedback('Isi Identity dengan Switch, lalu klik OK.', 'error');
-         state.identity = identity; state.identitySaved = true; closeEditors();
+        if (!sameText(identity, 'Switch')) return feedback('Isi Identity dengan Switch, lalu klik OK.', 'error');
+         state.identity = 'Switch'; state.identitySaved = true; closeEditors();
         feedback('Identity hEX tersimpan sebagai Switch. Sekarang buat Bridge.', 'success');
         if (state.stage === 'identity') setStage(bridgeValid() ? 'ports' : 'bridge'); else { persist(); render(); }
     });
@@ -319,9 +378,9 @@
     const saveBridge = (close = true) => {
         if (!requireConfigurationSession()) return;
         const name = document.querySelector('[data-bridge-name]').value.trim();
-        if (name !== 'bridge1') return feedback('Pertahankan Name: bridge1 sesuai pengaturan bridge pada modul.', 'error');
+        if (!sameText(name, 'bridge1')) return feedback('Pertahankan Name: bridge1 sesuai pengaturan bridge pada modul.', 'error');
         if (document.querySelector('[data-bridge-protocol]').value !== 'rstp') return feedback('Biarkan Protocol Mode: rstp sesuai pengaturan awal bridge.', 'error');
-         state.bridge = { name, protocol: 'rstp', mtu: document.querySelector('[data-bridge-mtu]').value || 'auto' };
+         state.bridge = { name: 'bridge1', protocol: 'rstp', mtu: document.querySelector('[data-bridge-mtu]').value || 'auto' };
         if (close) { closeEditors(); setStage('ports', 'bridge'); } else { document.querySelector('[data-bridge-editor-title]').textContent = 'Interface <' + name + '>'; persist(); render(); }
     };
     document.querySelector('[data-save-bridge]').addEventListener('click', () => saveBridge(true));
@@ -462,7 +521,7 @@
     document.querySelector('[data-ch5-hex-neighbor]').addEventListener('click', () => {  document.querySelector('[data-ch5-connect-to]').value = '48:A9:8A:1C:01:05'; render(); });
     document.querySelector('[data-ch5-connect-hex]').addEventListener('click', () => {
         if (state.connections.pcPort !== 'ether5' || discoveryBusy || connectBusy || !state.migration.neighborsLoaded) return;
-        if (document.querySelector('[data-ch5-connect-to]').value.trim() !== '48:A9:8A:1C:01:05' || document.querySelector('[data-ch5-login-name]').value.trim() !== 'admin' || document.querySelector('[data-ch5-login-password]').value !== '') return feedback('Pilih MAC hEX, Login: admin, Password: kosong.', 'error');
+        if (!sameText(document.querySelector('[data-ch5-connect-to]').value, '48:A9:8A:1C:01:05') || !sameText(document.querySelector('[data-ch5-login-name]').value, 'admin') || document.querySelector('[data-ch5-login-password]').value !== '') return feedback('Pilih MAC hEX, Login: admin, Password: kosong.', 'error');
          cancelDiscovery(); const revision = sessionRevision; connectBusy = true; render();
         sessionTimer = window.setTimeout(() => { if (revision !== sessionRevision || state.connections.pcPort !== 'ether5') return; connectBusy = false; state.migration.connectedHex = true; const next = state.identitySaved ? state.resumeStage || 'bridge' : 'identity'; delete state.resumeStage; setStage(next); feedback(state.identitySaved ? 'Terhubung kembali ke hEX.' : 'Terhubung ke hEX. Buka System → Identity dan ubah menjadi Switch.', 'success'); }, 900);
     });
@@ -696,7 +755,7 @@
             state.stage = 'finish';
             persist();
             render();
-            window.setTimeout(() => { quiz.close(); finish.showModal(); }, 850);
+            window.NetGuardEvaluation.showFinish();
         } catch {
             window.NetGuardEvaluation.showError('Hasil belum terkirim. Periksa koneksi lalu coba lagi.');
             button.disabled = false;
@@ -706,13 +765,18 @@
         if (allTestsComplete()) { setStage('quiz'); quiz.showModal(); window.NetGuardEvaluation.clear(); }
     });
     document.querySelector('[data-close-quiz]').addEventListener('click', () => quiz.close());
-    document.querySelector('[data-close-finish]').addEventListener('click', () => finish.close());
+    document.querySelector('[data-close-finish]').addEventListener('click', () => quiz.close());
 
-    learning.addEventListener('close', () => stepGuide.refresh());
+    learning.addEventListener('close', () => {
+        if (learningStage) explainedStages.add(learningStage);
+        state.learningVersion = 1;
+        state.explainedStages = [...explainedStages];
+        persist();
+        stepGuide.refresh();
+    });
     document.querySelector('[data-close-learning]').addEventListener('click', () => learning.close());
     document.querySelector('[data-learning-continue]').addEventListener('click', () => learning.close());
-    document.querySelector('[data-reread-learning]').addEventListener('click', () => learning.showModal());
-    document.querySelector('[data-save-progress]').addEventListener('click', () => { if (persist()) feedback('Progres Chapter 5 tersimpan pada browser ini.', 'success'); });
+    document.querySelector('[data-reread-learning]').addEventListener('click', () => showStageLearning(true));
     document.querySelector('[data-replay-prologue]').addEventListener('click', () => { prologueIndex = 0; renderPrologue(); prologue.hidden = false; surface.inert = true; scene.classList.add('is-prologue'); });
     const missionStages = [
         ['connect-switch', 'switch-session'],
@@ -727,6 +791,10 @@
     const resetFromStage = (destination) => {
         const index = missionStages.findIndex((mission) => mission.includes(destination));
         const resets = (stage) => missionStages.findIndex((mission) => mission.includes(stage)) >= index;
+        for (const stage of explainedStages) {
+            if (resets(stage)) explainedStages.delete(stage);
+        }
+        state.explainedStages = [...explainedStages];
         cancelDiscovery(); window.clearTimeout(dhcpTimer); dhcpBusy = false; guideRevision++;
         if (resets('connect-switch')) {
             state.connections = { trunk: 'ether1', pcPort: null };
@@ -784,6 +852,29 @@
     if (scene.dataset.completed === 'true') { state.stage = 'finish'; workspace = 'pc'; }
     if (state.stage === 'identity' && !state.migration.connectedHex) state.stage = 'switch-session';
     render(); persist();
-    if (!state.prologueComplete && scene.dataset.completed !== 'true') { renderPrologue(); prologue.hidden = false; surface.inert = true; scene.classList.add('is-prologue'); if (reducedMotion.matches) closePrologue(); }
-    else { prologue.hidden = true; surface.inert = false; scene.classList.remove('is-prologue'); }
+    if ((!state.prologueComplete || state.stage === 'connect-switch') && scene.dataset.completed !== 'true') { renderPrologue(); prologue.hidden = false; surface.inert = true; scene.classList.add('is-prologue'); }
+    else { prologue.hidden = true; surface.inert = false; scene.classList.remove('is-prologue'); showStageLearning(); }
+    window.NetGuardChapterNavbar.bindAutosave?.(persist);
+    window.NetGuardChapterNavbar.bindMissions?.({
+        storageKey, completed: scene.dataset.completed === 'true',
+        isComplete: () => state.stage === 'finish',
+        getCurrent: () => Math.min(7, stages.indexOf(state.stage)),
+        missions: [
+            { stage: 'connect-switch', title: 'Kabel PC ke hEX', description: 'Hubungkan kabel PC ke ether5 hEX dan pertahankan kabel trunk.' },
+            { stage: 'switch-session', title: 'Login WinBox hEX', description: 'Keluar dari sesi hAP dan temukan switch melalui Neighbors.' },
+            { stage: 'identity', title: 'Identity switch', description: 'Beri nama perangkat hEX agar mudah dibedakan dari router hAP.' },
+            { stage: 'bridge', title: 'Membuat Bridge', description: 'Buat bridge1 untuk menyiapkan jalur switching pada hEX.' },
+            { stage: 'ports', title: 'Anggota Bridge', description: 'Tambahkan ether1 sampai ether4 sebagai anggota bridge1.' },
+            { stage: 'switch-ports', title: 'Trunk dan access', description: 'Atur VLAN Mode, VLAN Header, dan Default VLAN ID tiap port.' },
+            { stage: 'vlans', title: 'VLAN switch', description: 'Tentukan anggota VLAN 10 siswa dan VLAN 20 guru.' },
+            { stage: 'test', title: 'Uji port access', description: 'Pindahkan PC ke ether2, ether3, dan ether4 lalu periksa alamat IP.' },
+        ],
+        replay(destination) {
+            document.querySelectorAll('dialog[open]').forEach((node) => node.close());
+            window.clearInterval(dialogueTimer); window.clearInterval(prologueTimer);
+            dialogue.hidden = true; prologue.hidden = true; surface.inert = false; scene.classList.remove('is-prologue');
+            state.prologueComplete = true;
+            resetFromStage(destination); setStage(destination);
+        },
+    });
 })();
